@@ -1177,7 +1177,9 @@ MenuItemHandlerResult menuhandlerMpAutoRandomWeapon(s32 operation, struct menuit
 	case MENUOP_CHECKDISABLED:
 	case MENUOP_CHECKHIDDEN:
 		if (g_MpWeaponSetNum == WEAPONSET_RANDOM
-				|| g_MpWeaponSetNum == WEAPONSET_RANDOMFIVE) {
+				|| g_MpWeaponSetNum == WEAPONSET_RANDOMFIVE
+				|| g_MpWeaponSetNum == WEAPONSET_RANDOMCLASSIC
+				|| g_MpWeaponSetNum == WEAPONSET_RANDOMDARK) {
 			return false;
 		}
 		return true;
