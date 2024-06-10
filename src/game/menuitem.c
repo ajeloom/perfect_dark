@@ -23,6 +23,17 @@
 #include "data.h"
 #include "types.h"
 
+u32 textColors[] = {
+	0xff0000ff, // Red
+	0xffff00ff, // Yellow
+	0x0000ffff, // Blue
+	0xff00ffff, // Magenta
+	0x00ffffff, // Cyan
+	0xff8855ff, // Orange
+	0x8800ffff, // Pink
+	0x884455ff, // Brown
+};
+
 u8 g_MpSelectedPlayersForStats[MAX_PLAYERS];
 
 #if VERSION >= VERSION_NTSC_1_0
@@ -3521,9 +3532,15 @@ Gfx *menuitemRankingRender(Gfx *gdl, struct menurendercontext *context)
 #endif
 
 		if (team) {
+			textcolour = textColors[ranking->teamnum];
+
 			gdl = textRenderProjected(gdl, &x, &y, g_BossFile.teamnames[ranking->teamnum],
 					g_CharsHandelGothicSm, g_FontHandelGothicSm, textcolour, context->width, context->height, 0, 0);
 		} else {
+			if (g_MpSetup.options & MPOPTION_TEAMSENABLED) {
+				textcolour = textColors[ranking->mpchr->team];
+			}
+			
 			gdl = textRenderProjected(gdl, &x, &y, ranking->mpchr->name,
 					g_CharsHandelGothicSm, g_FontHandelGothicSm, textcolour, context->width, context->height, 0, 0);
 		}
@@ -3817,8 +3834,17 @@ Gfx *menuitemPlayerStatsRender(Gfx *gdl, struct menurendercontext *context)
 					// Name
 					x = context->x + 29;
 					y = context->y + ypos;
-					gdl = textRenderProjected(gdl, &x, &y, loopmpchr->name, g_CharsHandelGothicSm, g_FontHandelGothicSm,
+					
+					if (g_MpSetup.options & MPOPTION_TEAMSENABLED) {
+						u32 textcolour = textColors[loopmpchr->team];
+
+						gdl = textRenderProjected(gdl, &x, &y, loopmpchr->name, g_CharsHandelGothicSm, g_FontHandelGothicSm,
+							textcolour, context->width, context->height, 0, 0);
+					}
+					else {
+						gdl = textRenderProjected(gdl, &x, &y, loopmpchr->name, g_CharsHandelGothicSm, g_FontHandelGothicSm,
 							0x00ffffff, context->width, context->height, 0, 0);
+					}
 
 					// Num deaths
 					sprintf(buffer, "%d\n", loopmpchr->killcounts[playernum]);
