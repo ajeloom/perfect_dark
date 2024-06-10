@@ -3298,6 +3298,34 @@ struct menudialogdef g_MpSimulantsMenuDialog = {
 	NULL,
 };
 
+bool isTeamInArray(s32 team, s32 teamArray[], int index) 
+{
+	// Check if other teams were picked before the current one
+	for (int i = 0; i < index; i++) {
+		if (team == teamArray[i]) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+s32 getRandomTeamColor(s32 teamArray[], int index) 
+{
+	// Get a random team color
+	s32 team = random() % MAX_TEAMS;
+
+	while (true) {
+		// Check if the team color is already used
+		if (!isTeamInArray(team, teamArray, index)) {
+			return team;
+		}
+
+		// Re-randomize the team if the team is already picked
+		team = random() % MAX_TEAMS;
+	}
+}
+
 MenuItemHandlerResult menuhandlerMpNTeams(s32 operation, struct menuitem *item, union handlerdata *data, s32 numteams)
 {
 	if (operation == MENUOP_SET) {
@@ -3310,6 +3338,11 @@ MenuItemHandlerResult menuhandlerMpNTeams(s32 operation, struct menuitem *item, 
 
 		s32 i;
 		s32 teamnum;
+	
+		s32 teamArray[] = {0, 1, 2, 3};
+		for (int i = 0; i < 4; i++) {
+			teamArray[i] = getRandomTeamColor(teamArray, i);
+		}
 
 #if VERSION >= VERSION_NTSC_1_0
 		if (!numchrs) {
@@ -3333,7 +3366,7 @@ MenuItemHandlerResult menuhandlerMpNTeams(s32 operation, struct menuitem *item, 
 
 				while (true) {
 					if (array[teamnum] == 0) {
-						mpchr->team = teamnum;
+						mpchr->team = teamArray[teamnum];
 
 						array[teamnum]++;
 						teamsremaining--;
@@ -3348,7 +3381,7 @@ MenuItemHandlerResult menuhandlerMpNTeams(s32 operation, struct menuitem *item, 
 
 				while (true) {
 					if (array[teamnum] < somevalue) {
-						mpchr->team = teamnum;
+						mpchr->team = teamArray[teamnum];
 
 						if (array[teamnum] == 0) {
 							teamsremaining--;
