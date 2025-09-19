@@ -419,7 +419,8 @@ MenuItemHandlerResult menuhandlerMpTeamsEnabled(s32 operation, struct menuitem *
 {
 	if (operation == MENUOP_CHECKDISABLED) {
 		if (g_MpSetup.scenario == MPSCENARIO_CAPTURETHECASE ||
-				g_MpSetup.scenario == MPSCENARIO_KINGOFTHEHILL) {
+				g_MpSetup.scenario == MPSCENARIO_KINGOFTHEHILL ||
+				g_MpSetup.scenario == MPSCENARIO_ZONES) {
 			return true;
 		}
 
@@ -5376,7 +5377,8 @@ MenuItemHandlerResult menuhandlerMpQuickTeamOption(s32 operation, struct menuite
 		if (g_Vars.mpquickteam == MPQUICKTEAM_PLAYERSONLY ||
 				g_Vars.mpquickteam == MPQUICKTEAM_PLAYERSANDSIMS) {
 			if (g_MpSetup.scenario == MPSCENARIO_KINGOFTHEHILL ||
-					g_MpSetup.scenario == MPSCENARIO_CAPTURETHECASE) {
+					g_MpSetup.scenario == MPSCENARIO_CAPTURETHECASE ||
+					g_MpSetup.scenario == MPSCENARIO_ZONES) {
 				g_MpSetup.scenario = MPSCENARIO_COMBAT;
 			}
 		}

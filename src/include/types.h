@@ -4242,6 +4242,20 @@ struct scenariodata_ctc {
 	/*0x58*/ struct prop *tokens[4];
 };
 
+struct scenariodata_z {
+	/*0x800ac110*/ u32 unk00;
+	/*0x800ac114*/ s16 occupiedteam;
+	/*0x800ac116*/ s16 elapsed240;
+	/*0x800ac118*/ s16 hillindex;
+	/*0x800ac11a*/ s16 hillcount;
+	/*0x800ac11c*/ RoomNum hillrooms[2];
+	/*0x800ac120*/ s16 hillpads[9];
+	/*0x800ac132*/ struct coord hillpos;
+	/*0x800ac13e*/ f32 colourfracr;
+	/*0x800ac142*/ f32 colourfracg;
+	/*0x800ac146*/ f32 colourfracb;
+};
+
 struct scenariodata {
 	union {
 		struct scenariodata_htb htb;
@@ -4249,6 +4263,7 @@ struct scenariodata {
 		struct scenariodata_pac pac;
 		struct scenariodata_koh koh;
 		struct scenariodata_ctc ctc;
+		struct scenariodata_z z;
 	};
 };
 

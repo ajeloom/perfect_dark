@@ -670,7 +670,8 @@ s32 mpCalculateTeamScoreLimit(void)
 
 	if (g_BossFile.locktype == MPLOCKTYPE_CHALLENGE
 			&& g_MpSetup.teamscorelimit != 400
-			&& (g_MpSetup.scenario == MPSCENARIO_COMBAT || g_MpSetup.scenario == MPSCENARIO_KINGOFTHEHILL)) {
+			&& (g_MpSetup.scenario == MPSCENARIO_COMBAT || g_MpSetup.scenario == MPSCENARIO_KINGOFTHEHILL
+			|| g_MpSetup.scenario == MPSCENARIO_ZONES)) {
 		s32 numchrs = 0;
 
 		for (i = 0; i < MAX_PLAYERS; i++) {

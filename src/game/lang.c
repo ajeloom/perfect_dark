@@ -419,6 +419,13 @@ void langClearBank(s32 bank)
  */
 char *langGet(s32 textid)
 {
+	switch (textid) {
+		case L_MPMENU_ZONES:
+			return "Zones";
+		case L_MPMENU_ZONESOPTIONS:
+			return "Zones Options\n";
+	}
+
 	s32 bankindex = textid >> 9;
 	s32 textindex = textid & 0x1ff;
 	uintptr_t *bank = (uintptr_t*)g_LangBanks[bankindex];

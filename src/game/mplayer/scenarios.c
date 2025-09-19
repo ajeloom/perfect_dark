@@ -172,6 +172,7 @@ MenuItemHandlerResult menuhandlerMpSlowMotion(s32 operation, struct menuitem *it
 #include "scenarios/kingofthehill.inc"
 #include "scenarios/hackthatmac.inc"
 #include "scenarios/popacap.inc"
+#include "scenarios/zones.inc"
 
 // Define the scenario callbacks
 struct mpscenario g_MpScenarios[] = {
@@ -248,6 +249,25 @@ struct mpscenario g_MpScenarios[] = {
 		ctcGetMaxTeams,
 		ctcIsRoomHighlighted,
 		ctcHighlightRoom,
+	}, {
+		&g_ZOptionsMenuDialog,
+		zInit,
+		NULL,
+		zInitProps,
+		zTick,
+		NULL,
+		zRenderHud,
+		zCalculatePlayerScore,
+		zRadarExtra,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		zIsRoomHighlighted,
+		zHighlightRoom,
+		NULL,
+		zReadSave,
+		zWriteSave
 	},
 };
 
@@ -259,6 +279,7 @@ struct mpscenariooverview g_MpScenarioOverviews[] = {
 	{ L_MPMENU_249, L_MPMENU_256, MPFEATURE_SCENARIO_PAC, false }, // "Pop a Cap", "Pop"
 	{ L_MPMENU_250, L_MPMENU_257, MPFEATURE_SCENARIO_KOH, true  }, // "King of the Hill", "Hill"
 	{ L_MPMENU_251, L_MPMENU_258, MPFEATURE_SCENARIO_CTC, true  }, // "Capture the Case", "Capture"
+	{ L_MPMENU_ZONES, L_MPMENU_ZONES, 0,                  true  }, // "Zones", "Zones"
 };
 
 /**
@@ -325,8 +346,7 @@ MenuItemHandlerResult scenarioScenarioMenuHandler(s32 operation, struct menuitem
 	switch (operation) {
 	case MENUOP_GETOPTIONCOUNT:
 		for (i = 0; i < ARRAYCOUNT(g_MpScenarioOverviews); i++) {
-			if (challengeIsFeatureUnlocked(g_MpScenarioOverviews[i].requirefeature)
-					&& (teamgame || g_MpScenarioOverviews[i].teamonly == false)) {
+			if (teamgame || g_MpScenarioOverviews[i].teamonly == false) {
 				count++;
 			}
 		}
@@ -335,8 +355,7 @@ MenuItemHandlerResult scenarioScenarioMenuHandler(s32 operation, struct menuitem
 		break;
 	case MENUOP_GETOPTIONTEXT:
 		for (i = 0; i < ARRAYCOUNT(g_MpScenarioOverviews); i++) {
-			if (challengeIsFeatureUnlocked(g_MpScenarioOverviews[i].requirefeature)
-					&& (teamgame || g_MpScenarioOverviews[i].teamonly == false)) {
+			if (teamgame || g_MpScenarioOverviews[i].teamonly == false) {
 				if (count == data->list.value) {
 					return (uintptr_t)langGet(g_MpScenarioOverviews[i].name);
 				}
@@ -348,8 +367,7 @@ MenuItemHandlerResult scenarioScenarioMenuHandler(s32 operation, struct menuitem
 		break;
 	case MENUOP_SET:
 		for (i = 0; i < ARRAYCOUNT(g_MpScenarioOverviews); i++) {
-			if (challengeIsFeatureUnlocked(g_MpScenarioOverviews[i].requirefeature)
-					&& (teamgame || g_MpScenarioOverviews[i].teamonly == false)) {
+			if (teamgame || g_MpScenarioOverviews[i].teamonly == false) {
 				if (count == data->list.value) {
 					g_MpSetup.scenario = i;
 					break;
@@ -363,8 +381,7 @@ MenuItemHandlerResult scenarioScenarioMenuHandler(s32 operation, struct menuitem
 		break;
 	case MENUOP_GETSELECTEDINDEX:
 		for (i = 0; i < ARRAYCOUNT(g_MpScenarioOverviews); i++) {
-			if (challengeIsFeatureUnlocked(g_MpScenarioOverviews[i].requirefeature)
-					&& (teamgame || g_MpScenarioOverviews[i].teamonly == false)) {
+			if (teamgame || g_MpScenarioOverviews[i].teamonly == false) {
 				if (i == g_MpSetup.scenario) {
 					data->list.value = count;
 					break;
@@ -376,7 +393,7 @@ MenuItemHandlerResult scenarioScenarioMenuHandler(s32 operation, struct menuitem
 
 		break;
 	case MENUOP_GETOPTGROUPCOUNT:
-		data->list.value = 2;
+		data->list.value = ARRAYCOUNT(groups);
 
 		if (!teamgame || (!challengeIsFeatureUnlocked(MPFEATURE_SCENARIO_KOH) && !challengeIsFeatureUnlocked(MPFEATURE_SCENARIO_CTC))) {
 			data->list.value--;
@@ -386,8 +403,7 @@ MenuItemHandlerResult scenarioScenarioMenuHandler(s32 operation, struct menuitem
 		return (uintptr_t)langGet(groups[data->list.value].textid);
 	case MENUOP_GETGROUPSTARTINDEX:
 		for (i = 0; i < groups[data->list.value].startindex; i++) {
-			if (challengeIsFeatureUnlocked(g_MpScenarioOverviews[i].requirefeature)
-					&& (teamgame || g_MpScenarioOverviews[i].teamonly == false)) {
+			if (teamgame || g_MpScenarioOverviews[i].teamonly == false) {
 				count++;
 			}
 		}
@@ -845,6 +861,9 @@ void scenarioReset(void)
 		break;
 	case MPSCENARIO_POPACAP:
 		break;
+	case MPSCENARIO_ZONES:
+		g_ScenarioData.koh.hillcount = 0;
+		break;
 	}
 
 	if (cmd) {
@@ -867,6 +886,8 @@ void scenarioReset(void)
 			case INTROCMD_HILL:
 				if (g_MpSetup.scenario == MPSCENARIO_KINGOFTHEHILL) {
 					kohAddHill(cmd);
+				} else if (g_MpSetup.scenario == MPSCENARIO_ZONES) {
+					zAddHill(cmd);
 				}
 				cmd += 2;
 				break;

@@ -4958,5 +4958,25 @@
         "fr": "Please Wait...\n",
         "de": "Please Wait...\n",
         "es": "Please Wait...\n"
+    },
+    {
+        "id": "L_MPMENU_ZONES",
+        "en": "Zones",
+        "gb": "Zones",
+        "jp": "Zones",
+        "it": "Zones",
+        "fr": "Zones",
+        "de": "Zones",
+        "es": "Zones"
+    },
+    {
+        "id": "L_MPMENU_ZONESOPTIONS",
+        "en": "Zones Options\n",
+        "gb": "Zones Options\n",
+        "jp": "Zones Options\n",
+        "it": "Zones Options\n",
+        "fr": "Zones Options\n",
+        "de": "Zones Options\n",
+        "es": "Zones Options\n"
     }
 ]
