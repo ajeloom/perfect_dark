@@ -1,3 +1,6 @@
 [submodule "tools/recomp"]
 	path = tools/recomp
 	url = https://github.com/Emill/ido-static-recomp.git
+[submodule "archipelago_client/subprojects/apclientpp"]
+	path = archipelago_client/subprojects/apclientpp
+	url = https://github.com/black-sliver/apclientpp.git
