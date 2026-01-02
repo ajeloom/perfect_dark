@@ -4,3 +4,9 @@
 [submodule "archipelago_client/subprojects/apclientpp"]
 	path = archipelago_client/subprojects/apclientpp
 	url = https://github.com/black-sliver/apclientpp.git
+[submodule "archipelago_client/subprojects/wswrap"]
+	path = archipelago_client/subprojects/wswrap
+	url = https://github.com/black-sliver/wswrap.git
+[submodule "archipelago_client/subprojects/websocketpp"]
+	path = archipelago_client/subprojects/websocketpp
+	url = https://github.com/zaphoyd/websocketpp.git
