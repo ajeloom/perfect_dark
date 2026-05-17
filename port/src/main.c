@@ -18,6 +18,10 @@
 #include "system.h"
 #include "utils.h"
 
+#include "apconfig.h"
+#include "archipelago.h"
+#include "itemhandler.h"
+
 u32 g_OsMemSize = 0;
 s32 g_OsMemSizeMb = 16;
 u8 g_Is4Mb = 0;
@@ -86,6 +90,8 @@ static void gameInit(void)
 static void cleanup(void)
 {
 	sysLogPrintf(LOG_NOTE, "shutdown");
+	APConfigSave("$S/ap.ini");
+	AP_Close();
 	inputSaveBinds();
 	configSave(CONFIG_PATH);
 	videoShutdown();
@@ -103,6 +109,7 @@ int main(int argc, const char **argv)
 
 	sysInit();
 	fsInit();
+	APConfigInit();
 	configInit();
 	videoInit();
 	inputInit();
@@ -153,8 +160,11 @@ int main(int argc, const char **argv)
 		sysLogPrintf(LOG_NOTE, "player profile set to %d", g_FileAutoSelect);
 	}
 
-	mainProc();
+	AP_Init();
+	resetAP();
 
+	mainProc();
+	
 	return 0;
 }
 
