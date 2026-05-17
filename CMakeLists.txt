@@ -161,6 +161,7 @@ include_directories("${CMAKE_BINARY_DIR}/src/generated/${ROMID}")
 include_directories("${CMAKE_SOURCE_DIR}/src/lib/ultra/audio")
 include_directories("${CMAKE_SOURCE_DIR}/port/include")
 include_directories("${CMAKE_BINARY_DIR}/port/include")
+include_directories("${CMAKE_SOURCE_DIR}/port/archipelago/include")
 
 # Set Release optimization to -Og until I fix the -O2 issues
 if(NOT (CMAKE_BUILD_TYPE STREQUAL "Debug"))
@@ -246,7 +247,7 @@ list(APPEND LIBS "${GL_LIBRARY}")
 # Platform-specific extra libs
 if(NOT EXTRA_LIBRARIES)
   if(WIN32)
-    set(EXTRA_LIBRARIES dbghelp -static-libstdc++)
+    set(EXTRA_LIBRARIES dbghelp -static-libstdc++ -static-libgcc -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic)
   elseif(NINTENDO_SWITCH)
     set(EXTRA_LIBRARIES stdc++ pthread)
   else()
@@ -342,8 +343,86 @@ add_custom_target(pd_headers ALL DEPENDS ${JSON_HEADERS})
 
 set(BIN_NAME "pd${BIN_REGION}.${TARGET_ARCH}")
 add_executable(pd ${SRC})
+
+add_library(apclientpp INTERFACE
+        archipelago_client/subprojects/apclientpp/apclient.hpp
+        archipelago_client/subprojects/apclientpp/apuuid.hpp
+        archipelago_client/subprojects/apclientpp/defaultdatapackagestore.hpp)
+
+target_include_directories(
+        apclientpp
+        INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/archipelago_client/subprojects/apclientpp>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/archipelago_client/subprojects/apclientpp>)
+
+include(FetchContent)
+FetchContent_Declare(
+        asio
+        URL https://github.com/chriskohlhoff/asio/archive/f693a3eb7fe72a5f19b975289afc4f437d373d9c.zip)
+FetchContent_Declare(
+        json
+        URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz)
+FetchContent_Declare(
+        websocketpp
+        URL https://github.com/zaphoyd/websocketpp/archive/4dfe1be74e684acca19ac1cf96cce0df9eac2a2d.zip)
+# Complete, with submodule:
+FetchContent_Declare(
+        wswrap
+        GIT_REPOSITORY https://github.com/black-sliver/wswrap.git
+        GIT_TAG d0505e0ec53a26743f11051949a0dc66bcf44951)
+
+FetchContent_MakeAvailable(asio json websocketpp wswrap)
+
+target_precompile_headers(pd PRIVATE "$<$<COMPILE_LANGUAGE:CXX>:apclient.hpp>")
+
+target_link_libraries(pd
+        PRIVATE apclientpp
+        PRIVATE nlohmann_json::nlohmann_json)
+target_include_directories(pd
+        PRIVATE "${wswrap_SOURCE_DIR}/include"
+        PRIVATE "${asio_SOURCE_DIR}/asio/include"
+        PRIVATE ${websocketpp_SOURCE_DIR})
+target_compile_definitions(pd
+        PRIVATE AP_NO_SCHEMA ASIO_STANDALONE _WEBSOCKETPP_CPP11_THREAD_)
+if(WIN32 OR MSYS OR MINGW)
+    target_link_libraries(pd
+            PRIVATE crypt32 # required for system cert loading with OpenSSL
+            PRIVATE ws2_32)
+
+endif()
+if ((MSVC) AND (MSVC_VERSION GREATER_EQUAL 1914))
+    target_compile_options(pd
+            PRIVATE "/Zc:__cplusplus" /bigobj)
+endif()
+
+# find OpenSSL and enable SSL support if found
+find_package(OpenSSL)
+if(OpenSSL_FOUND)
+    target_link_libraries(pd
+            PRIVATE OpenSSL::SSL OpenSSL::Crypto)
+else()
+    target_compile_definitions(pd
+            PRIVATE WSWRAP_NO_SSL)
+endif()
+
+# find zlib and enable compression support if found
+find_package(ZLIB)
+if(ZLIB_FOUND)
+    target_link_libraries(pd PRIVATE ZLIB::ZLIB)
+else()
+    target_compile_definitions(pd
+            PRIVATE WSWRAP_NO_COMPRESSION)
+endif()
+
+# enable ASAN and UBSAN on compatible platforms
+if(NOT MSYS AND NOT MINGW AND NOT MSVC)
+    target_compile_options(pd
+            PRIVATE -fsanitize=address -fsanitize=undefined)
+    target_link_options(pd
+            PRIVATE -fsanitize=address -fsanitize=undefined)
+endif()
+
 add_dependencies(pd pd_headers)
-target_link_libraries(pd ${LIBS})
+target_link_libraries(pd PRIVATE ${LIBS})
 set_target_properties(pd PROPERTIES OUTPUT_NAME "${BIN_NAME}")
 if(WIN32)
   set_target_properties(pd PROPERTIES WIN32_EXECUTABLE TRUE)

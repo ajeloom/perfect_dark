@@ -73,6 +73,7 @@
 #include "data.h"
 #include "types.h"
 #include "system.h"
+#include "archipelago.h"
 
 extern u8 *g_MempHeap;
 extern u32 g_MempHeapSize;
@@ -575,6 +576,8 @@ void mainTick(void)
 		rdpCreateTask(gdlstart, gdl, 0, (uintptr_t) &msg);
 		memaPrint();
 		profileSetMarker(PROFILE_MAINTICK_END);
+
+		PollServer();
 	}
 }
 
