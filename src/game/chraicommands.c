@@ -53,6 +53,8 @@
 #include "types.h"
 
 extern bool randomMusic;
+extern u32 unlockedWeapons[94];
+extern int weaponProgressionType;
 
 /**
  * @cmd 0000
@@ -5433,7 +5435,10 @@ bool aiChrDrawWeaponInCutscene(void)
 		u32 prevplayernum = g_Vars.currentplayernum;
 		u32 playernum = playermgrGetPlayerNumByProp(chr->prop);
 		setCurrentPlayerNum(playernum);
+		if (weaponProgressionType == WEAPONPROG_DISABLED
+				&& unlockedWeapons[(s8)cmd[3]] == 1) {
 			bgunEquipWeapon((s8)cmd[3]);
+		}
 		setCurrentPlayerNum(prevplayernum);
 	}
 
