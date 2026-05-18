@@ -36,6 +36,10 @@
 
 extern u32 unlockedMissions[NUM_SOLOSTAGES][3];
 
+extern int completionGoal;
+extern int missionStars;
+extern int requiredMissionStars;
+
 u8 g_InventoryWeapon;
 
 struct menudialogdef g_2PMissionControlStyleMenuDialog;
@@ -4638,12 +4642,25 @@ struct menuitem g_SelectMissionMenuItems[] = {
 	{ MENUITEMTYPE_END },
 };
 
+MenuDialogHandlerResult handleMissionMenuTitleDialog(s32 operation, struct menudialogdef *dialogdef, union handlerdata *data)
+{
+	if (completionGoal == 1) {
+		sprintf(g_StringPointer, "Mission Select - (Mission Stars: %d/%d)", missionStars, requiredMissionStars);
+		dialogdef->title = (uintptr_t)g_StringPointer;
+	}
+	else {
+		dialogdef->title = (uintptr_t)"Mission Select\n";
+	}
+	
+	return 0;
+}
+
 struct menudialogdef g_SelectMissionMenuDialog = {
 	MENUDIALOGTYPE_DEFAULT,
-	L_OPTIONS_122, // "Mission Select"
+	(uintptr_t)"Mission Select\n", // "Mission Select"
 	g_SelectMissionMenuItems,
-	NULL,
-	MENUDIALOGFLAG_STARTSELECTS,
+	handleMissionMenuTitleDialog,
+	MENUDIALOGFLAG_STARTSELECTS | MENUDIALOGFLAG_LITERAL_TEXT,
 	NULL,
 };
 
