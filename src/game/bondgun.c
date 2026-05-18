@@ -77,6 +77,7 @@
 extern int progressiveWeapon;
 extern int weaponProgressionType;
 extern int progressiveWeaponNumbers[43];
+extern int allowProgWeaponInChallenges;
 
 #if VERSION >= VERSION_PAL_BETA
 struct sndstate *g_CasingAudioHandles[2];
@@ -6345,6 +6346,17 @@ void bgunDisarm(struct prop *attackerprop)
 
 		chr = player->prop->chr;
 		drop = true;
+
+		// Only drop weapons in the weapon set if weapon progression is enabled
+		if (weaponProgressionType != WEAPONPROG_DISABLED && allowProgWeaponInChallenges == 1) {
+			drop = false;
+			for (i = 0; i < ARRAYCOUNT(g_MpSetup.weapons); i++) {
+				if (weaponnum == g_MpWeapons[g_MpSetup.weapons[i]].weaponnum) {
+					drop = true;
+					break;
+				}
+			}
+		}
 
 		// RC-P120 and cloaking device: turn off cloak if active
 		if (weaponnum == WEAPON_RCP120) {

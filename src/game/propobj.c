@@ -138,6 +138,7 @@ s32 g_MaxThrownLaptops = 0;
 extern u32 unlockedWeapons[94];
 
 extern int weaponProgressionType;
+extern int allowProgWeaponInChallenges;
 
 /**
  * Attempt to call a lift from the given door.
@@ -21394,6 +21395,22 @@ void weaponCreateForPlayerDrop(s32 weaponnum)
 	struct prop *prop;
 	struct chrdata *chr;
 	u32 stack2;
+
+	// Only drop weapons from the weapon set when you die
+	if (weaponProgressionType != WEAPONPROG_DISABLED 
+			&& allowProgWeaponInChallenges == 1
+			&& weaponnum != WEAPON_BRIEFCASE2
+			&& weaponnum != WEAPON_DATAUPLINK) {
+		for (s32 i = 0; i < ARRAYCOUNT(g_MpSetup.weapons); i++) {
+			if (weaponnum == g_MpWeapons[g_MpSetup.weapons[i]].weaponnum) {
+				break;
+			}
+
+			if (i == 5) {
+				return;
+			}
+		}
+	}
 
 	chr = g_Vars.currentplayer->prop->chr;
 	prop = weaponCreateForChr(chr, playermgrGetModelOfWeapon(weaponnum), weaponnum, OBJFLAG_WEAPON_AICANNOTUSE, NULL, NULL);
