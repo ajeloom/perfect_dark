@@ -523,7 +523,7 @@ void romdataFilePreprocess(s32 fileNum, s32 loadType, u8 *data, u32 size, u32 *o
 				const struct romfilepatch *p = &fileSlots[fileNum].patches[i];
 				if (!memcmp(data + p->ofs, p->src, p->len)) {
 					memcpy(data + p->ofs, p->dst, p->len);
-					sysLogPrintf(LOG_NOTE, "file %d (%s) patched at offset 0x%x", fileNum, fileSlots[fileNum].name, p->ofs);
+					// sysLogPrintf(LOG_NOTE, "file %d (%s) patched at offset 0x%x", fileNum, fileSlots[fileNum].name, p->ofs);
 				}
 			}
 			// then preprocess
