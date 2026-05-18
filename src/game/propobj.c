@@ -135,6 +135,10 @@ struct autogunobj *g_ThrownLaptops = NULL;
 struct beam *g_ThrownLaptopBeams = NULL;
 s32 g_MaxThrownLaptops = 0;
 
+extern u32 unlockedWeapons[94];
+
+extern int weaponProgressionType;
+
 /**
  * Attempt to call a lift from the given door.
  *
@@ -17238,6 +17242,44 @@ s32 propPickupByPlayer(struct prop *prop, bool showhudmsg)
 	case OBJTYPE_AMMOCRATE:
 		{
 			struct ammocrateobj *crate = (struct ammocrateobj *) prop->obj;
+			s8 weaponID = -1;
+			switch (crate->ammotype) {
+				case AMMOTYPE_GRENADE:
+					weaponID = WEAPON_GRENADE;
+					break;
+				case AMMOTYPE_REMOTE_MINE:
+					weaponID = WEAPON_REMOTEMINE;
+					break;
+				case AMMOTYPE_PROXY_MINE:
+					weaponID = WEAPON_PROXIMITYMINE;
+					break;
+				case AMMOTYPE_TIMED_MINE:
+					weaponID = WEAPON_TIMEDMINE;
+					break;
+				case AMMOTYPE_NBOMB:
+					weaponID = WEAPON_NBOMB;
+					break;					
+				case AMMOTYPE_KNIFE:
+					weaponID = WEAPON_COMBATKNIFE;
+					break;
+				case AMMOTYPE_ECM_MINE:
+					weaponID = WEAPON_ECMMINE;
+					break;
+				case AMMOTYPE_TOKEN:
+					weaponID = WEAPON_BRIEFCASE2;
+					break;
+				case AMMOTYPE_CLOAK:
+					weaponID = WEAPON_CLOAKINGDEVICE;
+					break;
+				case AMMOTYPE_BOOST:
+					weaponID = WEAPON_COMBATBOOST;
+					break;
+			}
+
+			if (weaponID > -1 && unlockedWeapons[weaponID] == 0) {
+				return TICKOP_NONE;
+			}
+
 			s32 quantity = ammocrateGetPickupAmmoQty(crate);
 			ammoHandlePickup(crate->ammotype, quantity, !g_Vars.in_cutscene, showhudmsg);
 			result = TICKOP_FREE;
@@ -17254,6 +17296,32 @@ s32 propPickupByPlayer(struct prop *prop, bool showhudmsg)
 
 				if (!g_Vars.normmplayerisrunning) {
 					qty *= g_AmmoQuantityScale;
+				}
+
+				s8 weaponID = -1;
+				switch (i + 1) {
+					case AMMOTYPE_GRENADE:
+						weaponID = WEAPON_GRENADE;
+						break;
+					case AMMOTYPE_REMOTE_MINE:
+						weaponID = WEAPON_REMOTEMINE;
+						break;
+					case AMMOTYPE_PROXY_MINE:
+						weaponID = WEAPON_PROXIMITYMINE;
+						break;
+					case AMMOTYPE_TIMED_MINE:
+						weaponID = WEAPON_TIMEDMINE;
+						break;
+					case AMMOTYPE_NBOMB:
+						weaponID = WEAPON_NBOMB;
+						break;					
+					case AMMOTYPE_KNIFE:
+						weaponID = WEAPON_COMBATKNIFE;
+						break;
+				}
+
+				if (weaponID > -1 && unlockedWeapons[weaponID] == 0) {
+					continue;
 				}
 
 				ammoHandlePickup(i + 1, qty, false, showhudmsg);
@@ -17400,6 +17468,10 @@ s32 propPickupByPlayer(struct prop *prop, bool showhudmsg)
 		break;
 	case OBJTYPE_SHIELD:
 		{
+			if (unlockedWeapons[WEAPON_MPSHIELD] == 0) {
+				return TICKOP_NONE;
+			}
+
 			playerSetShieldFrac(((struct shieldobj *) prop->obj)->amount);
 
 			if (!g_Vars.in_cutscene) {
@@ -17426,6 +17498,22 @@ s32 propPickupByPlayer(struct prop *prop, bool showhudmsg)
 		}
 		break;
 	case OBJTYPE_BASIC:
+		struct weaponobj *weapon = (struct weaponobj *) obj;
+
+		if (g_MissionConfig.stageindex == SOLOSTAGEINDEX_INVESTIGATION 
+				&& obj->pad == 317
+				&& unlockedWeapons[WEAPON_NIGHTVISION] == 0) {
+			return TICKOP_NONE;
+		}
+		else if (g_MissionConfig.stageindex == SOLOSTAGEINDEX_INVESTIGATION 
+				&& obj->pad == 579
+				&& unlockedWeapons[WEAPON_SHIELDTECHITEM] == 0) {
+			return TICKOP_NONE;
+		}
+		else if (g_MissionConfig.stageindex == SOLOSTAGEINDEX_G5BUILDING
+				&& unlockedWeapons[WEAPON_BACKUPDISK] == 0) {
+			return TICKOP_NONE;
+		}
 	case OBJTYPE_ALARM:
 	case OBJTYPE_CCTV:
 	case OBJTYPE_SINGLEMONITOR:
@@ -17711,6 +17799,106 @@ s32 objTestForPickup(struct prop *prop)
 		}
 
 		if (pickup) {
+			if (prop->obj->type == OBJTYPE_WEAPON) {
+				struct weaponobj *weapon = (struct weaponobj *) prop->obj;
+				if (weaponProgressionType == WEAPONPROG_ONEGUN && !g_Vars.normmplayerisrunning) {
+					if (weapon->weaponnum <= WEAPON_PSYCHOSISGUN 
+							&& g_Vars.stagenum != STAGE_CITRAINING) {
+
+						if (g_Vars.stagenum != STAGE_INVESTIGATION
+								&& weapon->weaponnum == WEAPON_K7AVENGER) {
+							return TICKOP_NONE;
+						}
+
+						if (g_Vars.stagenum != STAGE_CHICAGO
+								&& weapon->weaponnum == WEAPON_REMOTEMINE) {
+							return TICKOP_NONE;
+						}
+
+						if (g_Vars.stagenum != STAGE_DEFENSE
+								&& weapon->weaponnum == WEAPON_RCP120) {
+							return TICKOP_NONE;
+						}
+
+						if (weapon->weaponnum != WEAPON_K7AVENGER
+								&& weapon->weaponnum != WEAPON_REMOTEMINE
+								&& weapon->weaponnum != WEAPON_RCP120) {
+							return TICKOP_NONE;
+						}
+					}
+				}
+
+				if (unlockedWeapons[weapon->weaponnum] == 0) {
+					return TICKOP_NONE;
+				}
+			}
+			else if (prop->obj->type == OBJTYPE_KEY) {
+				u8 weaponnum = 0;
+				struct weaponobj *weapon = (struct weaponobj *) prop->obj;
+				
+				switch (weapon->weaponnum) {
+					case 0:
+						if (g_MissionConfig.stageindex == SOLOSTAGEINDEX_INFILTRATION) {
+							// Area 51 Lift Key Card
+							weaponnum = WEAPON_KEYCARD4B;
+						}
+						else if (g_MissionConfig.stageindex == SOLOSTAGEINDEX_AIRFORCEONE) {
+							// Air Force One Lift Key Card
+							weaponnum = WEAPON_KEYCARD49;
+						}
+						else if (g_MissionConfig.stageindex == SOLOSTAGEINDEX_PELAGIC) {
+							// Pelagic II Research Tape
+							weaponnum = WEAPON_RESEARCHTAPE;
+						}
+						break;
+					case 4:
+						if (g_MissionConfig.stageindex == SOLOSTAGEINDEX_G5BUILDING) {
+							// G5 Building Level 1 Key Card
+							weaponnum = WEAPON_KEYCARD45;
+						}
+						else if (g_MissionConfig.stageindex == SOLOSTAGEINDEX_AIRFORCEONE) {
+							// Air Force One Left Room Key Card
+							weaponnum = WEAPON_KEYCARD49;
+						}
+						break;
+					case 16:
+						// G5 Building Level 2 Key Card
+						weaponnum = WEAPON_KEYCARD46;
+						break;
+					case 32:
+						if (g_MissionConfig.stageindex == SOLOSTAGEINDEX_DEFECTION) {
+							// De Vries' Necklace
+							weaponnum = WEAPON_NECKLACE;
+						}
+						else if (g_MissionConfig.stageindex == SOLOSTAGEINDEX_RESCUE) {
+							// Medlab 2 Key Card
+							weaponnum = WEAPON_KEYCARD47;
+						}
+						else if (g_MissionConfig.stageindex == SOLOSTAGEINDEX_AIRFORCEONE) {
+							// Air Force One Right Room Key Card
+							weaponnum = WEAPON_KEYCARD49;
+						}
+						break;
+					case 64:
+						if (g_MissionConfig.stageindex == SOLOSTAGEINDEX_EXTRACTION) {
+							// Cassandra's Office Key Card
+							weaponnum = WEAPON_KEYCARD4C;
+						}
+						else if (g_MissionConfig.stageindex == SOLOSTAGEINDEX_VILLA) {
+							// Villa Cellar Key Card
+							weaponnum = WEAPON_KEYCARD4A;
+						}
+						break;
+					case 128:
+						// Op Room Key Card
+						weaponnum = WEAPON_KEYCARD48;
+						break;
+				}
+
+				if (unlockedWeapons[weaponnum] == 0) {
+					return TICKOP_NONE;
+				}
+			}
 			return propPickupByPlayer(prop, true);
 		}
 	}
