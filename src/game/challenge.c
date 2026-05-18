@@ -19,6 +19,9 @@
 #include "lib/rng.h"
 #include "data.h"
 #include "types.h"
+#include "itemhandler.h"
+
+extern u32 completedChallenges[30];
 
 u8 g_MpFeaturesForceUnlocked[40];
 u8 g_MpFeaturesUnlocked[80];
@@ -826,6 +829,12 @@ bool challengeIsCompleteForEndscreen(void)
 
 		if (rankings[0].teamnum == 0) {
 			result = true;
+
+			if (completedChallenges[g_MpChallengeIndex] == false) {
+				completedChallenges[g_MpChallengeIndex] = true;
+
+				collectChallengeItem(g_MpChallengeIndex);
+			}
 		}
 	}
 
