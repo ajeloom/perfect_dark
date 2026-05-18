@@ -439,7 +439,7 @@ void hudmsgsReset(void)
 {
 	s32 i;
 
-	g_NumHudMessages = g_Vars.mplayerisrunning ? 20 : 8;
+	g_NumHudMessages = g_Vars.mplayerisrunning ? 20 : 20;
 	g_HudMessages = mempAlloc(ALIGN64(sizeof(struct hudmessage) * g_NumHudMessages), MEMPOOL_STAGE);
 
 	for (i = 0; i < g_NumHudMessages; i++) {
