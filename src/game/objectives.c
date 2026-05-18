@@ -23,6 +23,7 @@
 #include "data.h"
 #include "types.h"
 #include "platform.h"
+#include "itemhandler.h"
 
 struct objective *g_Objectives[MAX_OBJECTIVES];
 u32 g_ObjectiveStatuses[MAX_OBJECTIVES];
@@ -37,6 +38,10 @@ u32 var8009d0cc;
 
 s32 g_ObjectiveLastIndex = -1;
 bool g_ObjectiveChecksDisabled = false;
+
+extern u32 completedAgentObjectives[NUM_SOLOSTAGES][3];
+extern u32 completedSpecialAgentObjectives[NUM_SOLOSTAGES][4];
+extern u32 completedPerfectAgentObjectives[NUM_SOLOSTAGES][5];
 
 #if PIRACYCHECKS
 u32 xorBaffbeff(u32 value)
@@ -429,6 +434,25 @@ void objectivesCheckAll(void)
 						hudmsgCreateWithFlags(buffer, HUDMSGTYPE_OBJECTIVEFAILED, HUDMSGFLAG_ALLOWDUPES);
 					}
 #endif
+					if (status == OBJECTIVE_COMPLETE) {
+						if (g_MissionConfig.difficulty == DIFF_A) {
+							if (completedAgentObjectives[g_MissionConfig.stageindex][availableindex] == 0) {
+								completedAgentObjectives[g_MissionConfig.stageindex][availableindex] = 1;
+							}
+						}
+						else if (g_MissionConfig.difficulty == DIFF_SA) {
+							if (completedSpecialAgentObjectives[g_MissionConfig.stageindex][availableindex] == 0) {
+								completedSpecialAgentObjectives[g_MissionConfig.stageindex][availableindex] = 1;
+							}
+						}
+						else if (g_MissionConfig.difficulty == DIFF_PA) {
+							if (completedPerfectAgentObjectives[g_MissionConfig.stageindex][availableindex] == 0) {
+								completedPerfectAgentObjectives[g_MissionConfig.stageindex][availableindex] = 1;
+							}
+						}
+
+						collectObjectiveItem(g_MissionConfig.stageindex, g_MissionConfig.difficulty, availableindex);
+					}
 				}
 			}
 

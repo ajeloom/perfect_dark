@@ -30,6 +30,9 @@
 #include "lib/str.h"
 #include "data.h"
 #include "types.h"
+#include "itemhandler.h"
+
+extern u32 completedMissions[NUM_SOLOSTAGES][3];
 
 MenuItemHandlerResult endscreenHandleDeclineMission(s32 operation, struct menuitem *item, union handlerdata *data)
 {
@@ -650,13 +653,13 @@ void endscreenContinue(s32 context)
 						viBlack(true);
 					}
 				} else if (g_Vars.stagenum == STAGE_SKEDARRUINS) {
-					// Commit to starting credits
-					g_MissionConfig.stagenum = STAGE_CREDITS;
-					titleSetNextStage(g_MissionConfig.stagenum);
-					lvSetDifficulty(g_MissionConfig.difficulty);
-					titleSetNextMode(TITLEMODE_SKIP);
-					mainChangeToStage(g_MissionConfig.stagenum);
-					viBlack(true);
+				// Commit to starting credits
+				g_MissionConfig.stagenum = STAGE_CREDITS;
+				titleSetNextStage(g_MissionConfig.stagenum);
+				lvSetDifficulty(g_MissionConfig.difficulty);
+				titleSetNextMode(TITLEMODE_SKIP);
+				mainChangeToStage(g_MissionConfig.stagenum);
+				viBlack(true);
 				}
 			} else {
 				if (context == 1) {
@@ -1466,6 +1469,12 @@ void endscreenPrepare(void)
 		{
 			menuPushRootDialog(&g_SoloMissionEndscreenFailedMenuDialog, MENUROOT_ENDSCREEN);
 		} else {
+			if (completedMissions[g_MissionConfig.stageindex][g_MissionConfig.difficulty] == false) {
+				completedMissions[g_MissionConfig.stageindex][g_MissionConfig.difficulty] = true;
+
+				collectMissionItem(g_MissionConfig.stageindex, g_MissionConfig.difficulty);
+			}
+
 			menuPushRootDialog(&g_SoloMissionEndscreenCompletedMenuDialog, MENUROOT_ENDSCREEN);
 
 			if (g_MissionConfig.iscoop) {
