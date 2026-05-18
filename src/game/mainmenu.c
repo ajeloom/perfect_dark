@@ -34,6 +34,8 @@
 #include "data.h"
 #include "types.h"
 
+extern u32 unlockedMissions[NUM_SOLOSTAGES][3];
+
 u8 g_InventoryWeapon;
 
 struct menudialogdef g_2PMissionControlStyleMenuDialog;
@@ -976,137 +978,8 @@ bool isStageDifficultyUnlocked(s32 stageindex, s32 difficulty)
 	s32 s;
 	s32 d;
 
-	// Handle special missions
-	if (stageindex > SOLOSTAGEINDEX_SKEDARRUINS) {
-#if VERSION >= VERSION_NTSC_1_0
-		// If the player has completed Skedar Ruins on the same difficulty as
-		// the one that's being queried, then they have access to this
-		// difficulty for all special missions. Agent is gifted here, so if the
-		// bonus mission is available at all then Agent is also available.
-		s32 maxcompleteddiff = DIFF_A;
-
-		for (d = DIFF_A; d <= DIFF_PA; d++) {
-			if (g_GameFile.besttimes[SOLOSTAGEINDEX_SKEDARRUINS][d] != 0) {
-				maxcompleteddiff = d;
-			}
-		}
-
-		if (difficulty <= maxcompleteddiff) {
-			return true;
-		}
-#endif
-
-		// Otherwise, grant them the difficulty if they've completed all prior
-		// difficulties on this stage.
-		for (d = DIFF_A; d < difficulty; d++) {
-			if (g_GameFile.besttimes[stageindex][d] == 0) {
-				return false;
-			}
-		}
-
+	if (unlockedMissions[stageindex][difficulty] == 1) {
 		return true;
-	}
-
-	// Handle normal missions
-	if (stageindex <= SOLOSTAGEINDEX_SKEDARRUINS && difficulty <= DIFF_PA) {
-		// Defection is always unlocked on all difficulties
-		if (g_SoloStages[stageindex].stagenum == STAGE_DEFECTION) {
-			return true;
-		}
-
-		// If the stage has already been completed on the queried difficulty
-		// or higher then the queried difficulty is made available.
-		// For coop and anti, coop completions are also checked.
-		for (d = difficulty; d <= DIFF_PA; d++) {
-			if (g_GameFile.besttimes[stageindex][d] != 0) {
-				return true;
-			}
-
-			if ((g_MissionConfig.iscoop || g_MissionConfig.isanti)
-					&& (g_GameFile.coopcompletions[d] & (1 << stageindex))) {
-				return true;
-			}
-		}
-
-		if (stageindex > 0) {
-			if (g_SoloStages[stageindex].stagenum != STAGE_SKEDARRUINS) {
-				// For normal stages prior to Skedar Ruins, test if the
-				// prior stage is complete on the same difficulty or higher.
-				for (d = difficulty; d <= DIFF_PA; d++) {
-					if (g_GameFile.besttimes[stageindex - 1][d] != 0) {
-						return true;
-					}
-
-					if ((g_MissionConfig.iscoop || g_MissionConfig.isanti)
-							&& (g_GameFile.coopcompletions[d] & (1 << (stageindex - 1)))) {
-						return true;
-					}
-				}
-			} else {
-				// For Skedar Ruins, check that all prior stages are complete
-				// on the queried difficulty or higher.
-				for (s = 0; s < stageindex; s++) {
-					for (d = difficulty; d <= DIFF_PA; d++) {
-						if (g_GameFile.besttimes[s][d] != 0) {
-							break;
-						}
-
-						if ((g_MissionConfig.iscoop || g_MissionConfig.isanti)
-								&& (g_GameFile.coopcompletions[d] & (1 << s)) != 0) {
-							break;
-						}
-					}
-
-					if (d > DIFF_PA) {
-						// A stage was not complete
-						break;
-					}
-				}
-
-				if (s >= stageindex) {
-					return true;
-				}
-			}
-		}
-
-		// If all normal stages are complete on any difficulty, and we're
-		// querying SA or higher, grant the difficulty if the stage is complete
-		// on the prior difficulty or higher.
-		if (difficulty >= DIFF_SA) {
-			if (g_SoloStages[stageindex].stagenum != STAGE_SKEDARRUINS) {
-				// Check if all normal stages are complete on any difficulty
-				for (s = 0; s <= SOLOSTAGEINDEX_SKEDARRUINS; s++) {
-					for (d = DIFF_A; d <= DIFF_PA; d++) {
-						if (g_GameFile.besttimes[s][d] != 0) {
-							break;
-						}
-
-						if ((g_MissionConfig.iscoop || g_MissionConfig.isanti)
-								&& (g_GameFile.coopcompletions[d] & (1 << s)) != 0) {
-							break;
-						}
-					}
-
-					if (d > DIFF_PA) {
-						// A stage was not complete
-						break;
-					}
-				}
-
-				if (s >= SOLOSTAGEINDEX_MBR) {
-					for (d = difficulty - 1; d <= DIFF_PA; d++) {
-						if (g_GameFile.besttimes[stageindex][d] != 0) {
-							return true;
-						}
-
-						if ((g_MissionConfig.iscoop || g_MissionConfig.isanti)
-								&& (g_GameFile.coopcompletions[d] & (1 << stageindex)) != 0) {
-							return true;
-						}
-					}
-				}
-			}
-		}
 	}
 
 	return false;
@@ -1225,7 +1098,7 @@ struct menuitem g_SoloMissionDifficultyMenuItems[] = {
 	{
 		MENUITEMTYPE_SELECTABLE,
 		0,
-		0,
+		MENUITEMFLAG_ALWAYSDISABLED,
 		L_MPWEAPONS_221, // "Perfect Dark"
 		0,
 		menuhandlerPdMode,
@@ -1778,24 +1651,11 @@ struct solostage g_SoloStages[NUM_SOLOSTAGES] = {
 
 s32 getNumUnlockedSpecialStages(void)
 {
-	s32 count = 0;
+	s32 count = 3;
 	s32 offsetforduel = 1;
-	s32 i;
-
-	for (i = 0; i < ARRAYCOUNT(g_GameFile.besttimes[0]); i++) {
-		if (g_GameFile.besttimes[SOLOSTAGEINDEX_SKEDARRUINS][i]) {
-			count = i + 1;
-		}
-	}
 
 	if (g_MissionConfig.iscoop || g_MissionConfig.isanti) {
 		offsetforduel = 0;
-	} else {
-		for (i = 0; i < (VERSION >= VERSION_NTSC_1_0 ? 32 : 33); i++) {
-			if (ciGetFiringRangeScore(i) <= 0) {
-				offsetforduel = 0;
-			}
-		}
 	}
 
 	return count + offsetforduel;
@@ -1803,14 +1663,7 @@ s32 getNumUnlockedSpecialStages(void)
 
 s32 func0f104720(s32 value)
 {
-	s32 next = 0;
-	s32 d;
-
-	for (d = 0; d < ARRAYCOUNT(g_GameFile.besttimes[0]); d++) {
-		if (g_GameFile.besttimes[SOLOSTAGEINDEX_SKEDARRUINS][d]) {
-			next = d + 1;
-		}
-	}
+	s32 next = 3;
 
 	if (next > value) {
 		return 17 + value;
@@ -1858,30 +1711,7 @@ MenuItemHandlerResult menuhandlerMissionList(s32 operation, struct menuitem *ite
 
 	switch (operation) {
 	case MENUOP_GETOPTIONCOUNT:
-		data->list.value = 0;
-
-		for (i = 0; i <= SOLOSTAGEINDEX_SKEDARRUINS; i++) {
-			stageiscomplete = false;
-
-			for (j = 0; j < ARRAYCOUNT(g_GameFile.besttimes[i]); j++) {
-				if (g_GameFile.besttimes[i][j] != 0) {
-					stageiscomplete = true;
-				}
-
-				if ((g_MissionConfig.iscoop || g_MissionConfig.isanti)
-						&& (g_GameFile.coopcompletions[j] & (1 << i))) {
-					stageiscomplete = true;
-				}
-			}
-
-			data->list.value++;
-
-			if (!stageiscomplete) {
-				break;
-			}
-		}
-
-		data->list.value += getNumUnlockedSpecialStages();
+		data->list.value = NUM_SOLOSTAGES;
 		break;
 	case MENUOP_GETOPTIONTEXT:
 		if (data->list.unk04u32 == 0) {
@@ -2093,15 +1923,31 @@ MenuItemHandlerResult menuhandlerMissionList(s32 operation, struct menuitem *ite
 		// Draw first part of name
 		strcpy(text, langGet(g_SoloStages[stageindex].name1));
 		strcat(text, "\n");
-
-		gdl = textRenderProjected(gdl, &x, &y, text, g_CharsHandelGothicMd, g_FontHandelGothicMd,
-				renderdata->colour, viGetWidth(), viGetHeight(), 0, 0);
+		
+		if (unlockedMissions[stageindex][DIFF_A] == 1 
+				|| unlockedMissions[stageindex][DIFF_SA] == 1 
+				|| unlockedMissions[stageindex][DIFF_PA] == 1) {
+			gdl = textRenderProjected(gdl, &x, &y, text, g_CharsHandelGothicMd, g_FontHandelGothicMd,
+					renderdata->colour, viGetWidth(), viGetHeight(), 0, 0);
+		}
+		else {
+			gdl = textRenderProjected(gdl, &x, &y, text, g_CharsHandelGothicMd, g_FontHandelGothicMd,
+					0xff0000ff, viGetWidth(), viGetHeight(), 0, 0);
+		}
 
 		// Draw last part of name
 		strcpy(text, langGet(g_SoloStages[stageindex].name2));
 
-		gdl = textRenderProjected(gdl, &x, &y, text, g_CharsHandelGothicSm, g_FontHandelGothicSm,
-				renderdata->colour, viGetWidth(), viGetHeight(), 0, 0);
+		if (unlockedMissions[stageindex][DIFF_A] == 1 
+				|| unlockedMissions[stageindex][DIFF_SA] == 1 
+				|| unlockedMissions[stageindex][DIFF_PA] == 1) {
+			gdl = textRenderProjected(gdl, &x, &y, text, g_CharsHandelGothicSm, g_FontHandelGothicSm,
+					renderdata->colour, viGetWidth(), viGetHeight(), 0, 0);
+		}
+		else {
+			gdl = textRenderProjected(gdl, &x, &y, text, g_CharsHandelGothicSm, g_FontHandelGothicSm,
+					0xff0000ff, viGetWidth(), viGetHeight(), 0, 0);
+		}
 
 		gdl = text0f153780(gdl);
 
