@@ -614,45 +614,9 @@ void endscreenContinue(s32 context)
 	} else if (g_Vars.coopplayernum >= 0 && PLAYERCOUNT() >= 2 && context == 0) {
 		menuPopDialog();
 	} else {
-		if (g_Vars.stagenum == STAGE_DEEPSEA || g_Vars.stagenum == STAGE_SKEDARRUINS) {
+		if (g_Vars.stagenum == STAGE_SKEDARRUINS) {
 			if (context == 2 || g_Menus[g_MpPlayerNum].endscreen.isfirstcompletion) {
 				// Pressed continue
-				if (g_Vars.stagenum == STAGE_DEEPSEA) {
-					if (!isStageDifficultyUnlocked(g_MissionConfig.stageindex + 1, g_MissionConfig.difficulty)) {
-						menuPopDialog();
-						menuPopDialog();
-					} else {
-						// Commit to starting next stage
-						g_MissionConfig.stageindex++;
-						g_MissionConfig.stagenum = g_SoloStages[g_MissionConfig.stageindex].stagenum;
-
-						titleSetNextStage(g_MissionConfig.stagenum);
-
-						if (g_MissionConfig.iscoop) {
-							if (g_Vars.numaibuddies == 0) {
-								g_Vars.bondplayernum = 0;
-								g_Vars.coopplayernum = 1;
-								g_Vars.antiplayernum = -1;
-								setNumPlayers(2);
-							} else {
-								g_Vars.bondplayernum = 0;
-								g_Vars.coopplayernum = -1;
-								g_Vars.antiplayernum = -1;
-								setNumPlayers(1);
-							}
-						} else {
-							g_Vars.bondplayernum = 0;
-							g_Vars.coopplayernum = -1;
-							g_Vars.antiplayernum = -1;
-							setNumPlayers(1);
-						}
-
-						lvSetDifficulty(g_MissionConfig.difficulty);
-						titleSetNextMode(TITLEMODE_SKIP);
-						mainChangeToStage(g_MissionConfig.stagenum);
-						viBlack(true);
-					}
-				} else if (g_Vars.stagenum == STAGE_SKEDARRUINS) {
 				// Commit to starting credits
 				g_MissionConfig.stagenum = STAGE_CREDITS;
 				titleSetNextStage(g_MissionConfig.stagenum);
@@ -660,7 +624,6 @@ void endscreenContinue(s32 context)
 				titleSetNextMode(TITLEMODE_SKIP);
 				mainChangeToStage(g_MissionConfig.stagenum);
 				viBlack(true);
-				}
 			} else {
 				if (context == 1) {
 					menuPushRootDialog(&g_MissionContinueOrReplyMenuDialog, MENUROOT_COOPCONTINUE);
