@@ -16,6 +16,7 @@ extern u32 unlockedWeapons[94];
 extern int progressiveWeapon;
 extern int weaponProgressionType;
 extern int progressiveWeaponNumbers[43];
+extern int progWeaponInvPosition[];
 
 void invClear(void)
 {
@@ -46,6 +47,9 @@ void invSortItem(struct invitem *subject)
 	// Prepare subject's properties for comparisons
 	if (subject->type == INVITEMTYPE_WEAP) {
 		subjweapon1 = subject->type_weap.weapon1;
+		if (weaponProgressionType == WEAPONPROG_ALLGUNS) {
+			subjweapon1 = progWeaponInvPosition[subjweapon1];
+		}
 	} else if (subject->type == INVITEMTYPE_DUAL) {
 		subjweapon1 = subject->type_dual.weapon1;
 		subjweapon2 = subject->type_dual.weapon2;
@@ -62,6 +66,9 @@ void invSortItem(struct invitem *subject)
 
 		if (subject->next->type == INVITEMTYPE_WEAP) {
 			candweapon1 = subject->next->type_weap.weapon1;
+			if (weaponProgressionType == WEAPONPROG_ALLGUNS) {
+				candweapon1 = progWeaponInvPosition[candweapon1];
+			}
 		} else if (subject->next->type == INVITEMTYPE_DUAL) {
 			candweapon1 = subject->next->type_dual.weapon1;
 			candweapon2 = subject->next->type_dual.weapon2;
@@ -622,11 +629,23 @@ void invChooseCycleForwardWeapon(s32 *ptr1, s32 *ptr2, bool arg2)
 
 		while (item) {
 			if (item->type == INVITEMTYPE_WEAP) {
+				if (weaponProgressionType == WEAPONPROG_ALLGUNS) {
+					if (item->type_weap.weapon1 < NUM_CYCLEABLE_WEAPONS 
+							&& progWeaponInvPosition[item->type_weap.weapon1] > progWeaponInvPosition[weapon1]) {
+						if (!arg2 || bgun0f0a1a10(item->type_weap.weapon1)) {
+							weapon1 = item->type_weap.weapon1;
+							weapon2 = WEAPON_NONE;
+							break;
+						}
+					}
+				}
+				else {
 					if (item->type_weap.weapon1 < NUM_CYCLEABLE_WEAPONS && item->type_weap.weapon1 > weapon1) {
 						if (!arg2 || bgun0f0a1a10(item->type_weap.weapon1)) {
 							weapon1 = item->type_weap.weapon1;
 							weapon2 = WEAPON_NONE;
 							break;
+						}
 					}
 				}
 			} else if (item->type == INVITEMTYPE_DUAL) {
@@ -692,12 +711,26 @@ void invChooseCycleBackWeapon(s32 *ptr1, s32 *ptr2, bool arg2)
 
 		while (true) {
 			if (item->type == INVITEMTYPE_WEAP) {
+				if (weaponProgressionType == WEAPONPROG_ALLGUNS) {
+					if (item->type_weap.weapon1 < NUM_CYCLEABLE_WEAPONS
+							&& (progWeaponInvPosition[item->type_weap.weapon1] < progWeaponInvPosition[weapon1] 
+							|| (progWeaponInvPosition[weapon1] == progWeaponInvPosition[item->type_weap.weapon1] 
+							&& weapon2 > 0))) {
+						if (!arg2 || bgun0f0a1a10(item->type_weap.weapon1)) {
+							weapon1 = item->type_weap.weapon1;
+							weapon2 = WEAPON_NONE;
+							break;
+						}
+					}
+				}
+				else {
 					if (item->type_weap.weapon1 < NUM_CYCLEABLE_WEAPONS
 							&& (item->type_weap.weapon1 < weapon1 || (weapon1 == item->type_weap.weapon1 && weapon2 > 0))) {
 						if (!arg2 || bgun0f0a1a10(item->type_weap.weapon1)) {
 							weapon1 = item->type_weap.weapon1;
 							weapon2 = WEAPON_NONE;
 							break;
+						}
 					}
 				}
 			} else if (item->type == INVITEMTYPE_DUAL) {
