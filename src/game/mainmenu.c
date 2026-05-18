@@ -43,6 +43,7 @@ struct menudialogdef g_CiControlPlayer2MenuDialog;
 struct menudialogdef g_CinemaMenuDialog;
 #ifndef PLATFORM_N64
 extern struct menudialogdef g_ExtendedMenuDialog;
+extern struct menudialogdef g_ArchipelagoMenuDialog;
 #endif
 
 char *menuTextCurrentStageName(struct menuitem *item)
@@ -4759,9 +4760,17 @@ struct menuitem g_MainMenuMenuItems[] = {
 	{
 		MENUITEMTYPE_SELECTABLE,
 		0,
+		MENUITEMFLAG_SELECTABLE_OPENSDIALOG | MENUITEMFLAG_BIGFONT | MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Archipelago\n", // Archipelago
+		0x00000002,
+		(void *)&g_ArchipelagoMenuDialog,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		0,
 		MENUITEMFLAG_BIGFONT,
 		(uintptr_t)&mainMenuTextLabel,
-		0x00000002,
+		0x00000003,
 		menuhandlerMainMenuSoloMissions,
 	},
 	{
@@ -4769,23 +4778,23 @@ struct menuitem g_MainMenuMenuItems[] = {
 		1,
 		MENUITEMFLAG_BIGFONT,
 		(uintptr_t)&mainMenuTextLabel,
-		0x00000003,
+		0x00000004,
 		menuhandlerMainMenuCombatSimulator,
 	},
 	{
 		MENUITEMTYPE_SELECTABLE,
 		2,
-		MENUITEMFLAG_BIGFONT,
+		MENUITEMFLAG_BIGFONT | MENUITEMFLAG_ALWAYSDISABLED,
 		(uintptr_t)&mainMenuTextLabel,
-		0x00000004,
+		0x00000005,
 		menuhandlerMainMenuCooperative,
 	},
 	{
 		MENUITEMTYPE_SELECTABLE,
 		3,
-		MENUITEMFLAG_BIGFONT,
+		MENUITEMFLAG_BIGFONT | MENUITEMFLAG_ALWAYSDISABLED,
 		(uintptr_t)&mainMenuTextLabel,
-		0x00000005,
+		0x00000006,
 		menuhandlerMainMenuCounterOperative,
 	},
 	{
@@ -4793,7 +4802,7 @@ struct menuitem g_MainMenuMenuItems[] = {
 		0,
 		MENUITEMFLAG_SELECTABLE_OPENSDIALOG | MENUITEMFLAG_BIGFONT,
 		L_OPTIONS_187, // "Change Agent..."
-		0x00000006,
+		0x00000007,
 		(void *)&g_ChangeAgentMenuDialog,
 	},
 #ifndef PLATFORM_N64
@@ -4802,7 +4811,7 @@ struct menuitem g_MainMenuMenuItems[] = {
 		0,
 		MENUITEMFLAG_SELECTABLE_OPENSDIALOG | MENUITEMFLAG_BIGFONT | MENUITEMFLAG_LITERAL_TEXT,
 		(uintptr_t)"Exit Game",
-		0x00000007,
+		0x00000008,
 		(void *)&g_ExitGameMenuDialog,
 	},
 #endif
