@@ -36,6 +36,7 @@
 #include "lib/mtx.h"
 #include "data.h"
 #include "types.h"
+#include "itemhandler.h"
 
 #define FRSCRIPTINDEX_WEAPONS 0x00
 #define FRSCRIPTINDEX_TARGETS 0x22
@@ -43,6 +44,13 @@
 
 extern u8 *_firingrangeSegmentRomStart;
 extern u8 *_firingrangeSegmentRomEnd;
+
+extern u32 unlockedWeapons[94];
+extern u32 completedTrainingMedals[32][3];
+
+extern int progressiveWeapon;
+extern int weaponProgressionType;
+extern int progressiveWeaponNumbers[43];
 
 struct frdata g_FrData;
 struct trainingdata g_DtData;
@@ -63,7 +71,7 @@ u16 g_FrPads[] = {
 
 bool ciIsTourDone(void)
 {
-	return gamefileHasFlag(GAMEFILEFLAG_CI_TOUR_DONE);
+	return true;
 }
 
 u8 ciGetFiringRangeScore(s32 weaponindex)
@@ -218,17 +226,12 @@ bool frIsWeaponAvailable(s32 weapon)
 		return false;
 	}
 
-	if (weapon == WEAPON_FALCON2 || weapon == WEAPON_CMP150) {
+	if (unlockedWeapons[weapon] == 1) {
 		return true;
 	}
-
-#if VERSION < VERSION_NTSC_1_0
-#ifdef DEBUG
-	if (debugIsAllTrainingEnabled() && weapon <= WEAPON_XRAYSCANNER) {
-		return true;
+	else {
+		return false;
 	}
-#endif
-#endif
 
 	return frIsWeaponFound(weapon);
 }
@@ -383,13 +386,26 @@ u32 frGetWeaponBySlot(s32 slot)
 	s32 index = -1;
 	s32 weapon;
 
-	for (weapon = WEAPON_NONE; weapon <= WEAPON_HORIZONSCANNER; weapon++) {
-		if (frIsWeaponAvailable(weapon)) {
-			index++;
-		}
+	if (weaponProgressionType == WEAPONPROG_DISABLED) {
+		for (weapon = WEAPON_NONE; weapon <= WEAPON_HORIZONSCANNER; weapon++) {
+			if (frIsWeaponAvailable(weapon)) {
+				index++;
+			}
 
-		if (slot == index) {
-			return weapon;
+			if (slot == index) {
+				return weapon;
+			}
+		}
+	}
+	else {
+		for (weapon = 1; weapon <= progressiveWeapon; weapon++) {
+			if (frIsWeaponAvailable(progressiveWeaponNumbers[weapon])) {
+				index++;
+			}
+
+			if (slot == index) {
+				return progressiveWeaponNumbers[weapon];
+			}
 		}
 	}
 
@@ -401,9 +417,18 @@ s32 frGetNumWeaponsAvailable(void)
 	s32 count = 0;
 	s32 i;
 
-	for (i = WEAPON_UNARMED; i <= WEAPON_HORIZONSCANNER; i++) {
-		if (frIsWeaponAvailable(i)) {
-			count++;
+	if (weaponProgressionType == WEAPONPROG_DISABLED) {
+		for (i = WEAPON_UNARMED; i <= WEAPON_HORIZONSCANNER; i++) {
+			if (frIsWeaponAvailable(i)) {
+				count++;
+			}
+		}
+	}
+	else {
+		for (i = 1; i <= progressiveWeapon; i++) {
+			if (frIsWeaponAvailable(progressiveWeaponNumbers[i])) {
+				count++;
+			}
 		}
 	}
 
@@ -1398,6 +1423,7 @@ void frSetCompleted(void)
 		u32 frweaponindex = frGetWeaponIndexByWeapon(frGetWeaponBySlot(g_FrData.slot));
 		frSaveScoreIfBest(frweaponindex, g_FrData.difficulty + 1);
 		g_FrData.menutype = FRMENUTYPE_COMPLETED;
+		collectFiringRangeItem(g_FrWeaponNum, g_FrData.difficulty);
 	}
 
 	g_FrData.menucountdown = TICKS(60);
@@ -2787,6 +2813,7 @@ void dtPushEndscreen(void)
 {
 	if (g_DtData.completed) {
 		func0f0f85e0(&g_DtCompletedMenuDialog, MENUROOT_TRAINING);
+		collectDeviceTrainingItem(dtGetIndexBySlot(g_DtSlot));
 	} else if (g_DtData.failed) {
 		func0f0f85e0(&g_DtFailedMenuDialog, MENUROOT_TRAINING);
 	}
@@ -3075,6 +3102,7 @@ void htPushEndscreen(void)
 {
 	if (g_HtData.completed) {
 		func0f0f85e0(&g_HtCompletedMenuDialog, MENUROOT_TRAINING);
+		collectHolotrainingItem(htGetIndexBySlot(var80088bb4));
 	} else if (g_HtData.failed) {
 		func0f0f85e0(&g_HtFailedMenuDialog, MENUROOT_TRAINING);
 	}
