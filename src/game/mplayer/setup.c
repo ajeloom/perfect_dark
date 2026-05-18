@@ -28,6 +28,8 @@
 #include "input.h"
 #include "mpsetups.h"
 
+extern u32 unlockedChallenges[30];
+
 struct menuitem g_MpCharacterMenuItems[];
 struct menudialogdef g_MpAddSimulantMenuDialog;
 struct menudialogdef g_MpChangeSimulantMenuDialog;
@@ -4764,9 +4766,13 @@ MenuItemHandlerResult mpChallengesListMenuHandler(s32 operation, struct menuitem
 		}
 		break;
 	case MENUOP_GETOPTIONCOUNT:
-		data->list.value = challengeGetNumAvailable();
+		data->list.value = 30;
 		break;
 	case MENUOP_SET:
+		if (unlockedChallenges[data->list.value] == 0) {
+			break;
+		}
+
 		if (data->list.unk04 != 0) {
 			data->list.unk04 = 2;
 		}
@@ -4806,7 +4812,13 @@ MenuItemHandlerResult mpChallengesListMenuHandler(s32 operation, struct menuitem
 		y = renderdata->y + 1;
 
 		gdl = text0f153628(gdl);
-		gdl = textRenderProjected(gdl, &x, &y, challengeGetNameBySlot(data->type19.unk04), g_CharsHandelGothicSm, g_FontHandelGothicSm, renderdata->colour, viGetWidth(), viGetHeight(), 0, 0);
+		if (unlockedChallenges[data->type19.unk04] == 1) {
+			gdl = textRenderProjected(gdl, &x, &y, challengeGetNameBySlot(data->type19.unk04), g_CharsHandelGothicSm, g_FontHandelGothicSm, renderdata->colour, viGetWidth(), viGetHeight(), 0, 0);
+		}
+		else {
+			gdl = textRenderProjected(gdl, &x, &y, challengeGetNameBySlot(data->type19.unk04), g_CharsHandelGothicSm, g_FontHandelGothicSm, 0xff0000ff, viGetWidth(), viGetHeight(), 0, 0);
+		}
+		
 		gdl = text0f153780(gdl);
 
 		gDPPipeSync(gdl++);

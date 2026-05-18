@@ -21,6 +21,7 @@
 #include "types.h"
 #include "itemhandler.h"
 
+extern u32 unlockedChallenges[30];
 extern u32 completedChallenges[30];
 
 u8 g_MpFeaturesForceUnlocked[40];
@@ -93,7 +94,7 @@ void challengeDetermineUnlockedFeatures(void)
 
 	// Clear all challenge availability
 	for (challengeindex = 0; challengeindex < ARRAYCOUNT(g_MpChallenges); challengeindex++) {
-		g_MpChallenges[challengeindex].availability = 0;
+		g_MpChallenges[challengeindex].availability = 1;
 	}
 
 	numgifted = 0;
@@ -279,7 +280,7 @@ s32 challengeGetNumAvailable(void)
 	s32 count = 0;
 
 	for (challengeindex = 0; challengeindex < ARRAYCOUNT(g_MpChallenges); challengeindex++) {
-		if (challengeIsAvailableToAnyPlayer(challengeindex)) {
+		if (unlockedChallenges[challengeindex] == 1) {
 			count++;
 		}
 	}
