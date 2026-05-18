@@ -74,6 +74,10 @@
 // Max downwards pitch when changing guns or reloading a classic gun
 #define MAX_PITCH 0.87252569198608f
 
+extern int progressiveWeapon;
+extern int weaponProgressionType;
+extern int progressiveWeaponNumbers[43];
+
 #if VERSION >= VERSION_PAL_BETA
 struct sndstate *g_CasingAudioHandles[2];
 s32 var8009d0d8;
@@ -12036,6 +12040,13 @@ void bgunTickGameplay(bool triggeron)
 		} else if (cheatIsActive(CHEAT_UNLIMITEDAMMO)) {
 			bgunGiveMaxAmmo(false);
 		}
+
+		// Give infinite ammo for one gun weapon progression
+		if (weaponProgressionType == WEAPONPROG_ONEGUN 
+				&& g_Vars.stagenum != STAGE_CITRAINING
+				&& !g_Vars.normmplayerisrunning) {
+			bgunGiveAmmoForProgressiveWeapons();
+		}
 	}
 
 	bgunDecreaseNoiseRadius();
@@ -12304,6 +12315,60 @@ void bgunGiveMaxAmmo(bool force)
 		if (give) {
 			bgunSetAmmoQuantity(i, g_AmmoTypes[i].capacity);
 		}
+	}
+}
+
+void bgunGiveAmmoForProgressiveWeapons(void)
+{
+	s32 i;
+
+	if (weaponProgressionType == WEAPONPROG_ALLGUNS) {
+		for (i = 0; i < ARRAYCOUNT(g_AmmoTypes); i++) {
+			bool give = true;
+
+			give = bgunAmmotypeAllowsUnlimitedAmmo(i);
+
+			if (give) {
+				if (i == AMMOTYPE_GRENADE
+						|| i == AMMOTYPE_ROCKET
+						|| i == AMMOTYPE_KNIFE
+						|| i == AMMOTYPE_REMOTE_MINE
+						|| i == AMMOTYPE_PROXY_MINE
+						|| i == AMMOTYPE_TIMED_MINE
+						|| i == AMMOTYPE_HOMINGROCKET
+						|| i == AMMOTYPE_NBOMB) {
+					bgunSetAmmoQuantity(i, g_AmmoTypes[i].capacity);
+				}
+				else {
+					bgunSetAmmoQuantity(i, g_AmmoTypes[i].capacity / 2);
+				}
+			}
+		}
+
+		bgunSetAmmoQuantity(AMMOTYPE_PSYCHOSIS, 4);
+	}
+	else if (weaponProgressionType == WEAPONPROG_ONEGUN) {
+		if (progressiveWeaponNumbers[progressiveWeapon] == WEAPON_PSYCHOSISGUN) {
+			bgunSetAmmoQuantity(AMMOTYPE_PSYCHOSIS, 100);
+			return;
+		}
+
+		if (progressiveWeaponNumbers[progressiveWeapon] == WEAPON_REMOTEMINE
+				&& g_Vars.stagenum == STAGE_CHICAGO) {
+				return;
+		}
+
+		if (progressiveWeaponNumbers[progressiveWeapon] == WEAPON_TIMEDMINE
+				&& g_Vars.stagenum == STAGE_AIRFORCEONE) {
+				return;
+		}
+
+		// Give infinite ammo to only the current weapon
+		s32 priammotype = bgunGetAmmoTypeForWeapon(progressiveWeaponNumbers[progressiveWeapon], FUNC_PRIMARY);
+		s32 secammotype = bgunGetAmmoTypeForWeapon(progressiveWeaponNumbers[progressiveWeapon], FUNC_SECONDARY);
+
+		bgunSetAmmoQuantity(priammotype, g_AmmoTypes[priammotype].capacity / 2);
+		bgunSetAmmoQuantity(secammotype, g_AmmoTypes[secammotype].capacity / 2);
 	}
 }
 

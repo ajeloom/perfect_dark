@@ -43,6 +43,10 @@ extern u32 completedAgentObjectives[NUM_SOLOSTAGES][3];
 extern u32 completedSpecialAgentObjectives[NUM_SOLOSTAGES][4];
 extern u32 completedPerfectAgentObjectives[NUM_SOLOSTAGES][5];
 
+extern int progressiveWeapon;
+extern int weaponProgressionType;
+extern int progressiveWeaponNumbers[43];
+
 #if PIRACYCHECKS
 u32 xorBaffbeff(u32 value)
 {
@@ -452,6 +456,15 @@ void objectivesCheckAll(void)
 						}
 
 						collectObjectiveItem(g_MissionConfig.stageindex, g_MissionConfig.difficulty, availableindex);
+
+						// Get weapon back after doing objective 3 (PA)
+						// on Air Base in One Gun Weapon Progression
+						if (g_Vars.stagenum == STAGE_AIRBASE 
+								&& g_MissionConfig.difficulty == DIFF_PA
+								&& availableindex == 2
+								&& weaponProgressionType == WEAPONPROG_ONEGUN) {
+							invGetProgressiveWeapons();
+						}
 					}
 				}
 			}

@@ -162,6 +162,7 @@ s32 bgunGetAmmoCount(s32 ammotype);
 s32 bgunGetCapacityByAmmotype(s32 ammotype);
 bool bgunAmmotypeAllowsUnlimitedAmmo(u32 ammotype);
 void bgunGiveMaxAmmo(bool force);
+void bgunGiveAmmoForProgressiveWeapons(void);
 u32 bgunGetAmmoTypeForWeapon(u32 weaponnum, u32 func);
 s32 bgunGetAmmoQtyForWeapon(u32 weaponnum, u32 func);
 void bgunSetAmmoQtyForWeapon(u32 weaponnum, u32 func, u32 quantity);

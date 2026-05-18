@@ -55,5 +55,7 @@ char *invGetPickupTextByObj(struct defaultobj *obj);
 char *invGetPickupTextByWeaponNum(s32 weaponnum);
 void invIncrementHeldTime(s32 param_1, s32 param_2);
 void invGetWeaponOfChoice(s32 *weapon1, s32 *weapon2);
+void invRemoveLockedWeapons(void);
+void invGetProgressiveWeapons(void);
 
 #endif

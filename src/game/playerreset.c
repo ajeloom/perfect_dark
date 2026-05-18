@@ -24,6 +24,8 @@
 #include "data.h"
 #include "types.h"
 
+extern int weaponProgressionType;
+
 void playerInitEyespy(void)
 {
 	struct prop *prop;
@@ -365,6 +367,12 @@ void playerReset(void)
 	if (cheatIsActive(CHEAT_RCP45)) {
 		invGiveSingleWeapon(WEAPON_RCP45);
 		bgunSetAmmoQuantity(AMMOTYPE_SMG, 200);
+	}
+
+	if (weaponProgressionType != WEAPONPROG_DISABLED 
+			&& !g_Vars.normmplayerisrunning
+			&& g_Vars.stagenum != STAGE_CITRAINING) {
+		invGetProgressiveWeapons();
 	}
 
 	if (!hasdefaultweapon) {

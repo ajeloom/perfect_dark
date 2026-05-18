@@ -76,6 +76,14 @@
 #include "platform.h"
 #endif
 
+extern u32 unlockedWeapons[94];
+
+extern int progressiveWeapon;
+extern int weaponProgressionType;
+extern int progressiveWeaponNumbers[43];
+
+extern int allowProgWeaponInChallenges;
+
 s32 g_DefaultWeapons[2];
 f32 g_MpSwirlRotateSpeed;
 f32 g_MpSwirlAngleDegrees;
@@ -1138,6 +1146,14 @@ void playerSpawn(void)
 				bgunEquipWeapon2(HAND_RIGHT, g_DefaultWeapons[HAND_RIGHT]);
 			}
 
+			if (weaponProgressionType != WEAPONPROG_DISABLED 
+					&& g_Vars.normmplayerisrunning
+					&& allowProgWeaponInChallenges == 1) {
+				invGetProgressiveWeapons();
+				bgunEquipWeapon2(HAND_LEFT, WEAPON_NONE);
+				bgunEquipWeapon2(HAND_RIGHT, progressiveWeaponNumbers[progressiveWeapon]);
+			}
+
 #if VERSION >= VERSION_NTSC_1_0
 			if (g_Vars.currentplayer->model00d4 == NULL
 					&& (IS8MB() || g_Vars.fourmeg2player || g_MpAllChrPtrs[g_Vars.currentplayernum] == NULL)) {
@@ -1237,68 +1253,68 @@ void playerChooseBodyAndHead(s32 *bodynum, s32 *headnum, s32 *arg2)
 		}
 	}
 
-	switch (outfit) {
-	default:
-	case OUTFIT_DEFAULT:
-		*bodynum = BODY_DARK_COMBAT;
-		*headnum = solo ? HEAD_DARK_COMBAT : HEAD_VD;
-		break;
-	case OUTFIT_ELVIS:
-		*bodynum = BODY_THEKING;
-		*headnum = solo ? HEAD_ELVIS : HEAD_ELVIS;
-		break;
-	case OUTFIT_TRENT:
-		*bodynum = BODY_TRENT;
-		*headnum = solo ? HEAD_TRENT : HEAD_TRENT;
-		break;
-	case OUTFIT_TRENCH:
-		*bodynum = BODY_DARK_TRENCH;
-		*headnum = solo ? HEAD_DARK_COMBAT : HEAD_VD;
-		break;
-	case OUTFIT_FROCK_RIPPED:
-		*bodynum = BODY_DARK_RIPPED;
-		*headnum = solo ? HEAD_DARK_FROCK : HEAD_VD;
-		break;
-	case OUTFIT_FROCK:
-		*bodynum = BODY_DARK_FROCK;
-		*headnum = solo ? HEAD_DARK_FROCK : HEAD_VD;
-		break;
-	case OUTFIT_LEATHER:
-		*bodynum = BODY_DARK_LEATHER;
-		*headnum = solo ? HEAD_DARK_COMBAT : HEAD_VD;
-		break;
-	case OUTFIT_DEEPSEA:
-		*bodynum = BODY_DARKWET;
-		*headnum = solo ? HEAD_DARK_COMBAT : HEAD_VD;
-		break;
-	case OUTFIT_WETSUIT:
-		*bodynum = BODY_DARKAQUALUNG;
-		*headnum = solo ? HEAD_DARKAQUA : HEAD_VD;
-		break;
-	case OUTFIT_SNOW:
-		*bodynum = BODY_DARKSNOW;
-		*headnum = solo ? HEAD_DARK_SNOW : HEAD_VD;
-		break;
-	case OUTFIT_LAB:
-		*bodynum = BODY_DARKLAB;
-		*headnum = solo ? HEAD_DARK_COMBAT : HEAD_VD;
-		break;
-	case OUTFIT_STEWARDESS:
-		*bodynum = BODY_DARK_AF1;
-		*headnum = solo ? HEAD_DARK_FROCK : HEAD_VD;
-		break;
-	case OUTFIT_NEGOTIATOR:
-		*bodynum = BODY_DARK_NEGOTIATOR;
-		*headnum = solo ? HEAD_DARK_FROCK : HEAD_VD;
-		break;
-	case OUTFIT_MRBLONDE:
-		*bodynum = BODY_MRBLONDE;
-		*headnum = solo ? HEAD_MRBLONDE : HEAD_MRBLONDE;
-		break;
-	case OUTFIT_MAIAN:
-		*bodynum = BODY_ELVIS1;
-		*headnum = solo ? HEAD_MAIAN_S : HEAD_MAIAN_S;
-		break;
+		switch (outfit) {
+		default:
+		case OUTFIT_DEFAULT:
+			*bodynum = BODY_DARK_COMBAT;
+			*headnum = solo ? HEAD_DARK_COMBAT : HEAD_VD;
+			break;
+		case OUTFIT_ELVIS:
+			*bodynum = BODY_THEKING;
+			*headnum = solo ? HEAD_ELVIS : HEAD_ELVIS;
+			break;
+		case OUTFIT_TRENT:
+			*bodynum = BODY_TRENT;
+			*headnum = solo ? HEAD_TRENT : HEAD_TRENT;
+			break;
+		case OUTFIT_TRENCH:
+			*bodynum = BODY_DARK_TRENCH;
+			*headnum = solo ? HEAD_DARK_COMBAT : HEAD_VD;
+			break;
+		case OUTFIT_FROCK_RIPPED:
+			*bodynum = BODY_DARK_RIPPED;
+			*headnum = solo ? HEAD_DARK_FROCK : HEAD_VD;
+			break;
+		case OUTFIT_FROCK:
+			*bodynum = BODY_DARK_FROCK;
+			*headnum = solo ? HEAD_DARK_FROCK : HEAD_VD;
+			break;
+		case OUTFIT_LEATHER:
+			*bodynum = BODY_DARK_LEATHER;
+			*headnum = solo ? HEAD_DARK_COMBAT : HEAD_VD;
+			break;
+		case OUTFIT_DEEPSEA:
+			*bodynum = BODY_DARKWET;
+			*headnum = solo ? HEAD_DARK_COMBAT : HEAD_VD;
+			break;
+		case OUTFIT_WETSUIT:
+			*bodynum = BODY_DARKAQUALUNG;
+			*headnum = solo ? HEAD_DARKAQUA : HEAD_VD;
+			break;
+		case OUTFIT_SNOW:
+			*bodynum = BODY_DARKSNOW;
+			*headnum = solo ? HEAD_DARK_SNOW : HEAD_VD;
+			break;
+		case OUTFIT_LAB:
+			*bodynum = BODY_DARKLAB;
+			*headnum = solo ? HEAD_DARK_COMBAT : HEAD_VD;
+			break;
+		case OUTFIT_STEWARDESS:
+			*bodynum = BODY_DARK_AF1;
+			*headnum = solo ? HEAD_DARK_FROCK : HEAD_VD;
+			break;
+		case OUTFIT_NEGOTIATOR:
+			*bodynum = BODY_DARK_NEGOTIATOR;
+			*headnum = solo ? HEAD_DARK_FROCK : HEAD_VD;
+			break;
+		case OUTFIT_MRBLONDE:
+			*bodynum = BODY_MRBLONDE;
+			*headnum = solo ? HEAD_MRBLONDE : HEAD_MRBLONDE;
+			break;
+		case OUTFIT_MAIAN:
+			*bodynum = BODY_ELVIS1;
+			*headnum = solo ? HEAD_MAIAN_S : HEAD_MAIAN_S;
+			break;
 	}
 }
 
@@ -1708,6 +1724,26 @@ void player0f0b9a20(void)
 	envChooseAndApply(mainGetStageNum(), false);
 	bgunEquipWeapon2(HAND_LEFT, g_DefaultWeapons[HAND_LEFT]);
 	bgunEquipWeapon2(HAND_RIGHT, g_DefaultWeapons[HAND_RIGHT]);
+
+	if (weaponProgressionType == WEAPONPROG_DISABLED) {
+		if (unlockedWeapons[g_DefaultWeapons[HAND_LEFT]] == 0) {
+			bgunEquipWeapon2(HAND_LEFT, WEAPON_UNARMED);
+		}
+
+		if (unlockedWeapons[g_DefaultWeapons[HAND_RIGHT]] == 0) {
+			bgunEquipWeapon2(HAND_RIGHT, WEAPON_UNARMED);
+		}
+	}
+	else if (weaponProgressionType != WEAPONPROG_DISABLED
+			&& g_Vars.stagenum != STAGE_CITRAINING
+			&& g_Vars.stagenum != STAGE_VILLA
+			&& g_Vars.stagenum != STAGE_CHICAGO
+			&& g_Vars.stagenum != STAGE_AIRFORCEONE
+			&& g_Vars.stagenum != STAGE_MAIANSOS
+			&& !g_Vars.normmplayerisrunning) {
+		bgunEquipWeapon2(HAND_RIGHT, progressiveWeaponNumbers[progressiveWeapon]);
+	}
+
 	var8007074c = 0;
 }
 
@@ -1721,6 +1757,11 @@ void playerEndCutscene(void)
 		playerSetTickMode(TICKMODE_NORMAL);
 		g_PlayerTriggerGeFadeIn = false;
 		bmoveSetModeForAllPlayers(MOVEMODE_WALK);
+
+		for (s32 i = 0; i < PLAYERCOUNT(); i++) {
+			setCurrentPlayerNum(i);
+			invRemoveLockedWeapons();
+		}
 	}
 }
 
@@ -3249,6 +3290,12 @@ void playerTick(bool arg0)
 
 	if ((g_Vars.coopplayernum >= 0 || g_Vars.antiplayernum >= 0) && PLAYERCOUNT() > 1) {
 		g_ViRes = VIRES_LO;
+	}
+
+	if (g_Vars.stagenum == STAGE_AIRFORCEONE
+			|| g_Vars.stagenum == STAGE_DEEPSEA
+			|| g_Vars.stagenum == STAGE_ATTACKSHIP) {
+		invRemoveLockedWeapons();
 	}
 
 #if PAL

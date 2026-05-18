@@ -4764,3 +4764,7 @@ enum weaponnum {
 #endif
 
 #endif
+
+#define WEAPONPROG_DISABLED	0
+#define WEAPONPROG_ALLGUNS	1
+#define WEAPONPROG_ONEGUN	2
