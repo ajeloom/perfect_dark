@@ -75,6 +75,7 @@
 #include "input.h"
 #include "platform.h"
 #endif
+#include "archipelago.h"
 
 extern u32 unlockedWeapons[94];
 
@@ -83,6 +84,11 @@ extern int weaponProgressionType;
 extern int progressiveWeaponNumbers[43];
 
 extern int allowProgWeaponInChallenges;
+
+extern int deathLink;
+extern bool pendingDeathLink;
+
+bool sentDeathLink = false;
 
 s32 g_DefaultWeapons[2];
 f32 g_MpSwirlRotateSpeed;
@@ -982,6 +988,9 @@ void playerSpawn(void)
 		playerSetShieldFrac(1);
 		g_Vars.currentplayer->armourscale = 2;
 	}
+
+	sentDeathLink = false;
+	pendingDeathLink = false;
 
 	if (g_Vars.mplayerisrunning) {
 		if (g_Vars.antiplayernum >= 0 && g_Vars.currentplayer == g_Vars.anti) {
@@ -4295,6 +4304,25 @@ void playerTick(bool arg0)
 
 	if (g_PlayerTriggerGeFadeIn) {
 		playerBeginGeFadeIn();
+	}
+
+	if (deathLink == 1 && !lvIsPaused()) {
+		if (pendingDeathLink 
+				&& !g_Vars.currentplayer->isdead
+				&& g_Vars.stagenum != STAGE_TITLE
+				&& g_Vars.stagenum != STAGE_CITRAINING) {
+			// Player received a death link
+			playerDieByShooter(g_Vars.currentplayernum, true);
+		}
+		else if (g_Vars.currentplayer->isdead 
+				&& pendingDeathLink == false
+				&& sentDeathLink == false
+				&& g_Vars.normmplayerisrunning == false) {
+			// Player sent a death link
+			sentDeathLink = true;
+			printf("Sending death link\n");
+			SendDeathLink();
+		}
 	}
 
 	// Handle mission exit on death
