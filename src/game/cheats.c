@@ -1624,16 +1624,16 @@ struct menuitem g_CheatsMenuItems[] = {
 		0,
 		cheatMenuHandleTurnOffAllCheats,
 	},
-#ifndef PLATFORM_N64
-	{
-		MENUITEMTYPE_SELECTABLE,
-		0,
-		MENUITEMFLAG_LITERAL_TEXT | MENUITEMFLAG_SELECTABLE_OPENSDIALOG,
-		(uintptr_t)"Unlock Everything\n",
-		0,
-		(void *)&g_CheatsConfirmUnlockMenuDialog,
-	},
-#endif
+// #ifndef PLATFORM_N64
+// 	{
+// 		MENUITEMTYPE_SELECTABLE,
+// 		0,
+// 		MENUITEMFLAG_LITERAL_TEXT | MENUITEMFLAG_SELECTABLE_OPENSDIALOG,
+// 		(uintptr_t)"Unlock Everything\n",
+// 		0,
+// 		(void *)&g_CheatsConfirmUnlockMenuDialog,
+// 	},
+// #endif
 	{
 		MENUITEMTYPE_SEPARATOR,
 		0,
