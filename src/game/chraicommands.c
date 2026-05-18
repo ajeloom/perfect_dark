@@ -52,6 +52,8 @@
 #include "data.h"
 #include "types.h"
 
+extern bool randomMusic;
+
 /**
  * @cmd 0000
  */
@@ -5431,7 +5433,7 @@ bool aiChrDrawWeaponInCutscene(void)
 		u32 prevplayernum = g_Vars.currentplayernum;
 		u32 playernum = playermgrGetPlayerNumByProp(chr->prop);
 		setCurrentPlayerNum(playernum);
-		bgunEquipWeapon((s8)cmd[3]);
+			bgunEquipWeapon((s8)cmd[3]);
 		setCurrentPlayerNum(prevplayernum);
 	}
 
@@ -5639,10 +5641,20 @@ bool aiPlayTrackIsolated(void)
 
 	if (cmd[2] == MUSIC_CI_TRAINING) {
 		u16 volume = optionsGetMusicVolume();
-		musicPlayTrackIsolated(cmd[2]);
+		if (randomMusic == true) {
+			musicPlayTrackIsolated(rngRandom() % MUSIC_END);
+		}
+		else {
+			musicPlayTrackIsolated(cmd[2]);
+		}
 		optionsSetMusicVolume(volume);
 	} else {
-		musicPlayTrackIsolated(cmd[2]);
+		if (randomMusic == true) {
+			musicPlayTrackIsolated(rngRandom() % MUSIC_END);
+		}
+		else {
+			musicPlayTrackIsolated(cmd[2]);
+		}
 	}
 
 	g_Vars.aioffset += 3;

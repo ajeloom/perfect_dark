@@ -57,6 +57,8 @@
 #define BLUR_OFS 30
 #endif
 
+extern bool randomMusic;
+
 #if VERSION >= VERSION_PAL_FINAL
 char g_CheatMarqueeString[300];
 #elif VERSION >= VERSION_NTSC_1_0
@@ -5762,6 +5764,12 @@ const char var7f1b27a4[] = "Tune Selector - mode %d\n";
 
 u32 menuChooseMusic(void)
 {
+	if (randomMusic == true) {
+		// Choose a random song
+		s32 randomsong = rngRandom() % MUSIC_END;
+		return randomsong;
+	} 
+	
 	s32 missionsuccess = MUSIC_MISSION_SUCCESS;
 
 	if (g_StageIndex == STAGEINDEX_DEFENSE) {

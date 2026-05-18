@@ -79,6 +79,28 @@
 
 extern u32 unlockedWeapons[94];
 
+extern bool randomCharacters;
+
+extern u32 randomJoHead;
+extern u32 randomVDHead;
+extern u32 randomElvisHead;
+extern u32 randomMaianHead;
+extern u32 randomMrBlondeHead;
+
+extern u32 randomCombatBody;
+extern u32 randomTrenchBody;
+extern u32 randomFrockRippedBody;
+extern u32 randomFrockBody;
+extern u32 randomLeatherBody;
+extern u32 randomDeepSeaBody;
+extern u32 randomWetSuitBody;
+extern u32 randomSnowBody;
+extern u32 randomLabBody;
+extern u32 randomStewardessBody;
+extern u32 randomNegotiatorBody;
+extern u32 randomMrBlondeBody;
+extern u32 randomMaianBody;
+
 extern int progressiveWeapon;
 extern int weaponProgressionType;
 extern int progressiveWeaponNumbers[43];
@@ -1262,6 +1284,72 @@ void playerChooseBodyAndHead(s32 *bodynum, s32 *headnum, s32 *arg2)
 		}
 	}
 
+	if (randomCharacters == true) {
+		switch (outfit) {
+		default:
+		case OUTFIT_DEFAULT:
+			*bodynum = randomCombatBody;
+			*headnum = solo ? randomJoHead : randomVDHead;
+			break;
+		case OUTFIT_ELVIS:
+			*bodynum = randomMaianBody;
+			*headnum = solo ? randomElvisHead : randomElvisHead;
+			break;
+		case OUTFIT_TRENT:
+			*bodynum = BODY_TRENT;
+			*headnum = solo ? HEAD_TRENT : HEAD_TRENT;
+			break;
+		case OUTFIT_TRENCH:
+			*bodynum = randomTrenchBody;
+			*headnum = solo ? randomJoHead : randomVDHead;
+			break;
+		case OUTFIT_FROCK_RIPPED:
+			*bodynum = randomFrockRippedBody;
+			*headnum = solo ? randomJoHead : randomVDHead;
+			break;
+		case OUTFIT_FROCK:
+			*bodynum = randomFrockBody;
+			*headnum = solo ? randomJoHead : randomVDHead;
+			break;
+		case OUTFIT_LEATHER:
+			*bodynum = randomLeatherBody;
+			*headnum = solo ? randomJoHead : randomVDHead;
+			break;
+		case OUTFIT_DEEPSEA:
+			*bodynum = randomDeepSeaBody;
+			*headnum = solo ? randomJoHead : randomVDHead;
+			break;
+		case OUTFIT_WETSUIT:
+			*bodynum = randomWetSuitBody;
+			*headnum = solo ? randomJoHead : randomVDHead;
+			break;
+		case OUTFIT_SNOW:
+			*bodynum = randomSnowBody;
+			*headnum = solo ? randomJoHead : randomVDHead;
+			break;
+		case OUTFIT_LAB:
+			*bodynum = randomLabBody;
+			*headnum = solo ? randomJoHead : randomVDHead;
+			break;
+		case OUTFIT_STEWARDESS:
+			*bodynum = randomStewardessBody;
+			*headnum = solo ? randomJoHead : randomVDHead;
+			break;
+		case OUTFIT_NEGOTIATOR:
+			*bodynum = randomNegotiatorBody;
+			*headnum = solo ? randomJoHead : randomVDHead;
+			break;
+		case OUTFIT_MRBLONDE:
+			*bodynum = randomMrBlondeBody;
+			*headnum = solo ? randomMrBlondeHead : randomMrBlondeHead;
+			break;
+		case OUTFIT_MAIAN:
+			*bodynum = randomMaianBody;
+			*headnum = solo ? randomMaianHead : randomMaianHead;
+			break;
+		}
+	}
+	else {
 		switch (outfit) {
 		default:
 		case OUTFIT_DEFAULT:
@@ -1324,6 +1412,7 @@ void playerChooseBodyAndHead(s32 *bodynum, s32 *headnum, s32 *arg2)
 			*bodynum = BODY_ELVIS1;
 			*headnum = solo ? HEAD_MAIAN_S : HEAD_MAIAN_S;
 			break;
+		}
 	}
 }
 

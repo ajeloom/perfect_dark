@@ -9,6 +9,9 @@
 #include "lib/memp.h"
 #include "data.h"
 #include "types.h"
+#include "lib/rng.h"
+
+extern bool randomMusic;
 
 struct stagemusic g_StageTracks[] = {
 	// stage,              main theme,           background sfx,          X theme
@@ -39,12 +42,68 @@ struct stagemusic g_StageTracks[] = {
 	{ 0,                   0,                    0,                       0  },
 };
 
+s32 g_MissionTracks[] = {
+	MUSIC_CI,
+	MUSIC_DEFECTION,
+	MUSIC_DEFECTION_X,
+	MUSIC_INVESTIGATION,
+	MUSIC_INVESTIGATION_X,
+	MUSIC_EXTRACTION,
+	MUSIC_EXTRACTION_X,
+	MUSIC_VILLA,
+	MUSIC_VILLA_X,
+	MUSIC_CHICAGO,
+	MUSIC_CHICAGO_X,
+	MUSIC_G5,
+	MUSIC_G5_X,
+	MUSIC_INFILTRATION,
+	MUSIC_INFILTRATION_X,
+	MUSIC_RESCUE,
+	MUSIC_RESCUE_X,
+	MUSIC_ESCAPE,
+	MUSIC_ESCAPE_X,
+	MUSIC_AIRBASE,
+	MUSIC_AIRBASE_X,
+	MUSIC_AIRFORCEONE,
+	MUSIC_AIRFORCEONE_X,
+	MUSIC_CRASHSITE,
+	MUSIC_CRASHSITE_X,
+	MUSIC_PELAGIC,
+	MUSIC_PELAGIC_X,
+	MUSIC_DEEPSEA,
+	MUSIC_DEEPSEA_X,
+	MUSIC_DEFENSE,
+	MUSIC_DEFENSE_X,
+	MUSIC_ATTACKSHIP,
+	MUSIC_ATTACKSHIP_X,
+	MUSIC_SKEDARRUINS,
+	MUSIC_SKEDARRUINS_X,
+	MUSIC_DARK_COMBAT,
+	MUSIC_MAIAN_TEARS,
+	MUSIC_CI_OPERATIVE,
+	MUSIC_ALIEN_CONFLICT,
+	MUSIC_CREDITS,
+	MUSIC_SKEDARRUINS_KING,
+	MUSIC_CI_TRAINING,
+	MUSIC_DEEPSEA_BETA,
+};
+
+s32 stageGetRandomTrack()
+{
+	s32 randomsong = rngRandom() % ARRAYCOUNT(g_MissionTracks);
+	return g_MissionTracks[randomsong];
+}
+
 s32 stageGetPrimaryTrack(s32 stagenum)
 {
 	s32 i;
 
 	if (g_Vars.normmplayerisrunning) {
 		return mpChooseTrack();
+	}
+
+	if (randomMusic == true) {
+		return stageGetRandomTrack();
 	}
 
 	i = 0;
@@ -81,6 +140,10 @@ s32 stageGetAmbientTrack(s32 stagenum)
 
 s32 stageGetNrgTrack(s32 stagenum)
 {
+	if (randomMusic == true) {
+		return stageGetRandomTrack();
+	}
+
 	s32 i = 0;
 
 	while (g_StageTracks[i].stagenum) {
