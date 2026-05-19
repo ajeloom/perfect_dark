@@ -4642,13 +4642,16 @@ struct menuitem g_SelectMissionMenuItems[] = {
 	{ MENUITEMTYPE_END },
 };
 
+int cachedMissionStars = -1;
+
 MenuDialogHandlerResult handleMissionMenuTitleDialog(s32 operation, struct menudialogdef *dialogdef, union handlerdata *data)
 {
-	if (completionGoal == 1) {
+	if (completionGoal == 1 && cachedMissionStars != missionStars) {
 		sprintf(g_StringPointer, "Mission Select - (Mission Stars: %d/%d)", missionStars, requiredMissionStars);
 		dialogdef->title = (uintptr_t)g_StringPointer;
+		cachedMissionStars = missionStars;
 	}
-	else {
+	else if (completionGoal == 0 && dialogdef->title != (uintptr_t)"Mission Select\n") {
 		dialogdef->title = (uintptr_t)"Mission Select\n";
 	}
 	

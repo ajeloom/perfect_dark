@@ -35,6 +35,7 @@ int completionGoal;
 
 extern int missionStars;
 int requiredMissionStars;
+extern int cachedMissionStars;
 
 extern int progressiveWeapon;
 int weaponProgressionType;
@@ -226,6 +227,7 @@ bool Initialize() {
             if (data.at("options").contains("required_mission_stars")) {
                 missionStars = 0;
                 requiredMissionStars = data.at("options").at("required_mission_stars");
+                cachedMissionStars = -1;
             }
 
             if (data.at("options").contains("weapon_progression")) {
