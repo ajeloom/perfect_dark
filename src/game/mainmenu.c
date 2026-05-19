@@ -1901,7 +1901,7 @@ MenuItemHandlerResult menuhandlerMissionList(s32 operation, struct menuitem *ite
 			for (k = 0; k < 3; k++) {
 				s32 relx = 63 + k * 17;
 
-				if (k == incompleteindex) {
+				if (g_GameFile.besttimes[stageindex][k] == 0) {
 					// Set transparency
 #if VERSION >= VERSION_NTSC_1_0
 					gDPSetEnvColorViaWord(gdl++, 0xffffff00 | ((renderdata->colour & 0xff) * 63 / 256));
@@ -1911,6 +1911,9 @@ MenuItemHandlerResult menuhandlerMissionList(s32 operation, struct menuitem *ite
 					gDPSetCombineLERP(gdl++,
 							TEXEL0, 0, ENVIRONMENT, 0, TEXEL0, 0, ENVIRONMENT, 0,
 							TEXEL0, 0, ENVIRONMENT, 0, TEXEL0, 0, ENVIRONMENT, 0);
+				} else {
+					gDPSetEnvColorViaWord(gdl++, 0xffffff00 | ((renderdata->colour & 0xff) * 175 / 256));
+					gDPSetCombineMode(gdl++, G_CC_DECALRGBA, G_CC_DECALRGBA);
 				}
 
 				gSPTextureRectangle(gdl++,
