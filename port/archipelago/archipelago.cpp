@@ -97,9 +97,9 @@ VOID InputCommand()
             printf(" - '/disconnect' - to exit the room\n");
             printf("--------------------------------------------------------------------------------------------------\n");
 		}
-        else if (line == "!help") {
-            Message("!help");
-		}
+        else if (line[0] == '!') {
+            Message(line);
+        }
         else if (line.find("/connect ") == 0) {
             
 			std::string param = line.substr(9);

@@ -264,7 +264,6 @@ void collectChallengeItem(u32 challengeIndex)
 
 void collectFiringRangeItem(s32 weaponIndex, s32 difficulty)
 {
-    printf("weaponIndex: %d", weaponIndex);
     uint64_t location = 3 * (weaponIndex - 2) + difficulty + AP_FIRING_RANGE_OFFSET;
 	if (hasWeaponTraining == 1) {
 		InternalCollectAPItem(location);
