@@ -4396,6 +4396,11 @@ void playerTick(bool arg0)
 	}
 
 	if (deathLink == 1 && !lvIsPaused()) {
+		if (pendingDeathLink && g_Vars.tickmode == TICKMODE_CUTSCENE) {
+			// Stop death link during cutscenes
+			pendingDeathLink = false;
+		}
+
 		if (pendingDeathLink 
 				&& !g_Vars.currentplayer->isdead
 				&& g_Vars.stagenum != STAGE_TITLE
