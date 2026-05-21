@@ -4649,10 +4649,12 @@ int cachedMissionStars = -1;
 
 MenuDialogHandlerResult handleMissionMenuTitleDialog(s32 operation, struct menudialogdef *dialogdef, union handlerdata *data)
 {
-	if (completionGoal == 1 && cachedMissionStars != missionStars) {
-		sprintf(g_StringPointer, "Mission Select - (Mission Stars: %d/%d)", missionStars, requiredMissionStars);
-		dialogdef->title = (uintptr_t)g_StringPointer;
-		cachedMissionStars = missionStars;
+	if (completionGoal == 1) {
+		sprintf(g_StringPointer, "Mission Select - (Mission Stars: %d/%d)\n", missionStars, requiredMissionStars);
+		if (dialogdef->title != (uintptr_t)g_StringPointer || cachedMissionStars != missionStars) {
+			dialogdef->title = (uintptr_t)g_StringPointer;
+			cachedMissionStars = missionStars;
+		}
 	}
 	else if (completionGoal == 0 && dialogdef->title != (uintptr_t)"Mission Select\n") {
 		dialogdef->title = (uintptr_t)"Mission Select\n";
