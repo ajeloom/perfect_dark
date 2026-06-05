@@ -1238,7 +1238,6 @@ void invRemoveLockedWeapons(void)
 					|| g_Vars.stagenum == STAGE_AIRFORCEONE
 					|| g_Vars.stagenum == STAGE_CRASHSITE
 					|| g_Vars.stagenum == STAGE_DEEPSEA
-					|| g_Vars.stagenum == STAGE_DEFENSE
 					|| g_Vars.stagenum == STAGE_ATTACKSHIP
 					|| g_Vars.stagenum == STAGE_MBR
 					|| g_Vars.stagenum == STAGE_MAIANSOS
@@ -1269,6 +1268,12 @@ void invRemoveLockedWeapons(void)
 			if (g_Vars.stagenum == STAGE_DEEPSEA 
 					&& i == WEAPON_FARSIGHT
 					&& unlockedWeapons[WEAPON_FARSIGHT] == 1) {
+				continue;
+			}
+
+			if (g_Vars.stagenum == STAGE_DEFENSE
+					&& i == WEAPON_LASER
+					&& unlockedWeapons[WEAPON_LASER] == 1) {
 				continue;
 			}
 
