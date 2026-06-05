@@ -5413,7 +5413,10 @@ bool aiChrDrawWeapon(void)
 		u32 prevplayernum = g_Vars.currentplayernum;
 		u32 playernum = playermgrGetPlayerNumByProp(chr->prop);
 		setCurrentPlayerNum(playernum);
-		bgunEquipWeapon2(0, (s8)cmd[3]);
+		if (weaponProgressionType == WEAPONPROG_DISABLED
+				&& unlockedWeapons[(s8)cmd[3]] == 1) {
+			bgunEquipWeapon2(0, (s8)cmd[3]);
+		}
 		bgunEquipWeapon2(1, 0);
 		setCurrentPlayerNum(prevplayernum);
 	}
