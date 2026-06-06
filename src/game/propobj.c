@@ -17879,7 +17879,7 @@ s32 objTestForPickup(struct prop *prop)
 						}
 						else if (g_MissionConfig.stageindex == SOLOSTAGEINDEX_AIRFORCEONE) {
 							// Air Force One Left Room Key Card
-							weaponnum = WEAPON_KEYCARD49;
+							weaponnum = WEAPON_HAMMER;
 						}
 						break;
 					case 16:
@@ -17897,7 +17897,7 @@ s32 objTestForPickup(struct prop *prop)
 						}
 						else if (g_MissionConfig.stageindex == SOLOSTAGEINDEX_AIRFORCEONE) {
 							// Air Force One Right Room Key Card
-							weaponnum = WEAPON_KEYCARD49;
+							weaponnum = WEAPON_SCREWDRIVER;
 						}
 						break;
 					case 64:
