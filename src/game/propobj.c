@@ -139,6 +139,8 @@ extern u32 unlockedWeapons[94];
 
 extern int weaponProgressionType;
 extern int allowProgWeaponInChallenges;
+extern int progressiveWeapon;
+extern int progressiveWeaponNumbers[43];
 
 /**
  * Attempt to call a lift from the given door.
@@ -17819,24 +17821,29 @@ s32 objTestForPickup(struct prop *prop)
 					if (weapon->weaponnum <= WEAPON_PSYCHOSISGUN 
 							&& g_Vars.stagenum != STAGE_CITRAINING) {
 
+						// Can't pickup K7 Avenger in any mission that's not Investigation
 						if (g_Vars.stagenum != STAGE_INVESTIGATION
 								&& weapon->weaponnum == WEAPON_K7AVENGER) {
 							return TICKOP_NONE;
 						}
 
+						// Can't pickup Remote Mine in any mission that's not Chicago
 						if (g_Vars.stagenum != STAGE_CHICAGO
 								&& weapon->weaponnum == WEAPON_REMOTEMINE) {
 							return TICKOP_NONE;
 						}
 
+						// Can't pickup RC-P120 in any mission that's not Defense
 						if (g_Vars.stagenum != STAGE_DEFENSE
 								&& weapon->weaponnum == WEAPON_RCP120) {
 							return TICKOP_NONE;
 						}
 
+						// Can't pickup weapons that are not the current progressive weapon
 						if (weapon->weaponnum != WEAPON_K7AVENGER
 								&& weapon->weaponnum != WEAPON_REMOTEMINE
-								&& weapon->weaponnum != WEAPON_RCP120) {
+								&& weapon->weaponnum != WEAPON_RCP120
+								&& weapon->weaponnum != progressiveWeaponNumbers[progressiveWeapon]) {
 							return TICKOP_NONE;
 						}
 					}
