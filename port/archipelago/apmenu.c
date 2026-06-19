@@ -17,6 +17,7 @@ extern u32 completedSpecialAgentObjectives[NUM_SOLOSTAGES][4];
 extern u32 completedPerfectAgentObjectives[NUM_SOLOSTAGES][5];
 extern u32 completedChallenges[30];
 
+bool showLocationName;
 bool randomMusic;
 bool randomCharacters;
 
@@ -1209,6 +1210,20 @@ struct menudialogdef g_GameOptionsMenuDialog = {
 	NULL,
 };
 
+MenuItemHandlerResult menuhandlerShowLocationName(s32 operation, struct menuitem *item, union handlerdata *data)
+{
+	s32 val;
+
+	switch (operation) {
+	case MENUOP_GET:
+		return showLocationName;
+	case MENUOP_SET:
+		showLocationName = data->checkbox.value;
+	}
+
+	return 0;
+}
+
 MenuItemHandlerResult menuhandlerRandomMusic(s32 operation, struct menuitem *item, union handlerdata *data)
 {
 	s32 val;
@@ -1420,6 +1435,14 @@ struct menuitem g_ArchipelagoMenuItems[] = {
 		MENUITEMTYPE_CHECKBOX,
 		0,
 		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Show Location Name\n",
+		0,
+		menuhandlerShowLocationName,
+	},
+	{
+		MENUITEMTYPE_CHECKBOX,
+		0,
+		MENUITEMFLAG_LITERAL_TEXT,
 		(uintptr_t)"Random Music\n",
 		0,
 		menuhandlerRandomMusic,
@@ -1470,6 +1493,7 @@ struct menudialogdef g_ArchipelagoMenuDialog = {
 
 PD_CONSTRUCTOR static void APConfigRandomOptionsInit(void)
 {
+	APConfigRegisterUInt("RandomOptions.ShowLocationName", &showLocationName, 0, 1);
     APConfigRegisterUInt("RandomOptions.RandomMusic", &randomMusic, 0, 1);
 	APConfigRegisterUInt("RandomOptions.RandomCharacters", &randomCharacters, 0, 1);
 	APConfigRegisterUInt("RandomOptions.JoannaHead", &randomJoHead, 4, 85);

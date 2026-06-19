@@ -61,6 +61,8 @@ extern int hasDeviceTraining;
 extern int hasHolotraining;
 extern int hasUnlockCheats;
 
+extern bool showLocationName;
+
 int progressiveWeaponNumbers[43] = {
     WEAPON_UNARMED,
     WEAPON_COMBATKNIFE,
@@ -351,7 +353,13 @@ void printSentItemMessage(const char* itemname, const char* recipient, const cha
     recipient = CheckString(recipient);
     location = CheckString(location);
 
-    sprintf(buffer, "Sent %s to %s (%s)\n", itemname, recipient, location);
+    if (showLocationName) {
+        sprintf(buffer, "Sent %s to %s (%s)\n", itemname, recipient, location);
+    }
+    else {
+        sprintf(buffer, "Sent %s to %s\n", itemname, recipient);
+    }
+    
 	hudmsgCreate(buffer, HUDMSGTYPE_DEFAULT);
 }
 
@@ -365,7 +373,14 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
 
     for (s32 i = 0; i < PLAYERCOUNT(); i++) {
 		setCurrentPlayerNum(i);
-        sprintf(buffer, "Got %s from %s (%s)\n", itemname, sender, location);
+
+        if (showLocationName) {
+            sprintf(buffer, "Got %s from %s (%s)\n", itemname, sender, location);
+        }
+        else {
+            sprintf(buffer, "Got %s from %s\n", itemname, sender);
+        }
+        
         hudmsgCreate(buffer, HUDMSGTYPE_DEFAULT);
     }
 
