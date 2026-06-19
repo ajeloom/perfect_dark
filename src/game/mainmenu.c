@@ -1034,8 +1034,8 @@ MenuItemHandlerResult menuhandlerPdMode(s32 operation, struct menuitem *item, un
 	case MENUOP_SET:
 		menuPushDialog(&g_PdModeSettingsMenuDialog);
 		break;
-	case MENUOP_CHECKHIDDEN:
-		if (g_GameFile.besttimes[SOLOSTAGEINDEX_SKEDARRUINS][DIFF_PA] == 0) {
+	case MENUOP_CHECKDISABLED:
+		if (!isStageDifficultyUnlocked(g_MissionConfig.stageindex, DIFF_PA)) {
 			return true;
 		}
 	}
@@ -1103,7 +1103,7 @@ struct menuitem g_SoloMissionDifficultyMenuItems[] = {
 	{
 		MENUITEMTYPE_SELECTABLE,
 		0,
-		MENUITEMFLAG_ALWAYSDISABLED,
+		0,
 		L_MPWEAPONS_221, // "Perfect Dark"
 		0,
 		menuhandlerPdMode,

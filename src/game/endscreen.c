@@ -1406,8 +1406,7 @@ void endscreenPrepare(void)
 
 		// Set cheat info
 		if (g_MissionConfig.iscoop == false
-				&& g_MissionConfig.isanti == false
-				&& g_MissionConfig.pdmode == false) {
+				&& g_MissionConfig.isanti == false) {
 			timedcheatid = cheatGetByTimedStageIndex(g_MissionConfig.stageindex, g_MissionConfig.difficulty);
 			complcheatid = cheatGetByCompletedStageIndex(g_MissionConfig.stageindex);
 
@@ -1482,26 +1481,18 @@ void endscreenPrepare(void)
 			g_GameFile.autodifficulty = g_MissionConfig.difficulty;
 
 #if VERSION >= VERSION_NTSC_1_0 && defined(DEBUG)
-			if (g_CheatsActiveBank0 == 0
-					&& g_CheatsActiveBank1 == 0
-					&& g_MissionConfig.pdmode == false
-					&& ((g_Vars.currentplayer->isdead == false
-							&& g_Vars.currentplayer->aborted == false
-							&& objectiveIsAllComplete())
-						|| debugIsSetCompleteEnabled()))
+			if ((g_Vars.currentplayer->isdead == false
+					&& g_Vars.currentplayer->aborted == false
+					&& objectiveIsAllComplete())
+					|| debugIsSetCompleteEnabled())
 #elif VERSION >= VERSION_NTSC_1_0
-			if (g_CheatsActiveBank0 == 0
-					&& g_CheatsActiveBank1 == 0
-					&& g_MissionConfig.pdmode == false
-					&& g_Vars.currentplayer->isdead == false
+			if (g_Vars.currentplayer->isdead == false
 					&& g_Vars.currentplayer->aborted == false
 					&& objectiveIsAllComplete())
 #else
 			if (g_Vars.currentplayer->isdead == false
 					&& g_Vars.currentplayer->aborted == false
-					&& objectiveIsAllComplete()
-					&& g_CheatsActiveBank0 == 0
-					&& g_CheatsActiveBank1 == 0)
+					&& objectiveIsAllComplete())
 #endif
 			{
 				secs = playerGetMissionTime() / 60;
