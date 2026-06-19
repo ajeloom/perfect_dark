@@ -397,6 +397,17 @@ s32 gamefileLoad(s32 device)
 #endif
 			gamefileApplyOptions(&g_GameFile);
 
+			gamefileSetFlag(GAMEFILEFLAG_CI_CLOAK_DONE);
+			gamefileSetFlag(GAMEFILEFLAG_CI_DISGUISE_DONE);
+			gamefileSetFlag(GAMEFILEFLAG_CI_XRAY_DONE);
+			gamefileSetFlag(GAMEFILEFLAG_CI_IR_DONE);
+			gamefileSetFlag(GAMEFILEFLAG_CI_RTRACKER_DONE);
+			gamefileSetFlag(GAMEFILEFLAG_CI_DOORDECODER_DONE);
+			gamefileSetFlag(GAMEFILEFLAG_CI_NIGHTVISION_DONE);
+			gamefileSetFlag(GAMEFILEFLAG_CI_CAMSPY_DONE);
+			gamefileSetFlag(GAMEFILEFLAG_CI_ECMMINE_DONE);
+			gamefileSetFlag(GAMEFILEFLAG_CI_UPLINK_DONE);
+
 			return 0;
 		}
 
