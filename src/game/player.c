@@ -696,6 +696,10 @@ void playerStartNewLife(void)
 	}
 
 	bmoveUpdateRooms(g_Vars.currentplayer);
+	invRemoveLockedWeapons();
+	if (weaponProgressionType != WEAPONPROG_DISABLED) {
+		invGetProgressiveWeapons();
+	}
 	playerSpawn();
 
 	if (g_Vars.normmplayerisrunning) {
@@ -1173,12 +1177,19 @@ void playerSpawn(void)
 			} else
 #endif
 			{
-				bgunEquipWeapon2(HAND_LEFT, g_DefaultWeapons[HAND_LEFT]);
-				bgunEquipWeapon2(HAND_RIGHT, g_DefaultWeapons[HAND_RIGHT]);
+				if (weaponProgressionType == WEAPONPROG_DISABLED) {
+					if (unlockedWeapons[g_DefaultWeapons[HAND_LEFT]] == 1) {
+						bgunEquipWeapon2(HAND_LEFT, g_DefaultWeapons[HAND_LEFT]);
+					}
+
+					if (unlockedWeapons[g_DefaultWeapons[HAND_RIGHT]] == 1) {
+						bgunEquipWeapon2(HAND_RIGHT, g_DefaultWeapons[HAND_RIGHT]);
+					}
+				}
 			}
 
 			if (weaponProgressionType != WEAPONPROG_DISABLED 
-					&& g_Vars.normmplayerisrunning
+					&& g_Vars.mplayerisrunning
 					&& allowProgWeaponInChallenges == 1) {
 				invGetProgressiveWeapons();
 				bgunEquipWeapon2(HAND_LEFT, WEAPON_NONE);

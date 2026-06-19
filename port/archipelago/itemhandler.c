@@ -363,51 +363,29 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
     sender = CheckString(sender);
     location = CheckString(location);
 
-    sprintf(buffer, "Got %s from %s (%s)\n", itemname, sender, location);
-    hudmsgCreate(buffer, HUDMSGTYPE_DEFAULT);
+    for (s32 i = 0; i < PLAYERCOUNT(); i++) {
+		setCurrentPlayerNum(i);
+        sprintf(buffer, "Got %s from %s (%s)\n", itemname, sender, location);
+        hudmsgCreate(buffer, HUDMSGTYPE_DEFAULT);
+    }
 
     // Progressive Weapon
-    if (weaponProgressionType != WEAPONPROG_DISABLED && itemID == 188) {
+    if (weaponProgressionType != WEAPONPROG_DISABLED && itemID == AP_ITEM_PROGRESSIVE_WEAPON) {
         progressiveWeapon += 1;
 
         unlockedWeapons[progressiveWeaponNumbers[progressiveWeapon]] = 1;
 
-        if (g_Vars.stagenum != STAGE_CITRAINING && !g_Vars.normmplayerisrunning) {
-            if (weaponProgressionType == WEAPONPROG_ALLGUNS) {
-                invGiveSingleWeapon(progressiveWeaponNumbers[progressiveWeapon]);
-                
-                if (g_Vars.currentplayer->gunctrl.weaponnum != WEAPON_UNARMED) {
-                    bgunEquipWeapon2(HAND_RIGHT, progressiveWeaponNumbers[progressiveWeapon]);
-                }
-            }
-            else if (weaponProgressionType == WEAPONPROG_ONEGUN) {
-                if (progressiveWeapon > 1) {
-                    invRemoveItemByNum(progressiveWeaponNumbers[progressiveWeapon - 1]);
-                }
-
-                invGetProgressiveWeapons();
-
-                if (g_Vars.currentplayer->gunctrl.weaponnum == progressiveWeaponNumbers[progressiveWeapon - 1]) {
-                    bgunEquipWeapon2(HAND_RIGHT, progressiveWeaponNumbers[progressiveWeapon]);
-                }
-            }
-        }
-        else if (g_Vars.stagenum != STAGE_CITRAINING
-                    && g_Vars.normmplayerisrunning 
-                    && allowProgWeaponInChallenges == 1) {
-            if (weaponProgressionType == WEAPONPROG_ALLGUNS) {
-                for (s32 i = 0; i < PLAYERCOUNT(); i++) {
-                    setCurrentPlayerNum(i);
+        for (s32 i = 0; i < PLAYERCOUNT(); i++) {
+			setCurrentPlayerNum(i);
+            if (g_Vars.stagenum != STAGE_CITRAINING && !g_Vars.normmplayerisrunning) {
+                if (weaponProgressionType == WEAPONPROG_ALLGUNS) {
                     invGiveSingleWeapon(progressiveWeaponNumbers[progressiveWeapon]);
                     
                     if (g_Vars.currentplayer->gunctrl.weaponnum != WEAPON_UNARMED) {
                         bgunEquipWeapon2(HAND_RIGHT, progressiveWeaponNumbers[progressiveWeapon]);
                     }
                 }
-            }
-            else if (weaponProgressionType == WEAPONPROG_ONEGUN) {
-                for (s32 i = 0; i < PLAYERCOUNT(); i++) {
-                    setCurrentPlayerNum(i);
+                else if (weaponProgressionType == WEAPONPROG_ONEGUN) {
                     if (progressiveWeapon > 1) {
                         invRemoveItemByNum(progressiveWeaponNumbers[progressiveWeapon - 1]);
                     }
@@ -419,7 +397,35 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
                     }
                 }
             }
-        }
+            else if (g_Vars.stagenum != STAGE_CITRAINING
+                        && g_Vars.normmplayerisrunning 
+                        && allowProgWeaponInChallenges == 1) {
+                if (weaponProgressionType == WEAPONPROG_ALLGUNS) {
+                    for (s32 i = 0; i < PLAYERCOUNT(); i++) {
+                        setCurrentPlayerNum(i);
+                        invGiveSingleWeapon(progressiveWeaponNumbers[progressiveWeapon]);
+                        
+                        if (g_Vars.currentplayer->gunctrl.weaponnum != WEAPON_UNARMED) {
+                            bgunEquipWeapon2(HAND_RIGHT, progressiveWeaponNumbers[progressiveWeapon]);
+                        }
+                    }
+                }
+                else if (weaponProgressionType == WEAPONPROG_ONEGUN) {
+                    for (s32 i = 0; i < PLAYERCOUNT(); i++) {
+                        setCurrentPlayerNum(i);
+                        if (progressiveWeapon > 1) {
+                            invRemoveItemByNum(progressiveWeaponNumbers[progressiveWeapon - 1]);
+                        }
+
+                        invGetProgressiveWeapons();
+
+                        if (g_Vars.currentplayer->gunctrl.weaponnum == progressiveWeaponNumbers[progressiveWeapon - 1]) {
+                            bgunEquipWeapon2(HAND_RIGHT, progressiveWeaponNumbers[progressiveWeapon]);
+                        }
+                    }
+                }
+            }
+		}
 
         return;
     }

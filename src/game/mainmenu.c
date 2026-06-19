@@ -1716,7 +1716,12 @@ MenuItemHandlerResult menuhandlerMissionList(s32 operation, struct menuitem *ite
 
 	switch (operation) {
 	case MENUOP_GETOPTIONCOUNT:
-		data->list.value = NUM_SOLOSTAGES;
+		if (g_MissionConfig.iscoop) {
+			data->list.value = NUM_SOLOSTAGES - 1;
+		}
+		else {
+			data->list.value = NUM_SOLOSTAGES;
+		}
 		break;
 	case MENUOP_GETOPTIONTEXT:
 		if (data->list.unk04u32 == 0) {
@@ -4809,7 +4814,7 @@ struct menuitem g_MainMenuMenuItems[] = {
 	{
 		MENUITEMTYPE_SELECTABLE,
 		2,
-		MENUITEMFLAG_BIGFONT | MENUITEMFLAG_ALWAYSDISABLED,
+		MENUITEMFLAG_BIGFONT,
 		(uintptr_t)&mainMenuTextLabel,
 		0x00000005,
 		menuhandlerMainMenuCooperative,
