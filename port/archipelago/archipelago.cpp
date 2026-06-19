@@ -46,6 +46,7 @@ int hasChallenges;
 int hasWeaponTraining;
 int hasDeviceTraining;
 int hasHolotraining;
+int hasUnlockCheats = -1;
 
 int deathLink;
 bool pendingDeathLink;
@@ -239,6 +240,48 @@ std::string itemNames[] = {
 	"Challenge 29",
 	"Challenge 30",
     "Progressive Weapon",
+    "Cheat: Hurricane Fists",
+    "Cheat: Cloaking Device",
+    "Cheat: Invincible",
+    "Cheat: All Guns in Solo",
+    "Cheat: Unlimited Ammo",
+    "Cheat: Unlimited Ammo, No Reloads",
+    "Cheat: Slo-mo Single Player",
+    "Cheat: DK Mode",
+    "Cheat: Trent's Magnum",
+    "Cheat: FarSight",
+    "Cheat: Small Jo",
+    "Cheat: Small Characters",
+    "Cheat: Enemy Shields",
+    "Cheat: Jo Shield",
+    "Cheat: Super Shield",
+    "Cheat: Classic Sight",
+    "Cheat: Team Heads Only",
+    "Cheat: Play as Elvis",
+    "Cheat: Enemy Rockets",
+    "Cheat: Unlimited Ammo - Laptop Sentry Gun",
+    "Cheat: Marquis of Queensbury Rules",
+    "Cheat: Perfect Darkness",
+    "Cheat: Pugilist",
+    "Cheat: Hotshot",
+    "Cheat: Hit and Run",
+    "Cheat: Alien",
+    "Cheat: R-Tracker/Weapon Cache Locations",
+    "Cheat: Rocket Launcher",
+    "Cheat: Sniper Rifle",
+    "Cheat: X-Ray Scanner",
+    "Cheat: SuperDragon",
+    "Cheat: Laptop Gun",
+    "Cheat: Phoenix",
+    "Cheat: Psychosis Gun",
+    "Cheat: PP9i",
+    "Cheat: CC13",
+    "Cheat: KL01313",
+    "Cheat: KF7 Special",
+    "Cheat: ZZT (9mm)",
+    "Cheat: DMC",
+    "Cheat: AR53",
+    "Cheat: RC-P45",
     "Cheese",
     "Trap",
     "Mission Star",
@@ -680,6 +723,48 @@ std::map<int, std::string> locationNames = {
     {453, "Holotraining 5: Unarmed Combat 2"},
     {454, "Holotraining 6: Live Combat 1"},
     {455, "Holotraining 7: Live Combat 2"},
+    {456, "Cheat Unlock: Complete dD Defection"},
+    {457, "Cheat Unlock: Complete dD Investigation"},
+    {458, "Cheat Unlock: Complete dD Extraction"},
+    {459, "Cheat Unlock: Complete Carrington Villa"},
+    {460, "Cheat Unlock: Complete Chicago"},
+    {461, "Cheat Unlock: Complete G5 Building"},
+    {462, "Cheat Unlock: Complete A51 Infiltration"},
+    {463, "Cheat Unlock: Complete A51 Rescue"},
+    {464, "Cheat Unlock: Complete A51 Escape"},
+    {465, "Cheat Unlock: Complete Air Base"},
+    {466, "Cheat Unlock: Complete Air Force One"},
+    {467, "Cheat Unlock: Complete Crash Site"},
+    {468, "Cheat Unlock: Complete Pelagic II"},
+    {469, "Cheat Unlock: Complete Deep Sea"},
+    {470, "Cheat Unlock: Complete CI Defense"},
+    {471, "Cheat Unlock: Complete Attack Ship"},
+    {472, "Cheat Unlock: Complete Skedar Ruins"},
+    {473, "Cheat Unlock: Complete dD Defection (Special Agent) in under 1:30"},
+    {474, "Cheat Unlock: Complete dD Investigation (Perfect Agent) in under 6:30"},
+    {475, "Cheat Unlock: Complete dD Extraction (Agent) in under 2:03"},
+    {476, "Cheat Unlock: Complete Carrington Villa (Special Agent) in under 2:30"},
+    {477, "Cheat Unlock: Complete Chicago (Perfect Agent) in under 2:00"},
+    {478, "Cheat Unlock: Complete G5 Building (Agent) in under 1:40"},
+    {479, "Cheat Unlock: Complete A51 Infiltration (Special Agent) in under 5:00"},
+    {480, "Cheat Unlock: Complete A51 Rescue (Perfect Agent) in under 7:59"},
+    {481, "Cheat Unlock: Complete A51 Escape (Agent) in under 3:50"},
+    {482, "Cheat Unlock: Complete Air Base (Special Agent) in under 3:11"},
+    {483, "Cheat Unlock: Complete Air Force One (Perfect Agent) in under 3:55"},
+    {484, "Cheat Unlock: Complete Crash Site (Agent) in under 2:50"},
+    {485, "Cheat Unlock: Complete Pelagic II (Special Agent) in under 7:07"},
+    {486, "Cheat Unlock: Complete Deep Sea (Perfect Agent) in under 7:27"},
+    {487, "Cheat Unlock: Complete CI Defense (Agent) in under 1:45"},
+    {488, "Cheat Unlock: Complete Attack Ship (Special Agent) in under 5:17"},
+    {489, "Cheat Unlock: Complete Skedar Ruins (Perfect Agent) in under 5:31"},
+    {490, "Cheat Unlock: Get gold medals for Falcon 2, Falcon 2 (Silencer), and Falcon 2 (Scope)"},
+    {491, "Cheat Unlock: Get gold medals for MagSec 4, Mauler, Phoenix, DY357 Magnum, and DY357-LX"},
+    {492, "Cheat Unlock: Get gold medals for CMP150, Cyclone, Callisto NTG, and RC-P120"},
+    {493, "Cheat Unlock: Get gold medals for Laptop Gun, Dragon, K7 Avenger, AR34, and SuperDragon"},
+    {494, "Cheat Unlock: Get gold medals for Shotgun, Sniper Rifle, Rocket Launcher, and Slayer"},
+    {495, "Cheat Unlock: Get gold medals for Timed Mine, Proximity Mine, and Remote Mine"},
+    {496, "Cheat Unlock: Get gold medals for FarSight XR-20, Crossbow, Combat Knife, and Grenade"},
+    {497, "Cheat Unlock: Get gold medals for Tranquilizer, Reaper, and Devastator"},
 };
 
 void AP_Init()
@@ -886,6 +971,10 @@ bool Initialize() {
 
             if (data.at("options").contains("holotraining")) {
                 hasHolotraining = data.at("options").at("holotraining");
+            }
+
+            if (data.at("options").contains("unlock_cheats")) {
+                hasUnlockCheats = data.at("options").at("unlock_cheats");
             }
 
             if (data.at("options").contains("deathlink")) {

@@ -50,6 +50,7 @@ extern int hasChallenges;
 extern int hasWeaponTraining;
 extern int hasDeviceTraining;
 extern int hasHolotraining;
+extern int hasUnlockCheats;
 
 extern int deathLink;
 
@@ -1093,6 +1094,9 @@ const char *GetOption(struct menuitem *item)
 			option = hasHolotraining;
 			break;
 		case 7:
+			option = hasUnlockCheats;
+			break;
+		case 8:
 			option = deathLink;
 			break;
 	}
@@ -1164,6 +1168,14 @@ struct menuitem g_GameOptionsMenuItems[] = {
 	{
 		MENUITEMTYPE_LABEL,
 		7,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Unlock Cheat Checks:\n",
+		(uintptr_t)&GetOption,
+		NULL,
+	},
+	{
+		MENUITEMTYPE_LABEL,
+		8,
 		MENUITEMFLAG_LITERAL_TEXT,
 		(uintptr_t)"Death Link:\n",
 		(uintptr_t)&GetOption,

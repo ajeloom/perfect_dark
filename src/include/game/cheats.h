@@ -12,6 +12,7 @@ extern struct menudialogdef g_CheatsClassicWeaponsMenuDialog;
 extern struct menudialogdef g_CheatsWeaponsMenuDialog;
 extern struct menudialogdef g_CheatsBuddiesMenuDialog;
 
+u32 cheatCheckIsCompleted(s32 cheat_id);
 u32 cheatIsUnlocked(s32 cheat_id);
 bool cheatIsActive(s32 cheat_id);
 void cheatActivate(s32 cheat_id);

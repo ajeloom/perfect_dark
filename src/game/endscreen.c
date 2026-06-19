@@ -1452,7 +1452,7 @@ void endscreenPrepare(void)
 
 			// If there's a timed cheat for this stage + difficulty
 			if (g_Menus[g_MpPlayerNum].endscreen.cheatinfo & 0x100) {
-				timedalreadyunlocked = cheatIsUnlocked(g_Menus[g_MpPlayerNum].endscreen.cheatinfo & 0xff);
+				timedalreadyunlocked = cheatCheckIsCompleted(g_Menus[g_MpPlayerNum].endscreen.cheatinfo & 0xff);
 
 				if (timedalreadyunlocked) {
 					g_Menus[g_MpPlayerNum].endscreen.cheatinfo |= 0x400;
@@ -1461,7 +1461,7 @@ void endscreenPrepare(void)
 
 			// If there's a completion cheat for this stage (ie. not a special stage)
 			if (g_Menus[g_MpPlayerNum].endscreen.cheatinfo & 0x1000) {
-				complalreadyunlocked = cheatIsUnlocked((g_Menus[g_MpPlayerNum].endscreen.cheatinfo >> 16) & 0xff);
+				complalreadyunlocked = cheatCheckIsCompleted((g_Menus[g_MpPlayerNum].endscreen.cheatinfo >> 16) & 0xff);
 			}
 #else
 			playerGetMissionTime();
@@ -1557,18 +1557,26 @@ void endscreenPrepare(void)
 				}
 
 				if (g_Menus[g_MpPlayerNum].endscreen.cheatinfo & 0x100) {
-					nowunlocked = cheatIsUnlocked(g_Menus[g_MpPlayerNum].endscreen.cheatinfo & 0xff);
+					nowunlocked = cheatCheckIsCompleted(g_Menus[g_MpPlayerNum].endscreen.cheatinfo & 0xff);
 
 					if (!timedalreadyunlocked && nowunlocked) {
 						g_Menus[g_MpPlayerNum].endscreen.cheatinfo |= 0x0200;
 					}
+
+					if (nowunlocked) {
+						collectTimedCheatItem(g_MissionConfig.stageindex);
+					}
 				}
 
 				if (g_Menus[g_MpPlayerNum].endscreen.cheatinfo & 0x1000) {
-					nowunlocked = cheatIsUnlocked((g_Menus[g_MpPlayerNum].endscreen.cheatinfo >> 16) & 0xff);
+					nowunlocked = cheatCheckIsCompleted((g_Menus[g_MpPlayerNum].endscreen.cheatinfo >> 16) & 0xff);
 
 					if (!complalreadyunlocked && nowunlocked) {
 						g_Menus[g_MpPlayerNum].endscreen.cheatinfo |= 0x0800;
+					}
+
+					if (nowunlocked) {
+						collectCompleteCheatItem(g_MissionConfig.stageindex);
 					}
 				}
 #else

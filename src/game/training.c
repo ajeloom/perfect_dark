@@ -1424,6 +1424,64 @@ void frSetCompleted(void)
 		frSaveScoreIfBest(frweaponindex, g_FrData.difficulty + 1);
 		g_FrData.menutype = FRMENUTYPE_COMPLETED;
 		collectFiringRangeItem(g_FrWeaponNum, g_FrData.difficulty);
+
+		// Check if classic weapon is unlocked
+		if (g_FrData.difficulty == FRDIFFICULTY_GOLD) {
+			u32 weaponnum;
+			switch (g_FrWeaponNum) {
+				case WEAPON_FALCON2:
+				case WEAPON_FALCON2_SCOPE:
+				case WEAPON_FALCON2_SILENCER:
+					weaponnum = WEAPON_PP9I;
+					break;
+				case WEAPON_MAGSEC4:
+				case WEAPON_MAULER:
+				case WEAPON_PHOENIX:
+				case WEAPON_DY357MAGNUM:
+				case WEAPON_DY357LX:
+					weaponnum = WEAPON_CC13;
+					break;
+				case WEAPON_CMP150:
+				case WEAPON_CYCLONE:
+				case WEAPON_CALLISTO:
+				case WEAPON_RCP120:
+					weaponnum = WEAPON_KL01313;
+					break;
+				case WEAPON_LAPTOPGUN:
+				case WEAPON_DRAGON:
+				case WEAPON_K7AVENGER:
+				case WEAPON_AR34:
+				case WEAPON_SUPERDRAGON:
+					weaponnum = WEAPON_KF7SPECIAL;
+					break;
+				case WEAPON_SHOTGUN:
+				case WEAPON_SNIPERRIFLE:
+				case WEAPON_ROCKETLAUNCHER:
+				case WEAPON_SLAYER:
+					weaponnum = WEAPON_ZZT;
+					break;
+				case WEAPON_TIMEDMINE:
+				case WEAPON_PROXIMITYMINE:
+				case WEAPON_REMOTEMINE:
+					weaponnum = WEAPON_DMC;
+					break;
+				case WEAPON_FARSIGHT:
+				case WEAPON_CROSSBOW:
+				case WEAPON_COMBATKNIFE:
+				case WEAPON_GRENADE:
+					weaponnum = WEAPON_AR53;
+					break;
+				case WEAPON_TRANQUILIZER:
+				case WEAPON_REAPER:
+				case WEAPON_DEVASTATOR:
+					weaponnum = WEAPON_RCP45;
+					break;
+			}
+
+			if (frIsClassicWeaponUnlocked(weaponnum)) {
+				collectClassicWeaponCheatItem(weaponnum);
+			}
+		}
 	}
 
 	g_FrData.menucountdown = TICKS(60);

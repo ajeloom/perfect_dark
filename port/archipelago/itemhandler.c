@@ -13,12 +13,28 @@
 
 extern struct g_vars g_Vars;
 
-#define AP_OBJECTIVE_OFFSET 1
+#define AP_ITEM_AGENT_START 95
+#define AP_ITEM_SPECIAL_AGENT_START 116
+#define AP_ITEM_PERFECT_AGENT_START 137
+#define AP_ITEM_CHALLENGE_START 158
+#define AP_ITEM_PROGRESSIVE_WEAPON 188
+#define AP_ITEM_CHEAT_START 189
+#define AP_ITEM_CLASSIC_WEAPON_CHEAT_START 223
+#define AP_ITEM_FILLER 231
+#define AP_ITEM_MISSION_STAR 233
+#define AP_ITEM_VICTORY 234
+
+#define AP_AGENT_OBJ_OFFSET 1
+#define AP_SPECIAL_AGENT_OBJ_OFFSET 62
+#define AP_PERFECT_AGENT_OBJ_OFFSET 144
 #define AP_MISSION_OFFSET 247
 #define AP_CHALLENGE_OFFSET 310
 #define AP_FIRING_RANGE_OFFSET 340
 #define AP_DEVICE_TRAINING_OFFSET 439
 #define AP_HOLOTRAINING_OFFSET 449
+#define AP_COMPLETE_CHEAT_OFFSET 456
+#define AP_TIMED_CHEAT_OFFSET 473
+#define AP_CLASSIC_WEAPON_CHEAT_OFFSET 490
 
 u32 completedMissions[NUM_SOLOSTAGES][3];
 u32 completedAgentObjectives[NUM_SOLOSTAGES][3];
@@ -30,6 +46,7 @@ u32 completedTrainingMedals[32][3];
 u32 unlockedMissions[NUM_SOLOSTAGES][3];
 u32 unlockedChallenges[30];
 u32 unlockedWeapons[94];
+u32 unlockedCheats[42];
 
 int missionStars = 0;
 extern int requiredMissionStars;
@@ -42,6 +59,7 @@ extern int hasChallenges;
 extern int hasWeaponTraining;
 extern int hasDeviceTraining;
 extern int hasHolotraining;
+extern int hasUnlockCheats;
 
 int progressiveWeaponNumbers[43] = {
     WEAPON_UNARMED,
@@ -217,6 +235,10 @@ void resetAP()
 		unlockedWeapons[i] = 0;
 	}
 
+    for (i = 0; i < ARRAYCOUNT(unlockedCheats); i++) {
+		unlockedCheats[i] = 0;
+	}
+
     func0f0f820c(NULL, -7);
 }
 
@@ -232,20 +254,16 @@ void collectObjectiveItem(u8 missionIndex, u8 difficulty, u8 objIndex)
     int difficultyOffset;
     switch (difficulty) {
         case 0:
-            APOffset = 1;
+            APOffset = AP_AGENT_OBJ_OFFSET;
             difficultyOffset = 3;
             break;
         case 1:
-            APOffset = 62;
+            APOffset = AP_SPECIAL_AGENT_OBJ_OFFSET;
             difficultyOffset = 4;
             break;
         case 2:
-            APOffset = 144;
+            APOffset = AP_PERFECT_AGENT_OBJ_OFFSET;
             difficultyOffset = 5;
-            break;
-        default:
-            APOffset = 1;
-            difficultyOffset = 3;
             break;
     }
 
@@ -282,6 +300,30 @@ void collectHolotrainingItem(s32 holoIndex)
 {
     uint64_t location = holoIndex + AP_HOLOTRAINING_OFFSET;
 	if (hasHolotraining == 1) {
+		InternalCollectAPItem(location);
+	}
+}
+
+void collectCompleteCheatItem(u8 missionIndex)
+{
+    uint64_t location = missionIndex + AP_COMPLETE_CHEAT_OFFSET;
+	if (hasUnlockCheats == 1) {
+		InternalCollectAPItem(location);
+	}
+}
+
+void collectTimedCheatItem(u8 missionIndex)
+{
+    uint64_t location = missionIndex + AP_TIMED_CHEAT_OFFSET;
+	if (hasUnlockCheats == 1) {
+		InternalCollectAPItem(location);
+	}
+}
+
+void collectClassicWeaponCheatItem(u8 weaponIndex)
+{
+    uint64_t location = (weaponIndex - WEAPON_PP9I) + AP_CLASSIC_WEAPON_CHEAT_OFFSET;
+	if (hasUnlockCheats == 1) {
 		InternalCollectAPItem(location);
 	}
 }
@@ -383,12 +425,12 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
     }
 
     // Filler
-	if (itemID == 189) {
+	if (itemID == AP_ITEM_FILLER) {
         return;
 	}
 
 	// Mission Star
-	if (itemID == 191) {
+	if (itemID == AP_ITEM_MISSION_STAR) {
         missionStars += 1;
 
         if (missionStars >= requiredMissionStars) {
@@ -399,31 +441,39 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
 	}
 
     // Victory
-    if (itemID == 192) {
+    if (itemID == AP_ITEM_VICTORY) {
         ReachedGoal();
         return;
     }
 
-    if (itemID < 95) {
+    if (itemID < AP_ITEM_AGENT_START) {
         unlockedWeapons[itemID - 1] = 1;
 
         if ((itemID - 1) == WEAPON_CROSSBOW) {
             unlockedWeapons[WEAPON_BOLT] = 1;
         }
     }
-    else if (itemID < 116 && itemID >= 95) {
+    else if (itemID < AP_ITEM_SPECIAL_AGENT_START && itemID >= AP_ITEM_AGENT_START) {
         // Agent
-        unlockedMissions[itemID - 95][0]= 1;
+        unlockedMissions[itemID - AP_ITEM_AGENT_START][0]= 1;
     }
-    else if (itemID < 137 && itemID >= 116) {
+    else if (itemID < AP_ITEM_PERFECT_AGENT_START && itemID >= AP_ITEM_SPECIAL_AGENT_START) {
         // Special Agent
-        unlockedMissions[itemID - 116][1]= 1;
+        unlockedMissions[itemID - AP_ITEM_SPECIAL_AGENT_START][1]= 1;
     }
-    else if (itemID < 158 && itemID >= 137) {
+    else if (itemID < AP_ITEM_CHALLENGE_START && itemID >= AP_ITEM_PERFECT_AGENT_START) {
         // Perfect Agent
-        unlockedMissions[itemID - 137][2]= 1;
+        unlockedMissions[itemID - AP_ITEM_PERFECT_AGENT_START][2]= 1;
     }
-    else if (itemID >= 158) {
-        unlockedChallenges[itemID - 158] = 1;
+    else if (itemID < AP_ITEM_CHEAT_START  && itemID >= AP_ITEM_CHALLENGE_START) {
+        unlockedChallenges[itemID - AP_ITEM_CHALLENGE_START] = 1;
+    }
+    else if (itemID < AP_ITEM_FILLER && itemID >= AP_ITEM_CHEAT_START) {
+        unlockedCheats[itemID - AP_ITEM_CHEAT_START] = 1;
+
+        // Classic weapon cheats
+        if (itemID >= AP_ITEM_CLASSIC_WEAPON_CHEAT_START) {
+            unlockedWeapons[itemID - 186] = 1;
+        }
     }
 }
