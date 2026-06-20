@@ -28,6 +28,8 @@ jobs:
             mingw-w64-i686-cmake
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - name: Build pd.i686.exe
         run: cmake -G"Unix Makefiles" -Bbuild . && cmake --build build -j
       - name: Build pd.pal.i686.exe
@@ -59,6 +61,8 @@ jobs:
           sudo apt-get install git gcc g++ gcc-multilib g++-multilib make libsdl2-dev zlib1g-dev libsdl2-dev:i386 zlib1g-dev:i386 cmake
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - name: Build pd.i686
         run: cmake -G"Unix Makefiles" -Bbuild -DCMAKE_C_FLAGS=-m32 -DCMAKE_CXX_FLAGS=-m32 . && cmake --build build -j
       - name: Build pd.pal.i686
@@ -100,6 +104,8 @@ jobs:
             mingw-w64-x86_64-cmake
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - name: Build pd.x86_64.exe
         run: cmake -G"Unix Makefiles" -Bbuild . && cmake --build build -j
       - name: Build pd.pal.x86_64.exe
@@ -131,6 +137,8 @@ jobs:
           sudo apt-get install git gcc g++ gcc-multilib g++-multilib make libsdl2-dev zlib1g-dev libsdl2-2.0-0 cmake
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - name: Build pd.x86_64
         run: cmake -G"Unix Makefiles" -Bbuild . && cmake --build build -j
       - name: Build pd.pal.x86_64
@@ -162,6 +170,8 @@ jobs:
           sudo cp -vr /Volumes/SDL2/SDL2.framework /Library/Frameworks
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - name: Build pd.x86_64
         run: |
           cmake -G"Unix Makefiles" -Bbuild -DCMAKE_OSX_ARCHITECTURES=x86_64 .
@@ -200,6 +210,8 @@ jobs:
           sudo cp -vr /Volumes/SDL2/SDL2.framework /Library/Frameworks
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - name: Build pd.arm64
         run: |
           cmake -G"Unix Makefiles" -Bbuild -DCMAKE_OSX_ARCHITECTURES=arm64 .
@@ -227,41 +239,41 @@ jobs:
           path: bin/
           retention-days: 0
 
-  build-arm64-nswitch:
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/port'
-    steps:
-      - name: Install host dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install git make cmake curl
-      - name: Install devkitA64 docker image
-        run: sudo docker pull devkitpro/devkita64:latest
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Build pd.arm64.nro
-        run: sudo docker run --name pd --rm -v `pwd`:`pwd` -w `pwd` devkitpro/devkita64:latest bash ./tools/buildscripts/nswitch_docker.sh build
-      - name: Build pd.pal.arm64.nro
-        run: sudo docker run --name pd --rm -v `pwd`:`pwd` -w `pwd` devkitpro/devkita64:latest bash ./tools/buildscripts/nswitch_docker.sh build_pal -DROMID=pal-final
-      - name: Build pd.jpn.arm64.nro
-        run: sudo docker run --name pd --rm -v `pwd`:`pwd` -w `pwd` devkitpro/devkita64:latest bash ./tools/buildscripts/nswitch_docker.sh build_jpn -DROMID=jpn-final
-      - name: Prepare artifact for packaging
-        run: |
-          mkdir -p bin/perfectdark/data
-          mkdir -p bin/perfectdark_pal/data
-          mkdir -p bin/perfectdark_jpn/data
-          cp build/pd.arm64.nro bin/perfectdark/
-          cp build_pal/pd.pal.arm64.nro bin/perfectdark_pal/
-          cp build_jpn/pd.jpn.arm64.nro bin/perfectdark_jpn/
-          touch bin/perfectdark/data/put_your_rom_here.txt
-          touch bin/perfectdark_pal/data/put_your_rom_here.txt
-          touch bin/perfectdark_jpn/data/put_your_rom_here.txt
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: pd-arm64-nswitch
-          path: bin/
-          retention-days: 0
+  # build-arm64-nswitch:
+  #   runs-on: ubuntu-latest
+  #   if: github.ref == 'refs/heads/port'
+  #   steps:
+  #     - name: Install host dependencies
+  #       run: |
+  #         sudo apt-get update
+  #         sudo apt-get install git make cmake curl
+  #     - name: Install devkitA64 docker image
+  #       run: sudo docker pull devkitpro/devkita64:latest
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
+  #     - name: Build pd.arm64.nro
+  #       run: sudo docker run --name pd --rm -v `pwd`:`pwd` -w `pwd` devkitpro/devkita64:latest bash ./tools/buildscripts/nswitch_docker.sh build
+  #     - name: Build pd.pal.arm64.nro
+  #       run: sudo docker run --name pd --rm -v `pwd`:`pwd` -w `pwd` devkitpro/devkita64:latest bash ./tools/buildscripts/nswitch_docker.sh build_pal -DROMID=pal-final
+  #     - name: Build pd.jpn.arm64.nro
+  #       run: sudo docker run --name pd --rm -v `pwd`:`pwd` -w `pwd` devkitpro/devkita64:latest bash ./tools/buildscripts/nswitch_docker.sh build_jpn -DROMID=jpn-final
+  #     - name: Prepare artifact for packaging
+  #       run: |
+  #         mkdir -p bin/perfectdark/data
+  #         mkdir -p bin/perfectdark_pal/data
+  #         mkdir -p bin/perfectdark_jpn/data
+  #         cp build/pd.arm64.nro bin/perfectdark/
+  #         cp build_pal/pd.pal.arm64.nro bin/perfectdark_pal/
+  #         cp build_jpn/pd.jpn.arm64.nro bin/perfectdark_jpn/
+  #         touch bin/perfectdark/data/put_your_rom_here.txt
+  #         touch bin/perfectdark_pal/data/put_your_rom_here.txt
+  #         touch bin/perfectdark_jpn/data/put_your_rom_here.txt
+  #     - name: Upload artifact
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: pd-arm64-nswitch
+  #         path: bin/
+  #         retention-days: 0
 
   build-flatpak-bundle:
     name: "Build flatpak bundle"
