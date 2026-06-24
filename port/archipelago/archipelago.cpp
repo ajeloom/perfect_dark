@@ -23,7 +23,7 @@ using nlohmann::json;
 bool ap_sync_queued = false;
 APClient* ap;
 
-#define VERSION_TUPLE {0, 6, 5}
+#define VERSION_TUPLE {0, 6, 7}
 
 std::string URI;
 std::string slotName;
@@ -840,13 +840,13 @@ VOID InputCommand()
 
 				slotName = param.substr(spaceIndex + 1, passwordIndex - spaceIndex - 2);
 				
-                std::cout << "URI: " << URI << "\n";
-                std::cout << "slotname: " << slotName << "\n";
-                std::cout << "password: " << password << "\n";
+                // std::cout << "URI: " << URI << "\n";
+                // std::cout << "slotname: " << slotName << "\n";
+                // std::cout << "password: " << password << "\n";
 				
-				if (!Initialize()) {
-					printf("Failed to initialise Archipelago\n");
-				}
+				printf("Attempting to connect to room...\n");
+
+                Initialize();
 			}
 		}
 		else if (line.find("/connect") == 0) {
@@ -909,19 +909,17 @@ bool Initialize() {
     bool roomInfo = false;
     bool roomUpdate = false;
 
-    printf("Attempting to connect to room...\n");
-
     // Set event callbacks
     // Called when the socket gets connected
     ap->set_socket_connected_handler([&connected]() {
-        printf("socket connected\n");
+        // printf("socket connected\n");
         connected = true;
         status = "Connected\n";
     });
 
     // Called when connect or a ping failed - no action required, reconnect is automatic
     ap->set_socket_error_handler([&error](const std::string& msg) {
-        printf("socket error\n");
+        printf("socket error: %s\n", msg.c_str());
         error = true;
         status = "Not connected\n";
     });
@@ -1113,22 +1111,22 @@ bool Initialize() {
         
     });
 
-    if (!connected) {
-        fprintf(stderr, "FAIL: Could not connect socket\n");
-        return false;
-    }
-    if (!roomInfo) {
-        fprintf(stderr, "FAIL: Did not receive room info\n");
-        return false;
-    }
-    if (!roomUpdate) {
-        fprintf(stderr, "FAIL: Did not receive room update\n");
-        return false;
-    }
-    if (error) {
-        fprintf(stderr, "FAIL: Error\n");
-        return false;
-    }
+    // if (!connected) {
+    //     fprintf(stderr, "FAIL: Could not connect socket\n");
+    //     return false;
+    // }
+    // if (!roomInfo) {
+    //     fprintf(stderr, "FAIL: Did not receive room info\n");
+    //     return false;
+    // }
+    // if (!roomUpdate) {
+    //     fprintf(stderr, "FAIL: Did not receive room update\n");
+    //     return false;
+    // }
+    // if (error) {
+    //     fprintf(stderr, "FAIL: Error\n");
+    //     return false;
+    // }
 
     return true;
 }
@@ -1175,7 +1173,7 @@ void QueueItem(APClient::NetworkItem item) {
 
 	std::string sender = ap->get_player_alias(item.player);
 	std::string location = ap->get_location_name(item.location, ap->get_player_game(item.player));
-    if (ap->get_player_game(item.player) != "Perfect Dark") {
+    if (ap->get_player_game(item.player) == "Perfect Dark") {
         location = locationNames[item.location];
     }
 
