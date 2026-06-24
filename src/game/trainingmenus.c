@@ -1729,7 +1729,6 @@ MenuItemHandlerResult dtDeviceListMenuHandler(s32 operation, struct menuitem *it
 {
 	Gfx *gdl;
 	struct menuitemrenderdata *renderdata;
-	s32 weaponnum2;
 	s32 x;
 	s32 y;
 
@@ -1765,7 +1764,6 @@ MenuItemHandlerResult dtDeviceListMenuHandler(s32 operation, struct menuitem *it
 	case MENUOP_RENDER:
 		gdl = data->type19.gdl;
 		renderdata = data->type19.renderdata2;
-		weaponnum2 = frGetWeaponBySlot(data->type19.unk04);
 
 		x = renderdata->x + 10;
 		y = renderdata->y + 1;
