@@ -33,6 +33,8 @@ struct menudialogdef g_BioTextMenuDialog;
 struct menudialogdef g_HangarLocationDetailsMenuDialog;
 struct menudialogdef g_HangarVehicleDetailsMenuDialog;
 
+extern u32 unlockedWeapons[94];
+
 MenuItemHandlerResult frDetailsOkMenuHandler(s32 operation, struct menuitem *item, union handlerdata *data)
 {
 	s32 i;
@@ -1725,13 +1727,24 @@ char *ciMenuTextMiscBioName(struct menuitem *item)
 
 MenuItemHandlerResult dtDeviceListMenuHandler(s32 operation, struct menuitem *item, union handlerdata *data)
 {
+	Gfx *gdl;
+	struct menuitemrenderdata *renderdata;
+	s32 weaponnum2;
+	s32 x;
+	s32 y;
+
 	switch (operation) {
 	case MENUOP_GETOPTIONCOUNT:
 		data->list.value = dtGetNumAvailable();
 		break;
 	case MENUOP_GETOPTIONTEXT:
-		return (uintptr_t) bgunGetName(dtGetWeaponByDeviceIndex(dtGetIndexBySlot(data->list.value)));
+		return 0;
+		// return (uintptr_t) bgunGetName(dtGetWeaponByDeviceIndex(dtGetIndexBySlot(data->list.value)));
 	case MENUOP_SET:
+		if (unlockedWeapons[dtGetWeaponByDeviceIndex(dtGetIndexBySlot(data->list.value))] == 0) {
+			break;
+		}
+
 		g_DtSlot = data->list.value;
 		menuPushDialog(&g_DtDetailsMenuDialog);
 		break;
@@ -1746,6 +1759,31 @@ MenuItemHandlerResult dtDeviceListMenuHandler(s32 operation, struct menuitem *it
 	case MENUOP_GETGROUPSTARTINDEX:
 		data->list.groupstartindex = 0;
 		break;
+	case MENUOP_GETOPTIONHEIGHT:
+		data->list.value = LINEHEIGHT;
+		break;
+	case MENUOP_RENDER:
+		gdl = data->type19.gdl;
+		renderdata = data->type19.renderdata2;
+		weaponnum2 = frGetWeaponBySlot(data->type19.unk04);
+
+		x = renderdata->x + 10;
+		y = renderdata->y + 1;
+
+		gdl = text0f153628(gdl);
+
+		if (unlockedWeapons[dtGetWeaponByDeviceIndex(dtGetIndexBySlot(data->type19.unk04))] == 0) {
+			gdl = textRenderProjected(gdl, &x, &y, bgunGetName(dtGetWeaponByDeviceIndex(dtGetIndexBySlot(data->type19.unk04))), g_CharsHandelGothicSm, g_FontHandelGothicSm,
+						0xff0000ff, viGetWidth(), viGetHeight(), 0, 0);
+		}
+		else {
+			gdl = textRenderProjected(gdl, &x, &y, bgunGetName(dtGetWeaponByDeviceIndex(dtGetIndexBySlot(data->type19.unk04))), g_CharsHandelGothicSm, g_FontHandelGothicSm,
+						renderdata->colour, viGetWidth(), viGetHeight(), 0, 0);
+		}
+		
+		gdl = text0f153780(gdl);
+
+		return (uintptr_t)gdl;
 	}
 
 	return 0;
@@ -1897,7 +1935,7 @@ struct menuitem g_DtListMenuItems[] = {
 	{
 		MENUITEMTYPE_LIST,
 		0,
-		MENUITEMFLAG_SELECTABLE_CLOSESDIALOG,
+		MENUITEMFLAG_SELECTABLE_CLOSESDIALOG | MENUITEMFLAG_LIST_CUSTOMRENDER,
 		0x000000a0,
 		0,
 		dtDeviceListMenuHandler,
