@@ -20,9 +20,13 @@ extern struct g_vars g_Vars;
 #define AP_ITEM_PROGRESSIVE_WEAPON 188
 #define AP_ITEM_CHEAT_START 189
 #define AP_ITEM_CLASSIC_WEAPON_CHEAT_START 223
-#define AP_ITEM_FILLER 231
-#define AP_ITEM_MISSION_STAR 233
-#define AP_ITEM_VICTORY 234
+#define AP_ITEM_DATADYNE_MASTER_KEY 231
+#define AP_ITEM_G5_BUILDING_MASTER_KEY 232
+#define AP_ITEM_AREA_51_MASTER_KEY 233
+#define AP_ITEM_AIR_FORCE_ONE_MASTER_KEY 234
+#define AP_ITEM_FILLER 235
+#define AP_ITEM_MISSION_STAR 237
+#define AP_ITEM_VICTORY 238
 
 #define AP_AGENT_OBJ_OFFSET 1
 #define AP_SPECIAL_AGENT_OBJ_OFFSET 62
@@ -69,6 +73,7 @@ int progressiveWeaponNumbers[43] = {
     WEAPON_PSYCHOSISGUN,
     WEAPON_TRANQUILIZER,
     WEAPON_KL01313,
+    WEAPON_CC13,
     WEAPON_LASER,
     WEAPON_CROSSBOW,
     WEAPON_SNIPERRIFLE,
@@ -76,7 +81,6 @@ int progressiveWeaponNumbers[43] = {
     WEAPON_FALCON2_SILENCER,
     WEAPON_FALCON2_SCOPE,
     WEAPON_PP9I,
-    WEAPON_CC13,
     WEAPON_MAGSEC4,
     WEAPON_DY357MAGNUM,
     WEAPON_SHOTGUN,
@@ -113,9 +117,9 @@ int progressiveWeaponNumbers[43] = {
 int progWeaponInvPosition[] = {
 	0,      // WEAPON_NONE
 	1,      // WEAPON_UNARMED
-	36,     // WEAPON_FALCON2
-	35,     // WEAPON_FALCON2_SILENCER
-	34,     // WEAPON_FALCON2_SCOPE
+	35,     // WEAPON_FALCON2
+	34,     // WEAPON_FALCON2_SILENCER
+	33,     // WEAPON_FALCON2_SCOPE
 	31,     // WEAPON_MAGSEC4
 	7,      // WEAPON_MAULER
 	6,      // WEAPON_PHOENIX
@@ -132,23 +136,23 @@ int progWeaponInvPosition[] = {
 	8,     // WEAPON_SUPERDRAGON
 	29,     // WEAPON_SHOTGUN
 	23,     // WEAPON_REAPER
-	37,     // WEAPON_SNIPERRIFLE
+	36,     // WEAPON_SNIPERRIFLE
 	2,      // WEAPON_FARSIGHT
 	9,      // WEAPON_DEVASTATOR
 	10,      // WEAPON_ROCKETLAUNCHER
 	16,     // WEAPON_SLAYER
 	43,     // WEAPON_COMBATKNIFE
-	38,      // WEAPON_CROSSBOW
+	37,      // WEAPON_CROSSBOW
 	41,     // WEAPON_TRANQUILIZER
-	39,     // WEAPON_LASER
+	38,     // WEAPON_LASER
 	17,     // WEAPON_GRENADE
 	14,     // WEAPON_NBOMB
 	19,     // WEAPON_TIMEDMINE
 	18,     // WEAPON_PROXIMITYMINE
 	15,     // WEAPON_REMOTEMINE
 	44,     // WEAPON_COMBATBOOST
-	33,     // WEAPON_PP9I
-	32,     // WEAPON_CC13
+	32,     // WEAPON_PP9I
+	39,     // WEAPON_CC13
 	40,     // WEAPON_KL01313
 	28,     // WEAPON_KF7SPECIAL
 	26,     // WEAPON_ZZT
@@ -445,6 +449,30 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
         return;
     }
 
+    // Master Keys
+    if (itemID == AP_ITEM_DATADYNE_MASTER_KEY) {
+        unlockedWeapons[WEAPON_NECKLACE] = 1;
+        unlockedWeapons[WEAPON_KEYCARD4C] = 1;
+        return;
+    }
+    else if (itemID == AP_ITEM_G5_BUILDING_MASTER_KEY) {
+        unlockedWeapons[WEAPON_KEYCARD45] = 1;
+        unlockedWeapons[WEAPON_KEYCARD46] = 1;
+        return;
+    }
+    else if (itemID == AP_ITEM_AREA_51_MASTER_KEY) {
+        unlockedWeapons[WEAPON_KEYCARD4B] = 1;
+        unlockedWeapons[WEAPON_KEYCARD47] = 1;
+        unlockedWeapons[WEAPON_KEYCARD48] = 1;
+        return;
+    }
+    else if (itemID == AP_ITEM_AIR_FORCE_ONE_MASTER_KEY) {
+        unlockedWeapons[WEAPON_KEYCARD49] = 1;
+        unlockedWeapons[WEAPON_HAMMER] = 1;
+        unlockedWeapons[WEAPON_SCREWDRIVER] = 1;
+        return;
+    }
+
     // Filler
 	if (itemID == AP_ITEM_FILLER) {
         return;
@@ -467,6 +495,7 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
         return;
     }
 
+    // Weapons, Missions, Challenges, Cheats
     if (itemID < AP_ITEM_AGENT_START) {
         unlockedWeapons[itemID - 1] = 1;
 
