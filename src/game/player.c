@@ -4415,7 +4415,8 @@ void playerTick(bool arg0)
 		if (pendingDeathLink 
 				&& !g_Vars.currentplayer->isdead
 				&& g_Vars.stagenum != STAGE_TITLE
-				&& g_Vars.stagenum != STAGE_CITRAINING) {
+				&& g_Vars.stagenum != STAGE_CITRAINING
+				&& !cheatIsActive(CHEAT_INVINCIBLE)) {
 			// Player received a death link
 			playerDieByShooter(g_Vars.currentplayernum, true);
 		}
