@@ -6348,7 +6348,9 @@ void bgunDisarm(struct prop *attackerprop)
 		drop = true;
 
 		// Only drop weapons in the weapon set if weapon progression is enabled
-		if (weaponProgressionType != WEAPONPROG_DISABLED && allowProgWeaponInChallenges == 1) {
+		if (weaponProgressionType != WEAPONPROG_DISABLED
+				&& g_Vars.normmplayerisrunning
+				&& allowProgWeaponInChallenges == 1) {
 			drop = false;
 			for (i = 0; i < ARRAYCOUNT(g_MpSetup.weapons); i++) {
 				if (weaponnum == g_MpWeapons[g_MpSetup.weapons[i]].weaponnum) {

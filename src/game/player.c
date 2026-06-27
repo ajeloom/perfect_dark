@@ -697,9 +697,19 @@ void playerStartNewLife(void)
 
 	bmoveUpdateRooms(g_Vars.currentplayer);
 	invRemoveLockedWeapons();
-	if (weaponProgressionType != WEAPONPROG_DISABLED) {
+
+	if (weaponProgressionType != WEAPONPROG_DISABLED
+			&& !g_Vars.normmplayerisrunning) {
+		// Co-operative
 		invGetProgressiveWeapons();
 	}
+	else if (weaponProgressionType != WEAPONPROG_DISABLED
+			&& g_Vars.normmplayerisrunning
+			&& allowProgWeaponInChallenges == 1) {
+		// Allow Progressive Weapons in Challenges
+		invGetProgressiveWeapons();
+	}
+
 	playerSpawn();
 
 	if (g_Vars.normmplayerisrunning) {
@@ -1188,8 +1198,9 @@ void playerSpawn(void)
 				}
 			}
 
+			// Equip progressive weapon in combat sim
 			if (weaponProgressionType != WEAPONPROG_DISABLED 
-					&& g_Vars.mplayerisrunning
+					&& g_Vars.normmplayerisrunning
 					&& allowProgWeaponInChallenges == 1) {
 				invGetProgressiveWeapons();
 				bgunEquipWeapon2(HAND_LEFT, WEAPON_NONE);

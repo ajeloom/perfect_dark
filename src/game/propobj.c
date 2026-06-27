@@ -21418,6 +21418,7 @@ void weaponCreateForPlayerDrop(s32 weaponnum)
 
 	// Only drop weapons from the weapon set when you die
 	if (weaponProgressionType != WEAPONPROG_DISABLED 
+			&& g_Vars.normmplayerisrunning
 			&& allowProgWeaponInChallenges == 1
 			&& weaponnum != WEAPON_BRIEFCASE2
 			&& weaponnum != WEAPON_DATAUPLINK) {

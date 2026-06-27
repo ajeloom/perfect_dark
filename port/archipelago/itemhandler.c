@@ -396,7 +396,9 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
 
         for (s32 i = 0; i < PLAYERCOUNT(); i++) {
 			setCurrentPlayerNum(i);
+
             if (g_Vars.stagenum != STAGE_CITRAINING && !g_Vars.normmplayerisrunning) {
+                // Co-operative
                 if (weaponProgressionType == WEAPONPROG_ALLGUNS) {
                     invGiveSingleWeapon(progressiveWeaponNumbers[progressiveWeapon]);
                     
@@ -419,6 +421,7 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
             else if (g_Vars.stagenum != STAGE_CITRAINING
                         && g_Vars.normmplayerisrunning 
                         && allowProgWeaponInChallenges == 1) {
+                // Allow Progressive Weapons in Challenges
                 if (weaponProgressionType == WEAPONPROG_ALLGUNS) {
                     for (s32 i = 0; i < PLAYERCOUNT(); i++) {
                         setCurrentPlayerNum(i);
