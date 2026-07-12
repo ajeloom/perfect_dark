@@ -24,6 +24,8 @@
 extern u32 unlockedChallenges[30];
 extern u32 completedChallenges[30];
 
+extern int shorterChallenges;
+
 u8 g_MpFeaturesForceUnlocked[40];
 u8 g_MpFeaturesUnlocked[80];
 
@@ -405,6 +407,7 @@ struct mpconfigfull *challengeLoadConfig(s32 confignum, u8 *buffer, s32 len)
 	extern struct mpstrings EXT_SEG _mpstringsISegmentRomEnd;
 
 	extern struct mpconfig g_MpConfigs[];
+	extern struct mpconfig shorterChallengeMpConfigs[];
 
 	BTYPE banks[][2] = {
 		{ (BTYPE)REF_SEG _mpstringsESegmentRomStart, (BTYPE)REF_SEG _mpstringsESegmentRomEnd },
@@ -427,7 +430,13 @@ struct mpconfigfull *challengeLoadConfig(s32 confignum, u8 *buffer, s32 len)
 	bank = banks[language_id][0];
 	loadedstrings = dmaExecWithAutoAlign(buffer2, bank + confignum * sizeof(struct mpstrings), sizeof(struct mpstrings));
 
-	mpconfig->config = g_MpConfigs[confignum];
+	if (shorterChallenges == 0) {
+		mpconfig->config = g_MpConfigs[confignum];
+	}
+	else {
+		mpconfig->config = shorterChallengeMpConfigs[confignum];
+	}
+	
 	mpconfig->strings = *loadedstrings;
 
 	return mpconfig;

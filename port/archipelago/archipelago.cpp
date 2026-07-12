@@ -43,6 +43,7 @@ int weaponProgressionType;
 int allowProgWeaponInChallenges;
 
 int hasChallenges;
+int shorterChallenges = 0;
 int hasWeaponTraining;
 int hasDeviceTraining;
 int hasHolotraining;
@@ -961,6 +962,10 @@ bool Initialize() {
 
             if (data.at("options").contains("challenges")) {
                 hasChallenges = data.at("options").at("challenges");
+            }
+
+            if (data.at("options").contains("shorter_challenges")) {
+                shorterChallenges = data.at("options").at("shorter_challenges");
             }
 
             if (data.at("options").contains("weapon_training")) {
