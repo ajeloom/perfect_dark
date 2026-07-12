@@ -1254,14 +1254,13 @@ MenuItemHandlerResult menuhandlerRandomCharacters(s32 operation, struct menuitem
 
 u32 getRandomBody() {
 	// Get a random body
-	u32 randomBody = (rngRandom() % 68);
+	u32 randomBody = (rngRandom() % 69);
 
 	// This is if the suit outfits get picked
 	if (randomBody <= 3) {
 		return randomBody + 0x00;
 	}
 
-	// s32 randomBody = (random() % 64) + 0x56;
 	randomBody = (randomBody - 4) + 0x56;
 	while (randomBody == BODY_SKEDAR 
 		|| randomBody == BODY_DRCAROLL 
@@ -1270,7 +1269,7 @@ u32 getRandomBody() {
 		|| randomBody == BODY_CHICROB 
 		|| randomBody == BODY_MINISKEDAR
 		|| randomBody == BODY_SKEDARKING) {
-		randomBody = (rngRandom() % 64) + 0x56;
+		randomBody = (rngRandom() % 65) + 0x56;
 	}
 
 	return randomBody;
@@ -1278,14 +1277,13 @@ u32 getRandomBody() {
 
 u32 getRandomBodyExcludeShort() {
 	// Get a random body
-	u32 randomBody = (rngRandom() % 68);
+	u32 randomBody = (rngRandom() % 69);
 
 	// This is if the suit outfits get picked
 	if (randomBody <= 3) {
 		return randomBody + 0x00;
 	}
 
-	// s32 randomBody = (random() % 64) + 0x56;
 	randomBody = (randomBody - 4) + 0x56;
 	while (randomBody == BODY_ELVIS1
 		|| randomBody == BODY_SKEDAR
@@ -1295,9 +1293,10 @@ u32 getRandomBodyExcludeShort() {
 		|| randomBody == BODY_TESTCHR 
 		|| randomBody == BODY_CHICROB 
 		|| randomBody == BODY_MINISKEDAR
+		|| randomBody == BODY_MAIAN_SOLDIER
 		|| randomBody == BODY_SKEDARKING
 		|| randomBody == BODY_ELVISWAISTCOAT) {
-		randomBody = (rngRandom() % 64) + 0x56;
+		randomBody = (rngRandom() % 65) + 0x56;
 	}
 
 	return randomBody;
@@ -1306,7 +1305,7 @@ u32 getRandomBodyExcludeShort() {
 u32 getRandomHead() {
 
 	// Get a number between 0x04 and 0x55
-	u32 randomHead = (rngRandom() % 81) + 0x04;
+	u32 randomHead = (rngRandom() % 82) + 0x04;
 
 	return randomHead;
 }
@@ -1329,7 +1328,7 @@ MenuItemHandlerResult menuhandlerRandomize(s32 operation, struct menuitem *item,
 		randomTrenchBody = getRandomBodyExcludeShort();
 		randomFrockRippedBody = getRandomBody();
 		randomFrockBody = getRandomBodyExcludeShort();
-		randomLeatherBody = getRandomBody();
+		randomLeatherBody = getRandomBodyExcludeShort();
 		randomDeepSeaBody = getRandomBody();
 		randomWetSuitBody = getRandomBody();
 		randomSnowBody = getRandomBody();
