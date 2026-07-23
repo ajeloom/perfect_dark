@@ -26,7 +26,9 @@ extern struct g_vars g_Vars;
 #define AP_ITEM_AIR_FORCE_ONE_MASTER_KEY 234
 #define AP_ITEM_FILLER 235
 #define AP_ITEM_MISSION_STAR 237
-#define AP_ITEM_VICTORY 238
+#define AP_ITEM_CHALLENGE_STAR 238
+#define AP_ITEM_SKEDAR_RUINS 239
+#define AP_ITEM_VICTORY 240
 
 #define AP_AGENT_OBJ_OFFSET 1
 #define AP_SPECIAL_AGENT_OBJ_OFFSET 62
@@ -39,6 +41,7 @@ extern struct g_vars g_Vars;
 #define AP_COMPLETE_CHEAT_OFFSET 456
 #define AP_TIMED_CHEAT_OFFSET 473
 #define AP_CLASSIC_WEAPON_CHEAT_OFFSET 490
+#define AP_COLLECT_ALL_STARS_LOCATION 498
 
 u32 completedMissions[NUM_SOLOSTAGES][3];
 u32 completedAgentObjectives[NUM_SOLOSTAGES][3];
@@ -52,8 +55,14 @@ u32 unlockedChallenges[30];
 u32 unlockedWeapons[94];
 u32 unlockedCheats[42];
 
+extern int completionGoal;
+extern int skedarRequirements;
+
 int missionStars = 0;
 extern int requiredMissionStars;
+
+int challengeStars = 0;
+extern int requiredChallengeStars;
 
 int progressiveWeapon = 0;
 extern int weaponProgressionType;
@@ -244,6 +253,9 @@ void resetAP()
     for (i = 0; i < ARRAYCOUNT(unlockedCheats); i++) {
 		unlockedCheats[i] = 0;
 	}
+
+    completionGoal = 0;
+    skedarRequirements = 0;
 
     func0f0f820c(NULL, -7);
 }
@@ -485,12 +497,65 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
 	if (itemID == AP_ITEM_MISSION_STAR) {
         missionStars += 1;
 
-        if (missionStars >= requiredMissionStars) {
-            ReachedGoal();
+        if (completionGoal == 1
+                || (completionGoal == 0 && skedarRequirements == 1)) {
+            if (missionStars >= requiredMissionStars) {
+                uint64_t location = AP_COLLECT_ALL_STARS_LOCATION;
+                InternalCollectAPItem(location);
+            }
+        }
+
+        if (completionGoal == 3
+                || (completionGoal == 0 && skedarRequirements == 3)) {
+            if (missionStars >= requiredMissionStars
+                    && challengeStars >= requiredChallengeStars) {
+                uint64_t location = AP_COLLECT_ALL_STARS_LOCATION;
+                InternalCollectAPItem(location);
+            }
         }
 
         return;
 	}
+
+    // Challenge Star
+    if (itemID == AP_ITEM_CHALLENGE_STAR) {
+        challengeStars += 1;
+
+        if (completionGoal == 2
+                || (completionGoal == 0 && skedarRequirements == 2)) {
+            if (challengeStars >= requiredChallengeStars) {
+                uint64_t location = AP_COLLECT_ALL_STARS_LOCATION;
+                InternalCollectAPItem(location);
+            }
+        }
+
+        if (completionGoal == 3
+                || (completionGoal == 0 && skedarRequirements == 3)) {
+            if (missionStars >= requiredMissionStars
+                    && challengeStars >= requiredChallengeStars) {
+                uint64_t location = AP_COLLECT_ALL_STARS_LOCATION;
+                InternalCollectAPItem(location);
+            }
+        }
+
+        return;
+    }
+
+    // Give Skedar Ruins on any difficulty that you have a mission in
+    if (itemID == AP_ITEM_SKEDAR_RUINS) {
+        for (s32 i = 0; i < 21; i++) {
+            if (unlockedMissions[i][0] == 1) {
+                unlockedMissions[16][0] = 1;
+            }
+            if (unlockedMissions[i][1] == 1) {
+                unlockedMissions[16][1] = 1;
+            }
+            if (unlockedMissions[i][2] == 1) {
+                unlockedMissions[16][2] = 1;
+            }
+        }
+        return;
+    }
 
     // Victory
     if (itemID == AP_ITEM_VICTORY) {

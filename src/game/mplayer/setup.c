@@ -30,6 +30,11 @@
 
 extern u32 unlockedChallenges[30];
 
+extern int completionGoal;
+extern int challengeStars;
+extern int requiredChallengeStars;
+extern int skedarRequirements;
+
 struct menuitem g_MpCharacterMenuItems[];
 struct menudialogdef g_MpAddSimulantMenuDialog;
 struct menudialogdef g_MpChangeSimulantMenuDialog;
@@ -4915,6 +4920,17 @@ MenuItemHandlerResult menuhandlerMpStartChallenge(s32 operation, struct menuitem
 
 char *mpMenuTextChallengeName(struct menuitem *item)
 {
+	if (completionGoal >= 2 || (completionGoal == 0 && skedarRequirements >= 2)) {
+		if (g_BossFile.locktype == MPLOCKTYPE_CHALLENGE || g_Vars.normmplayerisrunning) {
+			sprintf(g_StringPointer, "%s:\n", challengeGetName(challengeGetCurrent()));
+			return g_StringPointer;
+		}
+		else {
+			sprintf(g_StringPointer, "Challenge Stars: %d/%d\n", challengeStars, requiredChallengeStars);
+			return g_StringPointer;
+		}
+	}
+
 #if VERSION >= VERSION_NTSC_1_0
 	if (g_BossFile.locktype != MPLOCKTYPE_CHALLENGE) {
 		return langGet(L_MPMENU_050); // "Combat Challenges"
@@ -4973,7 +4989,7 @@ struct menuitem g_MpChallengesMenuItems[] = {
 
 struct menudialogdef g_MpChallengesMenuDialog = {
 	MENUDIALOGTYPE_DEFAULT,
-	L_MPMENU_050, // "Combat Challenges"
+	(uintptr_t)&mpMenuTextChallengeName,
 	g_MpChallengesMenuItems,
 	mpCombatChallengesMenuDialog,
 	0,

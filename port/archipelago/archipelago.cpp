@@ -33,10 +33,13 @@ std::string status = "Not connected\n";
 int nextCheckToGet = 0;
 
 int completionGoal;
+int skedarRequirements;
 
 extern int missionStars;
 int requiredMissionStars;
-extern int cachedMissionStars;
+
+extern int challengeStars;
+int requiredChallengeStars;
 
 extern int progressiveWeapon;
 int weaponProgressionType;
@@ -290,7 +293,9 @@ std::string itemNames[] = {
     "Cheese",
     "Trap",
     "Mission Star",
-    "Victory"
+    "Challenge Star",
+    "Skedar Ruins",
+    "Victory",
 };
 
 std::map<int, std::string> locationNames = {
@@ -770,6 +775,7 @@ std::map<int, std::string> locationNames = {
     {495, "Cheat Unlock: Get gold medals for Timed Mine, Proximity Mine, and Remote Mine"},
     {496, "Cheat Unlock: Get gold medals for FarSight XR-20, Crossbow, Combat Knife, and Grenade"},
     {497, "Cheat Unlock: Get gold medals for Tranquilizer, Reaper, and Devastator"},
+    {498, "Collect All Stars"},
 };
 
 void AP_Init()
@@ -784,6 +790,8 @@ void AP_Init()
 
     system("cls");
 
+    printf("Version: 0.3.0\n");
+    printf("If you are using an older version of the APWorld, then it will not work correctly.\n");
     printf("--------------------------------------------------------------------------------------------------\n");
     printf("Commands:\n");
     printf(" - '/help' - shows available commands\n");
@@ -945,6 +953,10 @@ bool Initialize() {
                 completionGoal = data.at("options").at("goal");
             }
 
+            if (data.at("options").contains("skedar_ruins_requirements")) {
+                skedarRequirements = data.at("options").at("skedar_ruins_requirements");
+            }
+
             if (data.at("options").contains("required_mission_stars")) {
                 missionStars = 0;
                 requiredMissionStars = data.at("options").at("required_mission_stars");
@@ -962,6 +974,11 @@ bool Initialize() {
 
             if (data.at("options").contains("challenges")) {
                 hasChallenges = data.at("options").at("challenges");
+            }
+
+            if (data.at("options").contains("required_challenge_stars")) {
+                challengeStars = 0;
+                requiredChallengeStars = data.at("options").at("required_challenge_stars");
             }
 
             if (data.at("options").contains("shorter_challenges")) {
