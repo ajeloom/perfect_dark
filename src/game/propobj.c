@@ -17833,9 +17833,10 @@ s32 objTestForPickup(struct prop *prop)
 							return TICKOP_NONE;
 						}
 
-						// Can't pickup RC-P120 in any mission that's not Defense
+						// Can't pickup RC-P120 or Devastator in any mission that's not Defense
 						if (g_Vars.stagenum != STAGE_DEFENSE
-								&& weapon->weaponnum == WEAPON_RCP120) {
+								&& (weapon->weaponnum == WEAPON_RCP120
+								|| weapon->weaponnum == WEAPON_DEVASTATOR)) {
 							return TICKOP_NONE;
 						}
 
@@ -17843,6 +17844,7 @@ s32 objTestForPickup(struct prop *prop)
 						if (weapon->weaponnum != WEAPON_K7AVENGER
 								&& weapon->weaponnum != WEAPON_REMOTEMINE
 								&& weapon->weaponnum != WEAPON_RCP120
+								&& weapon->weaponnum != WEAPON_DEVASTATOR
 								&& weapon->weaponnum != progressiveWeaponNumbers[progressiveWeapon]) {
 							return TICKOP_NONE;
 						}
