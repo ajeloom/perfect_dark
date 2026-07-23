@@ -80,6 +80,7 @@
 extern u32 unlockedWeapons[94];
 
 extern bool randomCharacters;
+extern bool randomBuddyWeapons;
 
 extern u32 randomJoHead;
 extern u32 randomVDHead;
@@ -4078,7 +4079,13 @@ void playerTick(bool arg0)
 						chr->cloakfadefinished = true;
 						chr->cloakfadefrac = 0;
 
-						chrGiveWeapon(chr, MODEL_CHRFALCON2, WEAPON_FALCON2, 0);
+						if (randomBuddyWeapons) {
+							u32 randomWeapon = (rngRandom() % 33) + 2;
+							chrGiveWeapon(chr, playermgrGetModelOfWeapon(randomWeapon), randomWeapon, 0);
+						}
+						else {
+							chrGiveWeapon(chr, MODEL_CHRFALCON2, WEAPON_FALCON2, 0);
+						}
 					}
 				}
 
@@ -4168,7 +4175,13 @@ void playerTick(bool arg0)
 						chr->cloakfadefinished = true;
 						chr->cloakfadefrac = 0;
 
-						chrGiveWeapon(chr, MODEL_CHRAVENGER, WEAPON_K7AVENGER, 0);
+						if (randomBuddyWeapons) {
+							u32 randomWeapon = (rngRandom() % 33) + 2;
+							chrGiveWeapon(chr, playermgrGetModelOfWeapon(randomWeapon), randomWeapon, 0);
+						}
+						else {
+							chrGiveWeapon(chr, MODEL_CHRAVENGER, WEAPON_K7AVENGER, 0);
+						}
 					}
 				}
 
@@ -4214,8 +4227,16 @@ void playerTick(bool arg0)
 						chr->cloakfadefinished = true;
 						chr->cloakfadefrac = 0;
 
-						chrGiveWeapon(chr, MODEL_CHRDY357TRENT, WEAPON_DY357LX, 0);
-						chrGiveWeapon(chr, MODEL_CHRDY357, WEAPON_DY357MAGNUM, OBJFLAG_WEAPON_LEFTHANDED);
+						if (randomBuddyWeapons) {
+							u32 randomWeapon = (rngRandom() % 33) + 2;
+							chrGiveWeapon(chr, playermgrGetModelOfWeapon(randomWeapon), randomWeapon, 0);
+							randomWeapon = (rngRandom() % 33) + 2;
+							chrGiveWeapon(chr, playermgrGetModelOfWeapon(randomWeapon), randomWeapon, OBJFLAG_WEAPON_LEFTHANDED);
+						}
+						else {
+							chrGiveWeapon(chr, MODEL_CHRDY357TRENT, WEAPON_DY357LX, 0);
+							chrGiveWeapon(chr, MODEL_CHRDY357, WEAPON_DY357MAGNUM, OBJFLAG_WEAPON_LEFTHANDED);
+						}
 					}
 				}
 
@@ -4261,7 +4282,13 @@ void playerTick(bool arg0)
 						chr->cloakfadefinished = true;
 						chr->cloakfadefrac = 0;
 
-						chrGiveWeapon(chr, MODEL_CHRRCP120, WEAPON_RCP120, 0);
+						if (randomBuddyWeapons) {
+							u32 randomWeapon = (rngRandom() % 33) + 2;
+							chrGiveWeapon(chr, playermgrGetModelOfWeapon(randomWeapon), randomWeapon, 0);
+						}
+						else {
+							chrGiveWeapon(chr, MODEL_CHRRCP120, WEAPON_RCP120, 0);
+						}
 					}
 				}
 
