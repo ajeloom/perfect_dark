@@ -35,11 +35,17 @@ int nextCheckToGet = 0;
 int completionGoal;
 int skedarRequirements;
 
-extern int missionStars;
-int requiredMissionStars;
+int missionLogic;
+int hasAgent;
+int hasSpecialAgent;
+int hasPerfectAgent;
 
-extern int challengeStars;
-int requiredChallengeStars;
+extern int missionStars;
+int requiredAgentMissionStars;
+int requiredSpecialAgentMissionStars;
+int requiredPerfectAgentMissionStars;
+int requiredMissionStars = 0;
+
 
 extern int progressiveWeapon;
 extern int progressivePistol;
@@ -50,8 +56,14 @@ extern int progressiveOtherWeapon;
 int weaponProgressionType;
 int allowProgWeaponInChallenges;
 
+int hasMasterKey;
+
 int hasChallenges;
+extern int challengeStars;
+int requiredChallengeStars;
+int challengeLogic;
 int shorterChallenges = 0;
+
 int hasWeaponTraining;
 int hasDeviceTraining;
 int hasHolotraining;
@@ -967,10 +979,38 @@ bool Initialize() {
                 skedarRequirements = data.at("options").at("skedar_ruins_requirements");
             }
 
-            if (data.at("options").contains("required_mission_stars")) {
-                missionStars = 0;
-                requiredMissionStars = data.at("options").at("required_mission_stars");
+            if (data.at("options").contains("mission_logic")) {
+                missionLogic = data.at("options").at("mission_logic");
             }
+
+            if (data.at("options").contains("agent")) {
+                hasAgent = data.at("options").at("agent");
+            }
+
+            if (data.at("options").contains("required_agent_mission_stars")) {
+                missionStars = 0;
+                requiredAgentMissionStars = data.at("options").at("required_agent_mission_stars");
+            }
+
+            if (data.at("options").contains("special_agent")) {
+                hasSpecialAgent = data.at("options").at("special_agent");
+            }
+
+            if (data.at("options").contains("required_special_agent_mission_stars")) {
+                missionStars = 0;
+                requiredSpecialAgentMissionStars = data.at("options").at("required_special_agent_mission_stars");
+            }
+
+            if (data.at("options").contains("perfect_agent")) {
+                hasPerfectAgent = data.at("options").at("perfect_agent");
+            }
+
+            if (data.at("options").contains("required_perfect_agent_mission_stars")) {
+                missionStars = 0;
+                requiredPerfectAgentMissionStars = data.at("options").at("required_perfect_agent_mission_stars");
+            }
+
+            requiredMissionStars = requiredAgentMissionStars + requiredSpecialAgentMissionStars + requiredPerfectAgentMissionStars;
 
             if (data.at("options").contains("weapon_progression")) {
                 progressiveWeapon = 0;
@@ -986,6 +1026,10 @@ bool Initialize() {
                 allowProgWeaponInChallenges = data.at("options").at("allow_progressive_weapon_in_challenges");
             }
 
+            if (data.at("options").contains("master_key")) {
+                hasMasterKey = data.at("options").at("master_key");
+            }
+
             if (data.at("options").contains("challenges")) {
                 hasChallenges = data.at("options").at("challenges");
             }
@@ -993,6 +1037,10 @@ bool Initialize() {
             if (data.at("options").contains("required_challenge_stars")) {
                 challengeStars = 0;
                 requiredChallengeStars = data.at("options").at("required_challenge_stars");
+            }
+
+            if (data.at("options").contains("challenge_logic")) {
+                challengeLogic = data.at("options").at("challenge_logic");
             }
 
             if (data.at("options").contains("shorter_challenges")) {

@@ -42,12 +42,25 @@ u32 randomMrBlondeBody;
 u32 randomMaianBody;
 
 extern int completionGoal;
+extern int skedarRequirements;
+
+extern int missionLogic;
+extern int hasAgent;
+extern int hasSpecialAgent;
+extern int hasPerfectAgent;
+
 extern int requiredMissionStars;
 
 extern int weaponProgressionType;
 extern int allowProgWeaponInChallenges;
 
+extern int hasMasterKey;
+
 extern int hasChallenges;
+extern int requiredChallengeStars;
+extern int challengeLogic;
+extern int shorterChallenges;
+
 extern int hasWeaponTraining;
 extern int hasDeviceTraining;
 extern int hasHolotraining;
@@ -1062,48 +1075,105 @@ const char *GetOption(struct menuitem *item)
 	int option = 0;
 	switch (item->param) {
 		case 0:
-			if (completionGoal == 0) {
-				return "Complete Skedar Ruins  \n";
-			}
-			else {
-				sprintf(g_StringPointer, "%d Mission Stars  \n", requiredMissionStars);
-				return g_StringPointer;
+			switch (completionGoal) {
+				case 0:
+					return "Complete Skedar Ruins  \n";
+				case 1:
+					sprintf(g_StringPointer, "%d Missions  \n", requiredMissionStars);
+					return g_StringPointer;
+				case 2:
+					sprintf(g_StringPointer, "%d Challenges  \n", requiredChallengeStars);
+					return g_StringPointer;
+				case 3:
+					sprintf(g_StringPointer, "%d Missions, %d Challenges  \n", requiredMissionStars, requiredChallengeStars);
+					return g_StringPointer;
 			}
 		case 1:
-			if (weaponProgressionType == WEAPONPROG_DISABLED) {
-				return "Normal ";
-			}
-			else if (weaponProgressionType == WEAPONPROG_VANILLA_ALLGUNS) {
-				return "All Guns ";
-			}
-			else if (weaponProgressionType == WEAPONPROG_ALLGUNS) {
-				return "Progressive Weapon ";
-			}
-			else if (weaponProgressionType == WEAPONPROG_ONEGUN) {
-				return "Progressive One Gun ";
-			}
-			else if (weaponProgressionType == WEAPONPROG_TYPES) {
-				return "Progressive Types ";
+			switch (skedarRequirements) {
+				case 0:
+					return "Item ";
+				case 1:
+					sprintf(g_StringPointer, "%d Missions  \n", requiredMissionStars);
+					return g_StringPointer;
+				case 2:
+					sprintf(g_StringPointer, "%d Challenges  \n", requiredChallengeStars);
+					return g_StringPointer;
+				case 3:
+					sprintf(g_StringPointer, "%d Missions, %d Challenges  \n", requiredMissionStars, requiredChallengeStars);
+					return g_StringPointer;
 			}
 		case 2:
-			option = allowProgWeaponInChallenges;
-			break;
+			switch (missionLogic) {
+				case 0:
+					return "Normal ";
+				case 1:
+					return "Veteran ";
+				case 2:
+					return "Hard " ;
+				case 3:
+					return "Perfect ";
+			}
 		case 3:
-			option = hasChallenges;
+			option = hasAgent;
 			break;
 		case 4:
-			option = hasWeaponTraining;
+			option = hasSpecialAgent;
 			break;
 		case 5:
-			option = hasDeviceTraining;
+			option = hasPerfectAgent;
 			break;
 		case 6:
-			option = hasHolotraining;
-			break;
+			switch (weaponProgressionType) {
+				case WEAPONPROG_DISABLED:
+					return "Normal ";
+				case WEAPONPROG_VANILLA_ALLGUNS:
+					return "All Guns ";
+				case WEAPONPROG_ALLGUNS:
+					return "Progressive Weapon ";
+				case WEAPONPROG_ONEGUN:
+					return "Progressive One Gun ";
+				case WEAPONPROG_TYPES:
+					return "Progressive Types ";
+			}
 		case 7:
-			option = hasUnlockCheats;
+			option = allowProgWeaponInChallenges;
 			break;
 		case 8:
+			option = hasMasterKey;
+			break;
+		case 9:
+			option = hasChallenges;
+			if (completionGoal >= 2 
+					|| (completionGoal == 0 
+					&& skedarRequirements >= 2)) {
+				option = 1;
+			}
+			break;
+		case 10:
+			switch (challengeLogic) {
+				case 0:
+					return "Strict ";
+				case 1:
+					return "Normal ";
+				case 2:
+					return "Hard " ;
+			}
+		case 11:
+			option = shorterChallenges;
+			break;
+		case 12:
+			option = hasWeaponTraining;
+			break;
+		case 13:
+			option = hasDeviceTraining;
+			break;
+		case 14:
+			option = hasHolotraining;
+			break;
+		case 15:
+			option = hasUnlockCheats;
+			break;
+		case 16:
 			option = deathLink;
 			break;
 	}
@@ -1117,7 +1187,7 @@ const char *GetOption(struct menuitem *item)
 
 struct menuitem g_GameOptionsMenuItems[] = {
 	{
-		MENUITEMTYPE_LABEL,
+		MENUITEMTYPE_SELECTABLE,
 		0,
 		MENUITEMFLAG_LITERAL_TEXT,
 		(uintptr_t)"Completion Goal:\n",
@@ -1125,64 +1195,128 @@ struct menuitem g_GameOptionsMenuItems[] = {
 		NULL,
 	},
 	{
-		MENUITEMTYPE_LABEL,
+		MENUITEMTYPE_SELECTABLE,
 		1,
 		MENUITEMFLAG_LITERAL_TEXT,
-		(uintptr_t)"Weapon Progression:                 \n",
+		(uintptr_t)"Skedar Requirements:                 \n",
 		(uintptr_t)&GetOption,
 		NULL,
 	},
 	{
-		MENUITEMTYPE_LABEL,
+		MENUITEMTYPE_SELECTABLE,
 		2,
 		MENUITEMFLAG_LITERAL_TEXT,
-		(uintptr_t)"Prog Wpns in Challenges:\n",
+		(uintptr_t)"Mission Logic:\n",
 		(uintptr_t)&GetOption,
 		NULL,
 	},
 	{
-		MENUITEMTYPE_LABEL,
+		MENUITEMTYPE_SELECTABLE,
 		3,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Agent:\n",
+		(uintptr_t)&GetOption,
+		NULL,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		4,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Special Agent:\n",
+		(uintptr_t)&GetOption,
+		NULL,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		5,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Perfect Agent:\n",
+		(uintptr_t)&GetOption,
+		NULL,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		6,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Weapon Progression:\n",
+		(uintptr_t)&GetOption,
+		NULL,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		7,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Prog. Weapons in Combat:\n",
+		(uintptr_t)&GetOption,
+		NULL,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		8,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Master Key:\n",
+		(uintptr_t)&GetOption,
+		NULL,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		9,
 		MENUITEMFLAG_LITERAL_TEXT,
 		(uintptr_t)"Challenges:\n",
 		(uintptr_t)&GetOption,
 		NULL,
 	},
 	{
-		MENUITEMTYPE_LABEL,
-		4,
+		MENUITEMTYPE_SELECTABLE,
+		10,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Challenge Logic:\n",
+		(uintptr_t)&GetOption,
+		NULL,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		11,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Shorter Challenges:\n",
+		(uintptr_t)&GetOption,
+		NULL,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		12,
 		MENUITEMFLAG_LITERAL_TEXT,
 		(uintptr_t)"Firing Range:\n",
 		(uintptr_t)&GetOption,
 		NULL,
 	},
 	{
-		MENUITEMTYPE_LABEL,
-		5,
+		MENUITEMTYPE_SELECTABLE,
+		13,
 		MENUITEMFLAG_LITERAL_TEXT,
 		(uintptr_t)"Device Training:\n",
 		(uintptr_t)&GetOption,
 		NULL,
 	},
 	{
-		MENUITEMTYPE_LABEL,
-		6,
+		MENUITEMTYPE_SELECTABLE,
+		14,
 		MENUITEMFLAG_LITERAL_TEXT,
 		(uintptr_t)"Holotraining:\n",
 		(uintptr_t)&GetOption,
 		NULL,
 	},
 	{
-		MENUITEMTYPE_LABEL,
-		7,
+		MENUITEMTYPE_SELECTABLE,
+		15,
 		MENUITEMFLAG_LITERAL_TEXT,
-		(uintptr_t)"Unlock Cheat Checks:\n",
+		(uintptr_t)"Cheat Unlocks:\n",
 		(uintptr_t)&GetOption,
 		NULL,
 	},
 	{
-		MENUITEMTYPE_LABEL,
-		8,
+		MENUITEMTYPE_SELECTABLE,
+		16,
 		MENUITEMFLAG_LITERAL_TEXT,
 		(uintptr_t)"Death Link:\n",
 		(uintptr_t)&GetOption,
@@ -1209,7 +1343,7 @@ struct menuitem g_GameOptionsMenuItems[] = {
 
 struct menudialogdef g_GameOptionsMenuDialog = {
 	MENUDIALOGTYPE_DEFAULT,
-	(uintptr_t)"Gameplay Options",
+	(uintptr_t)"YAML Settings\n",
 	g_GameOptionsMenuItems,
 	NULL,
 	MENUDIALOGFLAG_0002 | MENUDIALOGFLAG_DISABLERESIZE | MENUDIALOGFLAG_0400 | MENUDIALOGFLAG_LITERAL_TEXT,
@@ -1403,39 +1537,7 @@ MenuItemHandlerResult randomizeCharactersMenuDialog(s32 operation, struct menuit
 	return 0;
 }
 
-struct menuitem g_ArchipelagoMenuItems[] = {
-	{
-		MENUITEMTYPE_SELECTABLE,
-		0,
-		MENUITEMFLAG_SELECTABLE_OPENSDIALOG | MENUITEMFLAG_LITERAL_TEXT,
-		(uintptr_t)"Connection Info\n",
-		0,
-		(void *)&g_ConnectionInfoMenuDialog,
-	},
-	{
-		MENUITEMTYPE_SELECTABLE,
-		0,
-		MENUITEMFLAG_SELECTABLE_OPENSDIALOG | MENUITEMFLAG_LITERAL_TEXT,
-		(uintptr_t)"Gameplay Options\n",
-		0,
-		(void *)&g_GameOptionsMenuDialog,
-	},
-	// {
-	// 	MENUITEMTYPE_SELECTABLE,
-	// 	0,
-	// 	MENUITEMFLAG_SELECTABLE_OPENSDIALOG | MENUITEMFLAG_LITERAL_TEXT,
-	// 	(uintptr_t)"Mission Checklist\n",
-	// 	0,
-	// 	(void *)&g_MissionChecklistMenuDialog,
-	// },
-	// {
-	// 	MENUITEMTYPE_SELECTABLE,
-	// 	0,
-	// 	MENUITEMFLAG_SELECTABLE_OPENSDIALOG | MENUITEMFLAG_LITERAL_TEXT,
-	// 	(uintptr_t)"Challenge Checklist\n",
-	// 	0,
-	// 	(void *)&g_ChallengeChecklistMenuDialog,
-	// },
+struct menuitem g_OtherOptionsMenuItems[] = {
 	{
 		MENUITEMTYPE_CHECKBOX,
 		0,
@@ -1444,6 +1546,35 @@ struct menuitem g_ArchipelagoMenuItems[] = {
 		0,
 		menuhandlerShowLocationName,
 	},
+	{
+		MENUITEMTYPE_SEPARATOR,
+		0,
+		0,
+		0,
+		0,
+		NULL,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		0,
+		MENUITEMFLAG_SELECTABLE_CLOSESDIALOG,
+		L_OPTIONS_213, // "Back"
+		0,
+		NULL,
+	},
+	{ MENUITEMTYPE_END },
+};
+
+struct menudialogdef g_OtherOptionsMenuDialog = {
+	MENUDIALOGTYPE_DEFAULT,
+	(uintptr_t)"Other Options\n",
+	g_OtherOptionsMenuItems,
+	NULL,
+	MENUDIALOGFLAG_LITERAL_TEXT,
+	NULL,
+};
+
+struct menuitem g_RandomOptionsMenuItems[] = {
 	{
 		MENUITEMTYPE_CHECKBOX,
 		0,
@@ -1464,9 +1595,86 @@ struct menuitem g_ArchipelagoMenuItems[] = {
 		MENUITEMTYPE_SELECTABLE,
 		0,
 		MENUITEMFLAG_LITERAL_TEXT,
-		(uintptr_t)"Randomize\n",
+		(uintptr_t)"Re-roll Characters\n",
 		0,
 		randomizeCharactersMenuDialog,
+	},
+	{
+		MENUITEMTYPE_SEPARATOR,
+		0,
+		0,
+		0,
+		0,
+		NULL,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		0,
+		MENUITEMFLAG_SELECTABLE_CLOSESDIALOG,
+		L_OPTIONS_213, // "Back"
+		0,
+		NULL,
+	},
+	{ MENUITEMTYPE_END },
+};
+
+struct menudialogdef g_RandomOptionsMenuDialog = {
+	MENUDIALOGTYPE_DEFAULT,
+	(uintptr_t)"Random Options\n",
+	g_RandomOptionsMenuItems,
+	NULL,
+	MENUDIALOGFLAG_LITERAL_TEXT,
+	NULL,
+};
+
+struct menuitem g_ArchipelagoMenuItems[] = {
+	{
+		MENUITEMTYPE_SELECTABLE,
+		0,
+		MENUITEMFLAG_SELECTABLE_OPENSDIALOG | MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Connection Info\n",
+		0,
+		(void *)&g_ConnectionInfoMenuDialog,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		0,
+		MENUITEMFLAG_SELECTABLE_OPENSDIALOG | MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"YAML Settings\n",
+		0,
+		(void *)&g_GameOptionsMenuDialog,
+	},
+	// {
+	// 	MENUITEMTYPE_SELECTABLE,
+	// 	0,
+	// 	MENUITEMFLAG_SELECTABLE_OPENSDIALOG | MENUITEMFLAG_LITERAL_TEXT,
+	// 	(uintptr_t)"Mission Checklist\n",
+	// 	0,
+	// 	(void *)&g_MissionChecklistMenuDialog,
+	// },
+	// {
+	// 	MENUITEMTYPE_SELECTABLE,
+	// 	0,
+	// 	MENUITEMFLAG_SELECTABLE_OPENSDIALOG | MENUITEMFLAG_LITERAL_TEXT,
+	// 	(uintptr_t)"Challenge Checklist\n",
+	// 	0,
+	// 	(void *)&g_ChallengeChecklistMenuDialog,
+	// },
+	{
+		MENUITEMTYPE_SELECTABLE,
+		0,
+		MENUITEMFLAG_SELECTABLE_OPENSDIALOG | MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Random Options\n",
+		0,
+		(void *)&g_RandomOptionsMenuDialog,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		0,
+		MENUITEMFLAG_SELECTABLE_OPENSDIALOG | MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Other Options\n",
+		0,
+		(void *)&g_OtherOptionsMenuDialog,
 	},
 	{
 		MENUITEMTYPE_SEPARATOR,
