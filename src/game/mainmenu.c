@@ -37,6 +37,7 @@
 extern u32 unlockedMissions[NUM_SOLOSTAGES][3];
 
 extern int completionGoal;
+extern int skedarRequirements;
 extern int missionStars;
 extern int requiredMissionStars;
 
@@ -4650,30 +4651,25 @@ struct menuitem g_SelectMissionMenuItems[] = {
 	{ MENUITEMTYPE_END },
 };
 
-int cachedMissionStars = -1;
-
-MenuDialogHandlerResult handleMissionMenuTitleDialog(s32 operation, struct menudialogdef *dialogdef, union handlerdata *data)
+char *handleMissionMenuName(void)
 {
-	if (completionGoal == 1) {
+	sprintf(g_StringPointer, "Mission Select\n");
+
+	if (completionGoal == 1 
+			|| completionGoal == 3
+			|| (completionGoal == 0 && (skedarRequirements == 1 || skedarRequirements == 3))) {
 		sprintf(g_StringPointer, "Mission Select - (Mission Stars: %d/%d)\n", missionStars, requiredMissionStars);
-		if (dialogdef->title != (uintptr_t)g_StringPointer || cachedMissionStars != missionStars) {
-			dialogdef->title = (uintptr_t)g_StringPointer;
-			cachedMissionStars = missionStars;
-		}
 	}
-	else if (completionGoal == 0 && dialogdef->title != (uintptr_t)"Mission Select\n") {
-		dialogdef->title = (uintptr_t)"Mission Select\n";
-	}
-	
-	return 0;
+
+	return g_StringPointer;
 }
 
 struct menudialogdef g_SelectMissionMenuDialog = {
 	MENUDIALOGTYPE_DEFAULT,
-	(uintptr_t)"Mission Select\n", // "Mission Select"
+	(uintptr_t)&handleMissionMenuName,
 	g_SelectMissionMenuItems,
-	handleMissionMenuTitleDialog,
-	MENUDIALOGFLAG_STARTSELECTS | MENUDIALOGFLAG_LITERAL_TEXT,
+	NULL,
+	MENUDIALOGFLAG_STARTSELECTS,
 	NULL,
 };
 
