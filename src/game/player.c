@@ -1206,8 +1206,11 @@ void playerSpawn(void)
 					&& g_Vars.normmplayerisrunning
 					&& allowProgWeaponInChallenges == 1) {
 				invGetProgressiveWeapons();
-				bgunEquipWeapon2(HAND_LEFT, WEAPON_NONE);
-				bgunEquipWeapon2(HAND_RIGHT, progressiveWeaponNumbers[progressiveWeapon]);
+
+				if (!(g_MpSetup.options & MPOPTION_SPAWNWITHWEAPON)) {
+					bgunEquipWeapon2(HAND_LEFT, WEAPON_NONE);
+					bgunEquipWeapon2(HAND_RIGHT, WEAPON_UNARMED);
+				}
 			}
 
 #if VERSION >= VERSION_NTSC_1_0

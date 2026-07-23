@@ -324,6 +324,9 @@ void resetAP()
 		unlockedWeapons[i] = 0;
 	}
 
+    unlockedWeapons[WEAPON_NONE] = 1;
+    unlockedWeapons[WEAPON_UNARMED] = 1;
+
     for (i = 0; i < ARRAYCOUNT(unlockedCheats); i++) {
 		unlockedCheats[i] = 0;
 	}
