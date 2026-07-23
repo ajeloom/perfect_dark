@@ -2,16 +2,13 @@
 #include <ultra64.h>
 #include <stdio.h>
 #include <stdint.h>
-#include "constants.h"
+#include "bss.h"
 #include "game/bondgun.h"
-#include "game/chraction.h"
 #include "game/hudmsg.h"
 #include "game/inv.h"
 #include "game/menu.h"
 #include "game/playermgr.h"
 #include "archipelago.h"
-
-extern struct g_vars g_Vars;
 
 #define AP_ITEM_AGENT_START 95
 #define AP_ITEM_SPECIAL_AGENT_START 116
@@ -674,10 +671,233 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
 
     // Weapons, Missions, Challenges, Cheats
     if (itemID < AP_ITEM_AGENT_START) {
-        unlockedWeapons[itemID - 1] = 1;
+        u8 weaponnum = itemID - 1;
+        unlockedWeapons[weaponnum] = 1;
 
-        if ((itemID - 1) == WEAPON_CROSSBOW) {
+        if (weaponnum == WEAPON_CROSSBOW) {
             unlockedWeapons[WEAPON_BOLT] = 1;
+        }
+
+        // Get starting weapons during the mission
+        if (weaponProgressionType == WEAPONPROG_DISABLED && !g_Vars.normmplayerisrunning) {    
+            switch (weaponnum) {
+                case WEAPON_FALCON2:
+                    if (g_Vars.stagenum == STAGE_INVESTIGATION
+                            || g_Vars.stagenum == STAGE_INFILTRATION) {
+                        invGiveSingleWeapon(weaponnum);
+                    }
+                    break;
+                case WEAPON_FALCON2_SILENCER:
+                    if (g_Vars.stagenum == STAGE_DEFECTION
+                            || g_Vars.stagenum == STAGE_G5BUILDING
+                            || g_Vars.stagenum == STAGE_RESCUE
+                            || g_Vars.stagenum == STAGE_PELAGIC) {
+                        invGiveSingleWeapon(weaponnum);
+                    }
+                    break;
+                case WEAPON_FALCON2_SCOPE:
+                    if (g_Vars.stagenum == STAGE_EXTRACTION
+                            || g_Vars.stagenum == STAGE_CHICAGO
+                            || g_Vars.stagenum == STAGE_ESCAPE
+                            || g_Vars.stagenum == STAGE_CRASHSITE
+                            || g_Vars.stagenum == STAGE_DEEPSEA
+                            || g_Vars.stagenum == STAGE_SKEDARRUINS
+                            || g_Vars.stagenum == STAGE_DUEL) {
+                        invGiveSingleWeapon(weaponnum);
+                    }
+                    break;
+                case WEAPON_SNIPERRIFLE:
+                    if (g_Vars.stagenum == STAGE_VILLA
+                            && g_MissionConfig.difficulty <= DIFF_SA) {
+                        invGiveSingleWeapon(weaponnum);
+                    }
+                    break;
+                case WEAPON_LAPTOPGUN:
+                    if ((g_Vars.stagenum == STAGE_VILLA
+                                && g_MissionConfig.difficulty == DIFF_PA)
+                            || (g_Vars.stagenum == STAGE_AIRFORCEONE
+                                && g_MissionConfig.difficulty == DIFF_A)
+                            || g_Vars.stagenum == STAGE_PELAGIC) {
+                        invGiveSingleWeapon(weaponnum);
+                    }
+                    break;
+                case WEAPON_REMOTEMINE:
+                    if ((g_Vars.stagenum == STAGE_G5BUILDING
+                                && g_MissionConfig.difficulty >= DIFF_SA)
+                            || g_Vars.stagenum == STAGE_CRASHSITE) {
+                        invGiveSingleWeapon(weaponnum);
+                    }
+                    break;
+                case WEAPON_CROSSBOW:
+                    if (g_Vars.stagenum == STAGE_AIRBASE) {
+                        invGiveSingleWeapon(weaponnum);
+                    }
+                    break;
+                case WEAPON_TIMEDMINE:
+                    if (g_Vars.stagenum == STAGE_AIRFORCEONE
+                            && g_MissionConfig.difficulty == DIFF_A) {
+                        invGiveSingleWeapon(weaponnum);
+                    }
+                    break;
+                case WEAPON_NBOMB:
+                    if (g_Vars.stagenum == STAGE_PELAGIC) {
+                        invGiveSingleWeapon(weaponnum);
+                    }
+                    break;
+                case WEAPON_SHOTGUN:
+                    if (g_Vars.stagenum == STAGE_DEEPSEA) {
+                        invGiveSingleWeapon(weaponnum);
+                    }
+                    break;
+                case WEAPON_AR34:
+                case WEAPON_LASER:
+                    if (g_Vars.stagenum == STAGE_DEFENSE) {
+                        invGiveSingleWeapon(weaponnum);
+                    }
+                    break;
+                case WEAPON_COMBATKNIFE:
+                    if (g_Vars.stagenum == STAGE_ATTACKSHIP) {
+                        invGiveSingleWeapon(weaponnum);
+                    }
+                    break;
+                case WEAPON_CALLISTO:
+                case WEAPON_DEVASTATOR:
+                    if (g_Vars.stagenum == STAGE_SKEDARRUINS) {
+                        invGiveSingleWeapon(weaponnum);
+                    }
+                    break;
+                case WEAPON_MAULER:
+                    if (g_Vars.stagenum == STAGE_MBR) {
+                        invGiveSingleWeapon(weaponnum);
+                    }
+                    break;
+                case WEAPON_PHOENIX:
+                    if (g_Vars.stagenum == STAGE_MAIANSOS) {
+                        invGiveSingleWeapon(weaponnum);
+                    }
+                    break;
+            }
+        }
+        else if (weaponProgressionType == WEAPONPROG_VANILLA_ALLGUNS) {
+            if (g_Vars.stagenum != STAGE_CITRAINING
+                    && ((g_Vars.normmplayerisrunning 
+                        && allowProgWeaponInChallenges == 1)
+                    || !g_Vars.normmplayerisrunning)) {
+                invGiveSingleWeapon(weaponnum);
+            }
+        }
+
+        // Get starting mission items during the mission
+        switch (weaponnum) {
+            case WEAPON_ECMMINE:
+                if (g_Vars.stagenum == STAGE_DEFECTION) {
+                    invGiveSingleWeapon(weaponnum);
+                }
+                break;
+            case WEAPON_DATAUPLINK:
+                if (g_Vars.stagenum == STAGE_DEFECTION
+                        || g_Vars.stagenum == STAGE_INVESTIGATION
+                        || g_Vars.stagenum == STAGE_RESCUE
+                        || g_Vars.stagenum == STAGE_DEFENSE) {
+                    invGiveSingleWeapon(weaponnum);
+                }
+                break;
+            case WEAPON_EYESPY:
+                if (g_Vars.stagenum == STAGE_INVESTIGATION
+                        || g_Vars.stagenum == STAGE_G5BUILDING
+                        || g_Vars.stagenum == STAGE_AIRBASE
+                        || g_Vars.stagenum == STAGE_MBR) {
+                    invGiveSingleWeapon(weaponnum);
+                }
+                break;
+            case WEAPON_NIGHTVISION:
+                if (g_Vars.stagenum == STAGE_EXTRACTION
+                        || g_Vars.stagenum == STAGE_CRASHSITE) {
+                    invGiveSingleWeapon(weaponnum);
+                }
+                break;
+            case WEAPON_RTRACKER:
+                if (g_Vars.stagenum == STAGE_VILLA
+                        || g_Vars.stagenum == STAGE_SKEDARRUINS) {
+                    invGiveSingleWeapon(weaponnum);
+                }
+                break;
+            case WEAPON_TRACERBUG:
+                if (g_Vars.stagenum == STAGE_CHICAGO
+                        && g_MissionConfig.difficulty == DIFF_PA) {
+                    invGiveSingleWeapon(weaponnum);
+                }
+                break;
+            case WEAPON_DOORDECODER:
+                if (g_Vars.stagenum == STAGE_G5BUILDING) {
+                    invGiveSingleWeapon(weaponnum);
+                }
+                break;
+            case WEAPON_COMMSRIDER:
+            case WEAPON_EXPLOSIVES:
+                if (g_Vars.stagenum == STAGE_INFILTRATION) {
+                    invGiveSingleWeapon(weaponnum);
+                }
+                break;
+            case WEAPON_XRAYSCANNER:
+                if (g_Vars.stagenum == STAGE_RESCUE
+                        || g_Vars.stagenum == STAGE_PELAGIC) {
+                    invGiveSingleWeapon(weaponnum);
+                }
+                break;
+            case WEAPON_AUTOSURGEON:
+                if (g_Vars.stagenum == STAGE_ESCAPE
+                        && g_MissionConfig.difficulty <= DIFF_SA) {
+                    invGiveSingleWeapon(weaponnum);
+                }
+                break;
+            case WEAPON_HORIZONSCANNER:
+                if (g_Vars.stagenum == STAGE_AIRBASE
+                        || g_Vars.stagenum == STAGE_CRASHSITE) {
+                    invGiveSingleWeapon(weaponnum);
+                }
+                break;
+            case WEAPON_COMBATBOOST:
+                if (g_Vars.stagenum == STAGE_AIRFORCEONE
+                        || g_Vars.stagenum == STAGE_DEFENSE) {
+                    invGiveSingleWeapon(weaponnum);
+                }
+                break;
+            case WEAPON_SUITCASE:
+                if (g_Vars.stagenum == STAGE_AIRFORCEONE
+                        && g_MissionConfig.difficulty == DIFF_A) {
+                    invGiveSingleWeapon(weaponnum);
+                }
+                break;
+            case WEAPON_PRESIDENTSCANNER:
+                if (g_Vars.stagenum == STAGE_CRASHSITE
+                        && g_MissionConfig.difficulty == DIFF_A) {
+                    invGiveSingleWeapon(weaponnum);
+                }
+                break;
+            case WEAPON_IRSCANNER:
+                if (g_Vars.stagenum == STAGE_DEEPSEA
+                        || g_Vars.stagenum == STAGE_SKEDARRUINS) {
+                    invGiveSingleWeapon(weaponnum);
+                }
+                break;
+            case WEAPON_BACKUPDISK:
+                if (g_Vars.stagenum == STAGE_DEEPSEA
+                        && g_MissionConfig.difficulty == DIFF_PA) {
+                    invGiveSingleWeapon(weaponnum);
+                }
+                break;
+            case WEAPON_TARGETAMPLIFIER:
+                if (g_Vars.stagenum == STAGE_SKEDARRUINS) {
+                    invGiveSingleWeapon(weaponnum);
+                }
+                break;
+            case WEAPON_CLOAKINGDEVICE:
+            case WEAPON_SKEDARBOMB:
+                if (g_Vars.stagenum == STAGE_MBR) {
+                    invGiveSingleWeapon(weaponnum);
+                }
+                break;
         }
     }
     else if (itemID < AP_ITEM_SPECIAL_AGENT_START && itemID >= AP_ITEM_AGENT_START) {
