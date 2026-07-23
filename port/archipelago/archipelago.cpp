@@ -42,6 +42,11 @@ extern int challengeStars;
 int requiredChallengeStars;
 
 extern int progressiveWeapon;
+extern int progressivePistol;
+extern int progressiveSMG;
+extern int progressiveRifle;
+extern int progressiveExplosive;
+extern int progressiveOtherWeapon;
 int weaponProgressionType;
 int allowProgWeaponInChallenges;
 
@@ -296,6 +301,11 @@ std::string itemNames[] = {
     "Challenge Star",
     "Skedar Ruins",
     "Victory",
+    "Progressive Pistol",
+    "Progressive SMG",
+    "Progressive Rifle",
+    "Progressive Explosive",
+    "Progressive Other Weapon"
 };
 
 std::map<int, std::string> locationNames = {
@@ -965,6 +975,11 @@ bool Initialize() {
 
             if (data.at("options").contains("weapon_progression")) {
                 progressiveWeapon = 0;
+                progressivePistol = 0;
+                progressiveSMG = 0;
+                progressiveRifle = 0;
+                progressiveExplosive = 0;
+                progressiveOtherWeapon = 0;
                 weaponProgressionType = data.at("options").at("weapon_progression");
             }
 

@@ -17848,6 +17848,41 @@ s32 objTestForPickup(struct prop *prop)
 						}
 					}
 				}
+				else if (weaponProgressionType == WEAPONPROG_TYPES && !g_Vars.normmplayerisrunning) {
+					if (weapon->weaponnum <= WEAPON_PSYCHOSISGUN 
+							&& g_Vars.stagenum != STAGE_CITRAINING) {
+
+						// Can't pick up K7 Avenger on other missions if not in inventory
+						if (g_Vars.stagenum != STAGE_INVESTIGATION
+								&& g_Vars.stagenum != STAGE_AIRBASE
+								&& weapon->weaponnum == WEAPON_K7AVENGER
+								&& !invHasSingleWeaponIncAllGuns(weapon->weaponnum)) {
+							return TICKOP_NONE;
+						}
+
+						// Can't pick up Remote Mine on other missions if not in inventory
+						if (g_Vars.stagenum != STAGE_CHICAGO
+								&& weapon->weaponnum == WEAPON_REMOTEMINE
+								&& !invHasSingleWeaponIncAllGuns(weapon->weaponnum)) {
+							return TICKOP_NONE;
+						}
+
+						// Can't pick up RC-P120 on other missions if not in inventory
+						if (g_Vars.stagenum != STAGE_DEFENSE
+								&& weapon->weaponnum == WEAPON_RCP120
+								&& !invHasSingleWeaponIncAllGuns(weapon->weaponnum)) {
+							return TICKOP_NONE;
+						}
+
+						// Can't pick up weapons that are not in your inventory
+						if (weapon->weaponnum != WEAPON_K7AVENGER
+								&& weapon->weaponnum != WEAPON_REMOTEMINE
+								&& weapon->weaponnum != WEAPON_RCP120
+								&& !invHasSingleWeaponIncAllGuns(weapon->weaponnum)) {
+							return TICKOP_NONE;
+						}
+					}
+				}
 
 				if (unlockedWeapons[weapon->weaponnum] == 0) {
 					return TICKOP_NONE;

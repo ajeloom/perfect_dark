@@ -30,6 +30,12 @@ extern struct g_vars g_Vars;
 #define AP_ITEM_SKEDAR_RUINS 239
 #define AP_ITEM_VICTORY 240
 
+#define AP_ITEM_PROG_PISTOL 241
+#define AP_ITEM_PROG_SMG 242
+#define AP_ITEM_PROG_RIFLE 243
+#define AP_ITEM_PROG_EXPLOSIVE 244
+#define AP_ITEM_PROG_OTHER_WEAPON 245
+
 #define AP_AGENT_OBJ_OFFSET 1
 #define AP_SPECIAL_AGENT_OBJ_OFFSET 62
 #define AP_PERFECT_AGENT_OBJ_OFFSET 144
@@ -67,6 +73,12 @@ extern int requiredChallengeStars;
 int progressiveWeapon = 0;
 extern int weaponProgressionType;
 extern int allowProgWeaponInChallenges;
+
+int progressivePistol = 0;
+int progressiveSMG = 0;
+int progressiveRifle = 0;
+int progressiveExplosive = 0;
+int progressiveOtherWeapon = 0;
 
 extern int hasChallenges;
 extern int hasWeaponTraining;
@@ -218,6 +230,68 @@ int progWeaponInvPosition[] = {
     146,    // WEAPON_MPSHIELD
     147,    // WEAPON_DISABLED
     148,    // WEAPON_SUICIDEPILL
+};
+
+int progressivePistolNumbers[11] = {
+    WEAPON_UNARMED,
+    WEAPON_CC13,
+    WEAPON_FALCON2,
+    WEAPON_FALCON2_SILENCER,
+    WEAPON_FALCON2_SCOPE,
+    WEAPON_PP9I,
+    WEAPON_MAGSEC4,
+    WEAPON_DY357MAGNUM,
+    WEAPON_MAULER,
+    WEAPON_PHOENIX,
+    WEAPON_DY357LX,
+};
+
+int progressiveSMGNumbers[10] = {
+    WEAPON_UNARMED,
+    WEAPON_KL01313,
+    WEAPON_DMC,
+    WEAPON_ZZT,
+    WEAPON_CMP150,
+    WEAPON_CYCLONE,
+    WEAPON_LAPTOPGUN,
+    WEAPON_CALLISTO,
+    WEAPON_RCP45,
+    WEAPON_RCP120,
+};
+
+int progressiveRifleNumbers[7] = {
+    WEAPON_UNARMED,
+    WEAPON_KF7SPECIAL,
+    WEAPON_DRAGON,
+    WEAPON_AR34,
+    WEAPON_K7AVENGER,
+    WEAPON_AR53,
+    WEAPON_SUPERDRAGON,
+};
+
+int progressiveExplosiveNumbers[9] = {
+    WEAPON_UNARMED,
+    WEAPON_TIMEDMINE,
+    WEAPON_PROXIMITYMINE,
+    WEAPON_GRENADE,
+    WEAPON_SLAYER,
+    WEAPON_REMOTEMINE,
+    WEAPON_NBOMB,
+    WEAPON_ROCKETLAUNCHER,
+    WEAPON_DEVASTATOR,
+};
+
+int progressiveOtherWeaponNumbers[10] = {
+    WEAPON_UNARMED,
+    WEAPON_COMBATKNIFE,
+    WEAPON_PSYCHOSISGUN,
+    WEAPON_TRANQUILIZER,   
+    WEAPON_LASER,
+    WEAPON_CROSSBOW,
+    WEAPON_SNIPERRIFLE,
+    WEAPON_SHOTGUN,
+    WEAPON_REAPER,
+    WEAPON_FARSIGHT,
 };
 
 void resetAP()
@@ -401,7 +475,8 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
     }
 
     // Progressive Weapon
-    if (weaponProgressionType != WEAPONPROG_DISABLED && itemID == AP_ITEM_PROGRESSIVE_WEAPON) {
+    if ((weaponProgressionType == WEAPONPROG_ALLGUNS || weaponProgressionType == WEAPONPROG_ONEGUN) 
+            && itemID == AP_ITEM_PROGRESSIVE_WEAPON) {
         progressiveWeapon += 1;
 
         unlockedWeapons[progressiveWeaponNumbers[progressiveWeapon]] = 1;
@@ -563,6 +638,37 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
         return;
     }
 
+    // Progressive Weapon Type
+    if (weaponProgressionType == WEAPONPROG_TYPES && itemID >= AP_ITEM_PROG_PISTOL) {
+        if (itemID == AP_ITEM_PROG_PISTOL) {
+            progressivePistol += 1;
+            unlockedWeapons[progressivePistolNumbers[progressivePistol]] = 1;
+            GetNextProgressiveWeapon(progressivePistolNumbers, progressivePistol);
+        }
+        else if (itemID == AP_ITEM_PROG_SMG) {
+            progressiveSMG += 1;
+            unlockedWeapons[progressiveSMGNumbers[progressiveSMG]] = 1;
+            GetNextProgressiveWeapon(progressiveSMGNumbers, progressiveSMG);
+        }
+        else if (itemID == AP_ITEM_PROG_RIFLE) {
+            progressiveRifle += 1;
+            unlockedWeapons[progressiveRifleNumbers[progressiveRifle]] = 1;
+            GetNextProgressiveWeapon(progressiveRifleNumbers, progressiveRifle);
+        }
+        else if (itemID == AP_ITEM_PROG_EXPLOSIVE) {
+            progressiveExplosive += 1;
+            unlockedWeapons[progressiveExplosiveNumbers[progressiveExplosive]] = 1;
+            GetNextProgressiveWeapon(progressiveExplosiveNumbers, progressiveExplosive);
+        }
+        else if (itemID == AP_ITEM_PROG_OTHER_WEAPON) {
+            progressiveOtherWeapon += 1;
+            unlockedWeapons[progressiveOtherWeaponNumbers[progressiveOtherWeapon]] = 1;
+            GetNextProgressiveWeapon(progressiveOtherWeaponNumbers, progressiveOtherWeapon);
+        }
+
+        return;
+    }    
+
     // Weapons, Missions, Challenges, Cheats
     if (itemID < AP_ITEM_AGENT_START) {
         unlockedWeapons[itemID - 1] = 1;
@@ -592,6 +698,39 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
         // Classic weapon cheats
         if (itemID >= AP_ITEM_CLASSIC_WEAPON_CHEAT_START) {
             unlockedWeapons[itemID - 186] = 1;
+        }
+    }
+}
+
+void GetNextProgressiveWeapon(int weaponNumbersArray[], int currentWeaponNumber) {
+    for (s32 i = 0; i < PLAYERCOUNT(); i++) {
+        setCurrentPlayerNum(i);
+
+        if (g_Vars.stagenum != STAGE_CITRAINING && !g_Vars.normmplayerisrunning) {
+            // Co-operative
+            if (currentWeaponNumber > 1) {
+                invRemoveItemByNum(weaponNumbersArray[currentWeaponNumber - 1]);
+            }
+
+            invGiveSingleWeapon(weaponNumbersArray[currentWeaponNumber]);
+            
+            if (g_Vars.currentplayer->gunctrl.weaponnum != WEAPON_UNARMED) {
+                bgunEquipWeapon2(HAND_RIGHT, weaponNumbersArray[currentWeaponNumber]);
+            }
+        }
+        else if (g_Vars.stagenum != STAGE_CITRAINING
+                && g_Vars.normmplayerisrunning 
+                && allowProgWeaponInChallenges == 1) {
+            // Allow Progressive Weapons in Challenges
+            if (currentWeaponNumber > 1) {
+                invRemoveItemByNum(weaponNumbersArray[currentWeaponNumber - 1]);
+            }
+
+            invGiveSingleWeapon(weaponNumbersArray[currentWeaponNumber]);
+
+            if (g_Vars.currentplayer->gunctrl.weaponnum == weaponNumbersArray[currentWeaponNumber - 1]) {
+                bgunEquipWeapon2(HAND_RIGHT, weaponNumbersArray[currentWeaponNumber]);
+            }
         }
     }
 }

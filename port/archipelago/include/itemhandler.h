@@ -12,3 +12,4 @@ void collectTimedCheatItem(u8 missionIndex);
 void collectClassicWeaponCheatItem(u8 weaponIndex);
 void printSentItemMessage(const char* itemname, const char* recipient, const char* location);
 void handleItem(int itemID, const char* itemname, const char* sender, const char* location);
+void GetNextProgressiveWeapon(int weaponNumbersArray[], int currentWeaponNumber);

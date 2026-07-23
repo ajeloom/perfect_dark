@@ -1071,13 +1071,19 @@ const char *GetOption(struct menuitem *item)
 			}
 		case 1:
 			if (weaponProgressionType == WEAPONPROG_DISABLED) {
-				return "Disabled ";
+				return "Normal ";
 			}
-			else if (weaponProgressionType == WEAPONPROG_ALLGUNS) {
+			else if (weaponProgressionType == WEAPONPROG_VANILLA_ALLGUNS) {
 				return "All Guns ";
 			}
+			else if (weaponProgressionType == WEAPONPROG_ALLGUNS) {
+				return "Progressive Weapon ";
+			}
 			else if (weaponProgressionType == WEAPONPROG_ONEGUN) {
-				return "One Gun ";
+				return "Progressive One Gun ";
+			}
+			else if (weaponProgressionType == WEAPONPROG_TYPES) {
+				return "Progressive Types ";
 			}
 		case 2:
 			option = allowProgWeaponInChallenges;

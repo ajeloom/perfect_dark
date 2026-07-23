@@ -386,7 +386,9 @@ u32 frGetWeaponBySlot(s32 slot)
 	s32 index = -1;
 	s32 weapon;
 
-	if (weaponProgressionType == WEAPONPROG_DISABLED) {
+	if (weaponProgressionType == WEAPONPROG_DISABLED
+			|| weaponProgressionType == WEAPONPROG_VANILLA_ALLGUNS
+			|| weaponProgressionType == WEAPONPROG_TYPES) {
 		for (weapon = WEAPON_NONE; weapon <= WEAPON_HORIZONSCANNER; weapon++) {
 			if (frIsWeaponAvailable(weapon)) {
 				index++;
@@ -417,7 +419,9 @@ s32 frGetNumWeaponsAvailable(void)
 	s32 count = 0;
 	s32 i;
 
-	if (weaponProgressionType == WEAPONPROG_DISABLED) {
+	if (weaponProgressionType == WEAPONPROG_DISABLED
+			|| weaponProgressionType == WEAPONPROG_VANILLA_ALLGUNS
+			|| weaponProgressionType == WEAPONPROG_TYPES) {
 		for (i = WEAPON_UNARMED; i <= WEAPON_HORIZONSCANNER; i++) {
 			if (frIsWeaponAvailable(i)) {
 				count++;

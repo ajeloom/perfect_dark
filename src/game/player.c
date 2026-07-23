@@ -105,6 +105,9 @@ extern int progressiveWeapon;
 extern int weaponProgressionType;
 extern int progressiveWeaponNumbers[43];
 
+extern int progressivePistol;
+extern int progressivePistolNumbers[11];
+
 extern int allowProgWeaponInChallenges;
 
 extern int deathLink;
@@ -1845,7 +1848,8 @@ void player0f0b9a20(void)
 	bgunEquipWeapon2(HAND_LEFT, g_DefaultWeapons[HAND_LEFT]);
 	bgunEquipWeapon2(HAND_RIGHT, g_DefaultWeapons[HAND_RIGHT]);
 
-	if (weaponProgressionType == WEAPONPROG_DISABLED) {
+	if (weaponProgressionType == WEAPONPROG_DISABLED
+			|| weaponProgressionType == WEAPONPROG_VANILLA_ALLGUNS) {
 		if (unlockedWeapons[g_DefaultWeapons[HAND_LEFT]] == 0) {
 			bgunEquipWeapon2(HAND_LEFT, WEAPON_UNARMED);
 		}
@@ -1854,7 +1858,8 @@ void player0f0b9a20(void)
 			bgunEquipWeapon2(HAND_RIGHT, WEAPON_UNARMED);
 		}
 	}
-	else if (weaponProgressionType != WEAPONPROG_DISABLED
+	else if ((weaponProgressionType == WEAPONPROG_ALLGUNS
+			|| weaponProgressionType == WEAPONPROG_ONEGUN)
 			&& g_Vars.stagenum != STAGE_CITRAINING
 			&& g_Vars.stagenum != STAGE_VILLA
 			&& g_Vars.stagenum != STAGE_CHICAGO
@@ -1862,6 +1867,15 @@ void player0f0b9a20(void)
 			&& g_Vars.stagenum != STAGE_MAIANSOS
 			&& !g_Vars.normmplayerisrunning) {
 		bgunEquipWeapon2(HAND_RIGHT, progressiveWeaponNumbers[progressiveWeapon]);
+	}
+	else if (weaponProgressionType == WEAPONPROG_TYPES
+			&& g_Vars.stagenum != STAGE_CITRAINING
+			&& g_Vars.stagenum != STAGE_VILLA
+			&& g_Vars.stagenum != STAGE_CHICAGO
+			&& g_Vars.stagenum != STAGE_AIRFORCEONE
+			&& g_Vars.stagenum != STAGE_MAIANSOS
+			&& !g_Vars.normmplayerisrunning) {
+		bgunEquipWeapon2(HAND_RIGHT, progressivePistolNumbers[progressivePistol]);
 	}
 
 	var8007074c = 0;

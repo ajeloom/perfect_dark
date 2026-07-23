@@ -12361,6 +12361,28 @@ void bgunGiveAmmoForProgressiveWeapons(void)
 
 		bgunSetAmmoQuantity(AMMOTYPE_PSYCHOSIS, 4);
 	}
+	else if (weaponProgressionType == WEAPONPROG_VANILLA_ALLGUNS
+			|| weaponProgressionType == WEAPONPROG_TYPES) {
+		// Max Ammo
+		for (i = 0; i < ARRAYCOUNT(g_AmmoTypes); i++) {
+			bool give = true;
+
+			give = bgunAmmotypeAllowsUnlimitedAmmo(i);
+
+			if (give) {
+				if (i == AMMOTYPE_CLOAK || i == AMMOTYPE_BOOST) {
+					continue;
+				}
+				else {
+					bgunSetAmmoQuantity(i, g_AmmoTypes[i].capacity);
+				}
+			}
+
+			bgunSetAmmoQuantity(AMMOTYPE_PSYCHOSIS, 4);
+		}
+
+		bgunSetAmmoQuantity(AMMOTYPE_PSYCHOSIS, 4);
+	}
 	else if (weaponProgressionType == WEAPONPROG_ONEGUN) {
 		if (progressiveWeaponNumbers[progressiveWeapon] == WEAPON_PSYCHOSISGUN) {
 			bgunSetAmmoQuantity(AMMOTYPE_PSYCHOSIS, 100);
