@@ -150,9 +150,7 @@ u32 cheatIsUnlocked(s32 cheat_id)
 		unlocked++;
 	}
 
-	if (hasUnlockCheats == 0) {
-		unlocked += cheatCheckIsCompleted(cheat_id);
-	}
+	unlocked += cheatCheckIsCompleted(cheat_id);
 
 	return unlocked;
 }
