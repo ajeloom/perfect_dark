@@ -1191,15 +1191,8 @@ void playerSpawn(void)
 			} else
 #endif
 			{
-				if (weaponProgressionType == WEAPONPROG_DISABLED) {
-					if (unlockedWeapons[g_DefaultWeapons[HAND_LEFT]] == 1) {
-						bgunEquipWeapon2(HAND_LEFT, g_DefaultWeapons[HAND_LEFT]);
-					}
-
-					if (unlockedWeapons[g_DefaultWeapons[HAND_RIGHT]] == 1) {
-						bgunEquipWeapon2(HAND_RIGHT, g_DefaultWeapons[HAND_RIGHT]);
-					}
-				}
+				bgunEquipWeapon2(HAND_LEFT, g_DefaultWeapons[HAND_LEFT]);
+				bgunEquipWeapon2(HAND_RIGHT, g_DefaultWeapons[HAND_RIGHT]);
 			}
 
 			// Equip progressive weapon in combat sim
@@ -1208,10 +1201,6 @@ void playerSpawn(void)
 					&& allowProgWeaponInChallenges == 1) {
 				invGetProgressiveWeapons();
 
-				if (!(g_MpSetup.options & MPOPTION_SPAWNWITHWEAPON)) {
-					bgunEquipWeapon2(HAND_LEFT, WEAPON_NONE);
-					bgunEquipWeapon2(HAND_RIGHT, WEAPON_UNARMED);
-				}
 			}
 
 #if VERSION >= VERSION_NTSC_1_0
