@@ -12374,7 +12374,7 @@ void bgunGiveAmmoForProgressiveWeapons(void)
 					continue;
 				}
 				else {
-					bgunSetAmmoQuantity(i, g_AmmoTypes[i].capacity);
+					bgunSetAmmoQuantity(i, g_AmmoTypes[i].capacity * 0.75);
 				}
 			}
 
