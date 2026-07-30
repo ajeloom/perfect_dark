@@ -510,27 +510,21 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
                         && allowProgWeaponInChallenges == 1) {
                 // Allow Progressive Weapons in Challenges
                 if (weaponProgressionType == WEAPONPROG_ALLGUNS) {
-                    for (s32 i = 0; i < PLAYERCOUNT(); i++) {
-                        setCurrentPlayerNum(i);
-                        invGiveSingleWeapon(progressiveWeaponNumbers[progressiveWeapon]);
-                        
-                        if (g_Vars.currentplayer->gunctrl.weaponnum != WEAPON_UNARMED) {
-                            bgunEquipWeapon2(HAND_RIGHT, progressiveWeaponNumbers[progressiveWeapon]);
-                        }
+                    invGiveSingleWeapon(progressiveWeaponNumbers[progressiveWeapon]);
+                    
+                    if (g_Vars.currentplayer->gunctrl.weaponnum != WEAPON_UNARMED) {
+                        bgunEquipWeapon2(HAND_RIGHT, progressiveWeaponNumbers[progressiveWeapon]);
                     }
                 }
                 else if (weaponProgressionType == WEAPONPROG_ONEGUN) {
-                    for (s32 i = 0; i < PLAYERCOUNT(); i++) {
-                        setCurrentPlayerNum(i);
-                        if (progressiveWeapon > 1) {
-                            invRemoveItemByNum(progressiveWeaponNumbers[progressiveWeapon - 1]);
-                        }
+                    if (progressiveWeapon > 1) {
+                        invRemoveItemByNum(progressiveWeaponNumbers[progressiveWeapon - 1]);
+                    }
 
-                        invGetProgressiveWeapons();
+                    invGetProgressiveWeapons();
 
-                        if (g_Vars.currentplayer->gunctrl.weaponnum == progressiveWeaponNumbers[progressiveWeapon - 1]) {
-                            bgunEquipWeapon2(HAND_RIGHT, progressiveWeaponNumbers[progressiveWeapon]);
-                        }
+                    if (g_Vars.currentplayer->gunctrl.weaponnum == progressiveWeaponNumbers[progressiveWeapon - 1]) {
+                        bgunEquipWeapon2(HAND_RIGHT, progressiveWeaponNumbers[progressiveWeapon]);
                     }
                 }
             }
