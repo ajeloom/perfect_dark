@@ -3430,12 +3430,6 @@ void playerTick(bool arg0)
 		g_ViRes = VIRES_LO;
 	}
 
-	if (g_Vars.stagenum == STAGE_AIRFORCEONE
-			|| g_Vars.stagenum == STAGE_DEEPSEA
-			|| g_Vars.stagenum == STAGE_ATTACKSHIP) {
-		invRemoveLockedWeapons();
-	}
-
 #if PAL
 	text0f1531dc(false);
 #else

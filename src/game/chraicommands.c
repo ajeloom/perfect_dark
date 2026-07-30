@@ -2322,6 +2322,36 @@ bool aiGiveObjectToChr(void)
 
 	if (obj && obj->prop && chr && chr->prop) {
 		if (chr->prop->type == PROPTYPE_PLAYER) {
+			// Don't give certain weapons to player
+			if (obj->type == OBJTYPE_WEAPON) {
+				struct weaponobj *weapon = (struct weaponobj *) obj;
+
+				bool hasStageAndWeapon = ((g_Vars.stagenum == STAGE_AIRFORCEONE 
+												&& weapon->weaponnum == WEAPON_LAPTOPGUN)
+											|| (g_Vars.stagenum == STAGE_CRASHSITE 
+												&& weapon->weaponnum == WEAPON_PROXIMITYMINE)
+											|| (g_Vars.stagenum == STAGE_DEEPSEA 
+												&& weapon->weaponnum == WEAPON_FARSIGHT)
+											|| (g_Vars.stagenum == STAGE_ATTACKSHIP 
+												&& weapon->weaponnum == WEAPON_AR34));
+
+				if (hasStageAndWeapon
+						&& (unlockedWeapons[weapon->weaponnum] == 0
+						|| weaponProgressionType == WEAPONPROG_ONEGUN
+						|| weaponProgressionType == WEAPONPROG_TYPES)) {
+					g_Vars.aioffset += 4;
+					return false;
+				}
+
+				hasStageAndWeapon = (g_Vars.stagenum == STAGE_AIRFORCEONE 
+										&& weapon->weaponnum == WEAPON_TIMEDMINE);
+
+				if (hasStageAndWeapon && unlockedWeapons[weapon->weaponnum] == 0) {
+					g_Vars.aioffset += 4;
+					return false;
+				}
+			}
+
 			u32 something;
 			u32 prevplayernum = g_Vars.currentplayernum;
 			struct defaultobj *obj2 = obj->prop->obj;
