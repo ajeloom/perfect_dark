@@ -457,15 +457,15 @@ void objectivesCheckAll(void)
 
 						collectObjectiveItem(g_MissionConfig.stageindex, g_MissionConfig.difficulty, availableindex);
 
-						// Get weapon back after doing "Subvert security monitoring system" 
-						// objective on Air Base in One Gun Weapon Progression
-						if (g_Vars.stagenum == STAGE_AIRBASE && weaponProgressionType == WEAPONPROG_ONEGUN) {
-							if ((g_MissionConfig.difficulty == DIFF_SA || g_MissionConfig.difficulty == DIFF_PA)
-									&& availableindex == 2) {
-								for (s32 i = 0; i < PLAYERCOUNT(); i++) {
-									setCurrentPlayerNum(i);
-									invGetProgressiveWeapons();
-								}
+						// Get weapons back after completing "Subvert security monitoring system" objective 
+						// on Air Base in Progressive Weapon, Progressive One Gun, and Progressive Types.
+						if (g_Vars.stagenum == STAGE_AIRBASE 
+								&& weaponProgressionType >= WEAPONPROG_ALLGUNS
+								&& ((g_MissionConfig.difficulty == DIFF_A && availableindex == 1)
+									|| (g_MissionConfig.difficulty >= DIFF_SA && availableindex == 2))) {
+							for (s32 i = 0; i < PLAYERCOUNT(); i++) {
+								setCurrentPlayerNum(i);
+								invGetProgressiveWeapons();
 							}
 						}
 					}
