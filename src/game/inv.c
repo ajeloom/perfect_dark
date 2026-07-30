@@ -1365,7 +1365,6 @@ void invRemoveLockedWeapons(void)
 				case WEAPON_AR53:
 					if (progressiveRifle >= 0 
 							&& i != progressiveRifleNumbers[progressiveRifle]) {
-						printf("Removing weapon %d\n", i);
 						invRemoveItemByNum(i);
 					}
 					break;
@@ -1433,23 +1432,35 @@ void invGetProgressiveWeapons(void)
 	else if (weaponProgressionType == WEAPONPROG_ONEGUN) {
 		invGiveSingleWeapon(progressiveWeaponNumbers[progressiveWeapon]);
 
+		// Give the Laptop Gun for Mines, Grenade, and N-Bomb
+		if (progressiveWeaponNumbers[progressiveWeapon] == WEAPON_TIMEDMINE
+				|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_PROXIMITYMINE
+				|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_GRENADE
+				|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_REMOTEMINE
+				|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_NBOMB) {
+			invGiveSingleWeapon(WEAPON_LAPTOPGUN);
+		}
+
 		// Need laser to destroy things
 		// Extraction - hovercopter
+		// Chicago - dumpster
 		// Infiltration - robot interceptors
 		// Rescue - crate
 		// Escape - explosive barrel
 		// Air Base - remote mine
 		// Crash Site - enemy jamming device
+		// Deep Sea - switches
 		// Maian SOS - stretcher
-		if (g_Vars.stagenum == STAGE_INFILTRATION
+		if (g_Vars.stagenum == STAGE_CHICAGO
+				|| g_Vars.stagenum == STAGE_INFILTRATION
 				|| g_Vars.stagenum == STAGE_RESCUE
 				|| g_Vars.stagenum == STAGE_ESCAPE
 				|| g_Vars.stagenum == STAGE_AIRBASE
 				|| g_Vars.stagenum == STAGE_CRASHSITE
+				|| g_Vars.stagenum == STAGE_DEEPSEA
 				|| g_Vars.stagenum == STAGE_MAIANSOS) {
 			if (progressiveWeaponNumbers[progressiveWeapon] == WEAPON_COMBATKNIFE
-					|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_CROSSBOW
-					|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_NBOMB) {
+					|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_CROSSBOW) {
 				invGiveSingleWeapon(WEAPON_LASER);
 			}
 		}
@@ -1459,33 +1470,16 @@ void invGetProgressiveWeapons(void)
 			if (progressiveWeaponNumbers[progressiveWeapon] == WEAPON_COMBATKNIFE
 					|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_TRANQUILIZER
 					|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_CROSSBOW
-					|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_NBOMB
 					|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_PSYCHOSISGUN) {
 				invGiveSingleWeapon(WEAPON_LASER);
 			}
 		}
 
-		// Need laser to hit snipers
+		// Need laser to kill snipers
 		if (g_Vars.stagenum == STAGE_VILLA) {
 			if (progressiveWeaponNumbers[progressiveWeapon] == WEAPON_COMBATKNIFE
 					|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_TRANQUILIZER
-					|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_GRENADE
-					|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_NBOMB
-					|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_TIMEDMINE
-					|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_PROXIMITYMINE
-					|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_REMOTEMINE
 					|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_PSYCHOSISGUN) {
-				invGiveSingleWeapon(WEAPON_LASER);
-			}
-		}
-
-		// Need laser to get CamSpy
-		// Can't have infinite remote mines
-		if (g_Vars.stagenum == STAGE_CHICAGO) {
-			if (progressiveWeaponNumbers[progressiveWeapon] == WEAPON_COMBATKNIFE
-					|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_CROSSBOW
-					|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_NBOMB
-					|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_REMOTEMINE) {
 				invGiveSingleWeapon(WEAPON_LASER);
 			}
 		}
@@ -1495,18 +1489,6 @@ void invGetProgressiveWeapons(void)
 			invGiveSingleWeapon(WEAPON_REMOTEMINE);
 		}
 
-		// Need another weapon or you will fail
-		if (g_Vars.stagenum == STAGE_G5BUILDING
-				&& progressiveWeaponNumbers[progressiveWeapon] == WEAPON_REMOTEMINE) {
-			invGiveSingleWeapon(WEAPON_LASER);
-		}
-
-		// Can't have infinite timed mines
-		if (g_Vars.stagenum == STAGE_AIRFORCEONE 
-				&& progressiveWeaponNumbers[progressiveWeapon] == WEAPON_TIMEDMINE) {
-			invGiveSingleWeapon(WEAPON_LASER);
-		}
-		
 		// Start with other items from original mission
 		if (g_Vars.stagenum == STAGE_AIRFORCEONE
 				&& unlockedWeapons[WEAPON_COMBATBOOST] == 1) {
@@ -1514,29 +1496,12 @@ void invGetProgressiveWeapons(void)
 		}
 
 		// Need laser for certain objectives
-		// Psychosis Gun & N-Bomb doesn't work on skedar
-		// Deep Sea - switches
-		if (g_Vars.stagenum == STAGE_DEEPSEA) {
-			if (progressiveWeaponNumbers[progressiveWeapon] == WEAPON_COMBATKNIFE
-					|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_CROSSBOW
-					|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_NBOMB
-					|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_PSYCHOSISGUN) {
-				invGiveSingleWeapon(WEAPON_LASER);
-			}
-		}
-
-		// Need laser for certain objectives
-		// Psychosis Gun & N-Bomb doesn't work on skedar
+		// Psychosis Gun doesn't work on skedar
 		// Attack Ship - shield system & engine systems
 		if (g_Vars.stagenum == STAGE_ATTACKSHIP
 				&& (progressiveWeaponNumbers[progressiveWeapon] == WEAPON_DEVASTATOR
 				|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_COMBATKNIFE
 				|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_CROSSBOW
-				|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_GRENADE
-				|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_NBOMB
-				|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_TIMEDMINE
-				|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_PROXIMITYMINE
-				|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_REMOTEMINE
 				|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_PSYCHOSISGUN)) {
 			invGiveSingleWeapon(WEAPON_LASER);
 		}
@@ -1564,10 +1529,9 @@ void invGetProgressiveWeapons(void)
 			}
 		}
 
-		// Psychosis Gun & N-Bomb doesn't work on skedar
+		// Psychosis Gun doesn't work on skedar
 		if (g_Vars.stagenum == STAGE_WAR) {
-			if (progressiveWeaponNumbers[progressiveWeapon] == WEAPON_NBOMB
-					|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_PSYCHOSISGUN) {
+			if (progressiveWeaponNumbers[progressiveWeapon] == WEAPON_PSYCHOSISGUN) {
 				invGiveSingleWeapon(WEAPON_LASER);
 			}
 		}
