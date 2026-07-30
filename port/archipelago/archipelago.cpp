@@ -812,7 +812,7 @@ void AP_Init()
 
     system("cls");
 
-    printf("Version: 0.3.0\n");
+    printf("Version: 0.3.1\n");
     printf("If you are using an older version of the APWorld, then it will not work correctly.\n");
     printf("--------------------------------------------------------------------------------------------------\n");
     printf("Commands:\n");
