@@ -12373,6 +12373,16 @@ void bgunGiveAmmoForProgressiveWeapons(void)
 				if (i == AMMOTYPE_CLOAK || i == AMMOTYPE_BOOST) {
 					continue;
 				}
+				else if (i == AMMOTYPE_GRENADE
+						|| i == AMMOTYPE_ROCKET
+						|| i == AMMOTYPE_KNIFE
+						|| i == AMMOTYPE_REMOTE_MINE
+						|| i == AMMOTYPE_PROXY_MINE
+						|| i == AMMOTYPE_TIMED_MINE
+						|| i == AMMOTYPE_HOMINGROCKET
+						|| i == AMMOTYPE_NBOMB) {
+					bgunSetAmmoQuantity(i, g_AmmoTypes[i].capacity);
+				}
 				else {
 					bgunSetAmmoQuantity(i, g_AmmoTypes[i].capacity * 0.75);
 				}
