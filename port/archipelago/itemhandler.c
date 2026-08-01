@@ -623,6 +623,16 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
                 unlockedMissions[16][2] = 1;
             }
         }
+
+        // Give Skedar Ruins on all difficulties if you played no missions
+        if (unlockedMissions[16][0] == 0
+                && unlockedMissions[16][1] == 0
+                && unlockedMissions[16][2] == 0) {
+            unlockedMissions[16][0] = 1;
+            unlockedMissions[16][1] = 1;
+            unlockedMissions[16][2] = 1;
+        }
+
         return;
     }
 
