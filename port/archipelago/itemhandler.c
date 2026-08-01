@@ -477,7 +477,9 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
     // Progressive Weapon
     if ((weaponProgressionType == WEAPONPROG_ALLGUNS || weaponProgressionType == WEAPONPROG_ONEGUN) 
             && itemID == AP_ITEM_PROGRESSIVE_WEAPON) {
-        progressiveWeapon += 1;
+        if (progressiveWeapon < ARRAYCOUNT(progressiveWeaponNumbers) - 1) {
+            progressiveWeapon += 1;
+        }
 
         unlockedWeapons[progressiveWeaponNumbers[progressiveWeapon]] = 1;
 
@@ -645,27 +647,37 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
     // Progressive Weapon Type
     if (weaponProgressionType == WEAPONPROG_TYPES && itemID >= AP_ITEM_PROG_PISTOL) {
         if (itemID == AP_ITEM_PROG_PISTOL) {
-            progressivePistol += 1;
+            if (progressivePistol < ARRAYCOUNT(progressivePistolNumbers) - 1) {
+                progressivePistol += 1;
+            }
             unlockedWeapons[progressivePistolNumbers[progressivePistol]] = 1;
             GetNextProgressiveWeapon(progressivePistolNumbers, progressivePistol);
         }
         else if (itemID == AP_ITEM_PROG_SMG) {
-            progressiveSMG += 1;
+            if (progressiveSMG < ARRAYCOUNT(progressiveSMGNumbers) - 1) {
+                progressiveSMG += 1;
+            }
             unlockedWeapons[progressiveSMGNumbers[progressiveSMG]] = 1;
             GetNextProgressiveWeapon(progressiveSMGNumbers, progressiveSMG);
         }
         else if (itemID == AP_ITEM_PROG_RIFLE) {
-            progressiveRifle += 1;
+            if (progressiveRifle < ARRAYCOUNT(progressiveRifleNumbers) - 1) {
+                progressiveRifle += 1;
+            }
             unlockedWeapons[progressiveRifleNumbers[progressiveRifle]] = 1;
             GetNextProgressiveWeapon(progressiveRifleNumbers, progressiveRifle);
         }
         else if (itemID == AP_ITEM_PROG_EXPLOSIVE) {
-            progressiveExplosive += 1;
+            if (progressiveExplosive < ARRAYCOUNT(progressiveExplosiveNumbers) - 1) {
+                progressiveExplosive += 1;
+            }
             unlockedWeapons[progressiveExplosiveNumbers[progressiveExplosive]] = 1;
             GetNextProgressiveWeapon(progressiveExplosiveNumbers, progressiveExplosive);
         }
         else if (itemID == AP_ITEM_PROG_OTHER_WEAPON) {
-            progressiveOtherWeapon += 1;
+            if (progressiveOtherWeapon < ARRAYCOUNT(progressiveOtherWeaponNumbers) - 1) {
+                progressiveOtherWeapon += 1;
+            }
             unlockedWeapons[progressiveOtherWeaponNumbers[progressiveOtherWeapon]] = 1;
             GetNextProgressiveWeapon(progressiveOtherWeaponNumbers, progressiveOtherWeapon);
         }
