@@ -142,6 +142,17 @@ extern int allowProgWeaponInChallenges;
 extern int progressiveWeapon;
 extern int progressiveWeaponNumbers[43];
 
+extern int progressivePistol;
+extern int progressiveSMG;
+extern int progressiveRifle;
+extern int progressiveExplosive;
+extern int progressiveOtherWeapon;
+extern int progressivePistolNumbers[11];
+extern int progressiveSMGNumbers[10];
+extern int progressiveRifleNumbers[7];
+extern int progressiveExplosiveNumbers[9];
+extern int progressiveOtherWeaponNumbers[10];
+
 /**
  * Attempt to call a lift from the given door.
  *
@@ -17856,7 +17867,6 @@ s32 objTestForPickup(struct prop *prop)
 
 						// Can't pick up K7 Avenger on other missions if not in inventory
 						if (g_Vars.stagenum != STAGE_INVESTIGATION
-								&& g_Vars.stagenum != STAGE_AIRBASE
 								&& weapon->weaponnum == WEAPON_K7AVENGER
 								&& !invHasSingleWeaponIncAllGuns(weapon->weaponnum)) {
 							return TICKOP_NONE;
@@ -17871,16 +17881,22 @@ s32 objTestForPickup(struct prop *prop)
 
 						// Can't pick up RC-P120 on other missions if not in inventory
 						if (g_Vars.stagenum != STAGE_DEFENSE
-								&& weapon->weaponnum == WEAPON_RCP120
+								&& (weapon->weaponnum == WEAPON_RCP120
+									|| weapon->weaponnum == WEAPON_DEVASTATOR)
 								&& !invHasSingleWeaponIncAllGuns(weapon->weaponnum)) {
 							return TICKOP_NONE;
 						}
 
-						// Can't pick up weapons that are not in your inventory
+						// Can't pick up weapons that are not the current progressive weapon type
 						if (weapon->weaponnum != WEAPON_K7AVENGER
 								&& weapon->weaponnum != WEAPON_REMOTEMINE
 								&& weapon->weaponnum != WEAPON_RCP120
-								&& !invHasSingleWeaponIncAllGuns(weapon->weaponnum)) {
+								&& weapon->weaponnum != WEAPON_DEVASTATOR
+								&& weapon->weaponnum != progressivePistolNumbers[progressivePistol]
+								&& weapon->weaponnum != progressiveSMGNumbers[progressiveSMG]
+								&& weapon->weaponnum != progressiveRifleNumbers[progressiveRifle]
+								&& weapon->weaponnum != progressiveExplosiveNumbers[progressiveExplosive]
+								&& weapon->weaponnum != progressiveOtherWeaponNumbers[progressiveOtherWeapon]) {
 							return TICKOP_NONE;
 						}
 					}
