@@ -21,6 +21,7 @@ const char *GetServerAddress();
 const char *GetSlotName();
 const char *GetPassword();
 const char *GetStatus();
+void PrintCommands();
 
 #ifdef __cplusplus
 }

@@ -25,6 +25,8 @@ APClient* ap;
 
 #define VERSION_TUPLE {0, 6, 7}
 
+char* clientVersion = "0.3.2";
+
 std::string URI;
 std::string slotName;
 std::string password;
@@ -812,25 +814,15 @@ void AP_Init()
 
     system("cls");
 
-    printf("Version: 0.3.1\n");
+    printf("Version: %s\n", clientVersion);
     printf("If you are using an older version of the APWorld, then it will not work correctly.\n");
-    printf("--------------------------------------------------------------------------------------------------\n");
-    printf("Commands:\n");
-    printf(" - '/help' - shows available commands\n");
-	printf(" - '/connect {SERVER_IP}:{SERVER_PORT} {SLOT_NAME} [password:{PASSWORD}]' - to connect to the room\n");
-    printf(" - '/disconnect' - to exit the room\n");
-	printf("--------------------------------------------------------------------------------------------------\n");
+    PrintCommands();
 
     CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)InputCommand, NULL, 0, NULL);
 }
 
 void AP_Close() {
     FreeConsole();
-
-    if (ap != nullptr) {
-        delete ap;
-        ap = nullptr;
-    }
 }
 
 VOID InputCommand()
@@ -840,15 +832,7 @@ VOID InputCommand()
 		std::getline(std::cin, line);
         
         if (line == "/help") {
-            printf("--------------------------------------------------------------------------------------------------\n");
-			printf("Commands: \n");
-            printf(" - '/help' - shows available commands\n");
-            if (ap) {
-                printf(" - '!help' - Prints the help message related to Archipelago.\n");
-            }
-            printf(" - '/connect {SERVER_IP}:{SERVER_PORT} {SLOT_NAME} [password:{PASSWORD}]' - to connect to the room\n");
-            printf(" - '/disconnect' - to exit the room\n");
-            printf("--------------------------------------------------------------------------------------------------\n");
+            PrintCommands();
 		}
         else if (line[0] == '!') {
             Message(line);
@@ -887,6 +871,9 @@ VOID InputCommand()
 		else if (line.find("/connect") == 0) {
 			printf("Missing parameter : Make sure to type '/connect {SERVER_IP}:{SERVER_PORT} {SLOT_NAME} [password:{PASSWORD}]\n");
 		}
+        else if (line.find("/version") == 0) {
+            printf("Version: %s\n", clientVersion);
+		}
         else if (line.find("/disconnect") == 0) {
             if (ap) {
                 delete ap;
@@ -896,12 +883,7 @@ VOID InputCommand()
                 resetAP();
                 system("cls");
                 printf("You are now disconnected\n");
-                printf("--------------------------------------------------------------------------------------------------\n");
-                printf("Commands:\n");
-                printf(" - '/help' - shows available commands\n");
-                printf(" - '/connect {SERVER_IP}:{SERVER_PORT} {SLOT_NAME} [password:{PASSWORD}]' - to connect to the room\n");
-                printf(" - '/disconnect' - to exit the room\n");
-                printf("--------------------------------------------------------------------------------------------------\n");
+                PrintCommands();
             }
         }
     }
@@ -911,10 +893,12 @@ bool Initialize() {
     // Generate a uuid
     std::string uuid = ap_get_uuid(UUID_FILE);
 
+    if (URI.find("localhost") == 0 && URI.find("://") == std::string::npos) {
+        URI = "ws://" + URI;
+    }
+
     if (ap != nullptr) {
         ap->reset();
-        delete ap;
-        ap = nullptr;
     }
 
     ap = new APClient(uuid, "Perfect Dark", URI);
@@ -1304,4 +1288,18 @@ const char *GetPassword()
 const char *GetStatus()
 {
     return status.c_str();
+}
+
+void PrintCommands()
+{
+    printf("--------------------------------------------------------------------------------------------------\n");
+    printf("Commands:\n");
+    printf(" - '/help' - shows available commands\n");
+    if (ap) {
+        printf(" - '!help' - Prints the help message related to Archipelago.\n");
+    }
+	printf(" - '/connect {SERVER_IP}:{SERVER_PORT} {SLOT_NAME} [password:{PASSWORD}]' - to connect to the room\n");
+    printf(" - '/version' - to show the version of the client\n");
+    printf(" - '/disconnect' - to exit the room\n");
+	printf("--------------------------------------------------------------------------------------------------\n");
 }
