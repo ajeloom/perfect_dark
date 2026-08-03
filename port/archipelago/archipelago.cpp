@@ -25,7 +25,7 @@ APClient* ap;
 
 #define VERSION_TUPLE {0, 6, 7}
 
-char* clientVersion = "0.3.2";
+char* clientVersion = "0.3.3";
 
 std::string URI;
 std::string slotName;
@@ -994,7 +994,19 @@ bool Initialize() {
                 requiredPerfectAgentMissionStars = data.at("options").at("required_perfect_agent_mission_stars");
             }
 
-            requiredMissionStars = requiredAgentMissionStars + requiredSpecialAgentMissionStars + requiredPerfectAgentMissionStars;
+            requiredMissionStars = 0;
+
+            if (hasAgent == 1) {
+                requiredMissionStars += requiredAgentMissionStars;
+            }
+
+            if (hasSpecialAgent == 1) {
+                requiredMissionStars += requiredSpecialAgentMissionStars;
+            }
+
+            if (hasPerfectAgent == 1) {
+                requiredMissionStars += requiredPerfectAgentMissionStars;
+            }
 
             if (data.at("options").contains("weapon_progression")) {
                 progressiveWeapon = 0;
