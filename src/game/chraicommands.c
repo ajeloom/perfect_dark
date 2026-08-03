@@ -2330,15 +2330,34 @@ bool aiGiveObjectToChr(void)
 												&& weapon->weaponnum == WEAPON_LAPTOPGUN)
 											|| (g_Vars.stagenum == STAGE_CRASHSITE 
 												&& weapon->weaponnum == WEAPON_PROXIMITYMINE)
-											|| (g_Vars.stagenum == STAGE_DEEPSEA 
-												&& weapon->weaponnum == WEAPON_FARSIGHT)
 											|| (g_Vars.stagenum == STAGE_ATTACKSHIP 
 												&& weapon->weaponnum == WEAPON_AR34));
 
+				// Don't give these weapons if it is not unlocked 
+				// or it is Progressive One Gun or Progressive Types
 				if (hasStageAndWeapon
 						&& (unlockedWeapons[weapon->weaponnum] == 0
 						|| weaponProgressionType == WEAPONPROG_ONEGUN
 						|| weaponProgressionType == WEAPONPROG_TYPES)) {
+					g_Vars.aioffset += 4;
+					return false;
+				}
+
+				hasStageAndWeapon = (g_Vars.stagenum == STAGE_DEEPSEA 
+										&& weapon->weaponnum == WEAPON_FARSIGHT);
+				
+				// Don't give FarSight on lower difficulties 
+				// for Progressive One Gun and Progressive Types
+				if (hasStageAndWeapon
+						&& weaponProgressionType >= WEAPONPROG_ONEGUN
+						&& g_MissionConfig.difficulty < DIFF_PA) {
+					g_Vars.aioffset += 4;
+					return false;
+				}
+
+				// Don't give FarSight if not unlocked
+				if (hasStageAndWeapon
+						&& unlockedWeapons[weapon->weaponnum] == 0) {
 					g_Vars.aioffset += 4;
 					return false;
 				}
