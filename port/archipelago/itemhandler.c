@@ -970,7 +970,8 @@ void GetNextProgressiveWeapon(int weaponNumbersArray[], int currentWeaponNumber)
 
             invGiveSingleWeapon(weaponNumbersArray[currentWeaponNumber]);
             
-            if (g_Vars.currentplayer->gunctrl.weaponnum != WEAPON_UNARMED) {
+            // Switch to weapon if you are still holding the one that was removed
+            if (g_Vars.currentplayer->gunctrl.weaponnum == weaponNumbersArray[currentWeaponNumber - 1]) {
                 bgunEquipWeapon2(HAND_RIGHT, weaponNumbersArray[currentWeaponNumber]);
             }
         }
@@ -984,6 +985,7 @@ void GetNextProgressiveWeapon(int weaponNumbersArray[], int currentWeaponNumber)
 
             invGiveSingleWeapon(weaponNumbersArray[currentWeaponNumber]);
 
+            // Switch to weapon if you are still holding the one that was removed
             if (g_Vars.currentplayer->gunctrl.weaponnum == weaponNumbersArray[currentWeaponNumber - 1]) {
                 bgunEquipWeapon2(HAND_RIGHT, weaponNumbersArray[currentWeaponNumber]);
             }
