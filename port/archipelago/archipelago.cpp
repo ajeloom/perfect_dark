@@ -26,7 +26,7 @@ APClient* ap;
 
 #define VERSION_TUPLE {0, 6, 7}
 
-char* clientVersion = "0.3.3";
+char* clientVersion = "0.4.0";
 
 std::string URI;
 std::string slotName;
@@ -834,7 +834,7 @@ void AP_Init()
     system("cls");
 
     printf("Version: %s\n", clientVersion);
-    printf("If you are using an older version of the APWorld, then it will not work correctly.\n");
+    printf("If you are using an incompatible version of the APWorld, then it will not work correctly.\n");
     PrintCommands();
 
     CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)InputCommand, NULL, 0, NULL);
