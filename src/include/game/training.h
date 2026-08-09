@@ -19,6 +19,7 @@ void frSetWeaponFound(s32 weaponnum);
 s32 ciIsStageComplete(s32 stageindex);
 bool func0f19cbcc(s32 weapon);
 bool frIsWeaponAvailable(s32 weapon);
+u32 frGetWeaponNumFromIndex(u32 weaponindex);
 u32 frGetWeaponIndexByWeapon(u32 weaponnum);
 u32 frGetWeaponScriptIndex(u32 weaponnum);
 s32 frIsClassicWeaponUnlocked(u32 weapon);

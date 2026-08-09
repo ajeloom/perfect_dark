@@ -33,7 +33,9 @@ struct menudialogdef g_BioTextMenuDialog;
 struct menudialogdef g_HangarLocationDetailsMenuDialog;
 struct menudialogdef g_HangarVehicleDetailsMenuDialog;
 
+extern int hasWeaponTraining;
 extern u32 unlockedWeapons[94];
+extern u32 completedTrainingMedals[33][3];
 
 MenuItemHandlerResult frDetailsOkMenuHandler(s32 operation, struct menuitem *item, union handlerdata *data)
 {
@@ -179,7 +181,10 @@ MenuItemHandlerResult frWeaponListMenuHandler(s32 operation, struct menuitem *it
 
 		// Iterate and render the 3 difficulty stars
 		for (i = 0; i < 3; i++) {
-			if (score2 > i) {
+			// Display stars from saved scores if weapon training is disabled.
+			// Otherwise, display stars from completed locations.
+			if ((score2 > i && hasWeaponTraining == 0)
+					|| completedTrainingMedals[weaponnum2 - 2][i] == 1) {
 				switch (i) {
 				case FRDIFFICULTY_BRONZE:
 					colour = 0x884400ff;

@@ -45,8 +45,9 @@
 extern u8 *_firingrangeSegmentRomStart;
 extern u8 *_firingrangeSegmentRomEnd;
 
+extern int hasWeaponTraining;
 extern u32 unlockedWeapons[94];
-extern u32 completedTrainingMedals[32][3];
+extern u32 completedTrainingMedals[33][3];
 
 extern int progressiveWeapon;
 extern int weaponProgressionType;
@@ -85,6 +86,11 @@ u8 ciGetFiringRangeScore(s32 weaponindex)
 		return 3;
 	}
 #endif
+
+	// Don't get the score if the weapon is locked
+	if (unlockedWeapons[frGetWeaponNumFromIndex(weaponindex)] == 0) {
+		return 0;
+	}
 
 	return (g_GameFile.firingrangescores[weaponindex >> 2] >> (weaponindex % 4) * 2) & 3;
 }
@@ -236,6 +242,46 @@ bool frIsWeaponAvailable(s32 weapon)
 	return frIsWeaponFound(weapon);
 }
 
+u32 frGetWeaponNumFromIndex(u32 weaponindex)
+{
+	switch (weaponindex) {
+    case 0:  return WEAPON_FALCON2;
+    case 1:  return WEAPON_FALCON2_SCOPE;
+    case 2:  return WEAPON_FALCON2_SILENCER;
+    case 3:  return WEAPON_MAGSEC4;
+    case 4:  return WEAPON_MAULER;
+    case 5:  return WEAPON_PHOENIX;
+    case 6:  return WEAPON_DY357MAGNUM;
+    case 7:  return WEAPON_DY357LX;
+    case 8:  return WEAPON_CMP150;
+    case 9:  return WEAPON_CYCLONE;
+    case 10: return WEAPON_CALLISTO;
+    case 11: return WEAPON_RCP120;
+    case 12: return WEAPON_LAPTOPGUN;
+    case 13: return WEAPON_DRAGON;
+    case 14: return WEAPON_K7AVENGER;
+    case 15: return WEAPON_AR34;
+    case 16: return WEAPON_SUPERDRAGON;
+    case 17: return WEAPON_SHOTGUN;
+    case 18: return WEAPON_SNIPERRIFLE;
+    case 19: return WEAPON_FARSIGHT;
+    case 20: return WEAPON_CROSSBOW;
+    case 21: return WEAPON_TRANQUILIZER;
+    case 22: return WEAPON_REAPER;
+    case 23: return WEAPON_DEVASTATOR;
+    case 24: return WEAPON_ROCKETLAUNCHER;
+    case 25: return WEAPON_SLAYER;
+    case 26: return WEAPON_COMBATKNIFE;
+    case 27: return WEAPON_LASER;
+    case 28: return WEAPON_GRENADE;
+    case 29: return WEAPON_TIMEDMINE;
+    case 30: return WEAPON_PROXIMITYMINE;
+    case 31: return WEAPON_REMOTEMINE;
+	}
+
+	return 0;
+}
+
 u32 frGetWeaponIndexByWeapon(u32 weaponnum)
 {
 	switch (weaponnum) {
@@ -316,56 +362,112 @@ u32 frGetWeaponScriptIndex(u32 weaponnum)
 	return 0;
 }
 
+s32 frIsWeaponFullyComplete(u32 weaponnum) {
+	if (completedTrainingMedals[weaponnum - 2][0] == 1
+			&& completedTrainingMedals[weaponnum - 2][1] == 1
+			&& completedTrainingMedals[weaponnum - 2][2] == 1) {
+		return true;
+	}
+
+	return false;
+}
+
 s32 frIsClassicWeaponUnlocked(u32 weapon)
 {
-	switch (weapon) {
-	case WEAPON_PP9I:
-		return ciGetFiringRangeScore(0) == 3
-			&& ciGetFiringRangeScore(1) == 3
-			&& ciGetFiringRangeScore(2) == 3;
-	case WEAPON_CC13:
-		return ciGetFiringRangeScore(3) == 3
-			&& ciGetFiringRangeScore(4) == 3
-			&& ciGetFiringRangeScore(5) == 3
-			&& ciGetFiringRangeScore(6) == 3
-			&& ciGetFiringRangeScore(7) == 3;
-	case WEAPON_KL01313:
-		return ciGetFiringRangeScore(8) == 3
-			&& ciGetFiringRangeScore(9) == 3
-			&& ciGetFiringRangeScore(10) == 3
-			&& ciGetFiringRangeScore(11) == 3;
-	case WEAPON_KF7SPECIAL:
-		return ciGetFiringRangeScore(12) == 3
-			&& ciGetFiringRangeScore(13) == 3
-			&& ciGetFiringRangeScore(14) == 3
-			&& ciGetFiringRangeScore(15) == 3
-			&& ciGetFiringRangeScore(16) == 3;
-	case WEAPON_ZZT:
-		return ciGetFiringRangeScore(17) == 3
-			&& ciGetFiringRangeScore(18) == 3
-			&& ciGetFiringRangeScore(24) == 3
-			&& ciGetFiringRangeScore(25) == 3;
-	case WEAPON_DMC:
+	// Use the original game's method of checking if classic weapon is unlocked
+	if (hasWeaponTraining == 0) {
+		switch (weapon) {
+		case WEAPON_PP9I:
+			return ciGetFiringRangeScore(0) == 3
+				&& ciGetFiringRangeScore(1) == 3
+				&& ciGetFiringRangeScore(2) == 3;
+		case WEAPON_CC13:
+			return ciGetFiringRangeScore(3) == 3
+				&& ciGetFiringRangeScore(4) == 3
+				&& ciGetFiringRangeScore(5) == 3
+				&& ciGetFiringRangeScore(6) == 3
+				&& ciGetFiringRangeScore(7) == 3;
+		case WEAPON_KL01313:
+			return ciGetFiringRangeScore(8) == 3
+				&& ciGetFiringRangeScore(9) == 3
+				&& ciGetFiringRangeScore(10) == 3
+				&& ciGetFiringRangeScore(11) == 3;
+		case WEAPON_KF7SPECIAL:
+			return ciGetFiringRangeScore(12) == 3
+				&& ciGetFiringRangeScore(13) == 3
+				&& ciGetFiringRangeScore(14) == 3
+				&& ciGetFiringRangeScore(15) == 3
+				&& ciGetFiringRangeScore(16) == 3;
+		case WEAPON_ZZT:
+			return ciGetFiringRangeScore(17) == 3
+				&& ciGetFiringRangeScore(18) == 3
+				&& ciGetFiringRangeScore(24) == 3
+				&& ciGetFiringRangeScore(25) == 3;
+		case WEAPON_DMC:
 #if VERSION >= VERSION_NTSC_1_0
-		return ciGetFiringRangeScore(29) == 3
-			&& ciGetFiringRangeScore(30) == 3
-			&& ciGetFiringRangeScore(31) == 3;
+			return ciGetFiringRangeScore(29) == 3
+				&& ciGetFiringRangeScore(30) == 3
+				&& ciGetFiringRangeScore(31) == 3;
 #else
-		return ciGetFiringRangeScore(29) == 3
-			&& ciGetFiringRangeScore(30) == 3
-			&& ciGetFiringRangeScore(32) == 3
-			&& ciGetFiringRangeScore(33) == 3
-			&& ciGetFiringRangeScore(34) == 3;
+			return ciGetFiringRangeScore(29) == 3
+				&& ciGetFiringRangeScore(30) == 3
+				&& ciGetFiringRangeScore(32) == 3
+				&& ciGetFiringRangeScore(33) == 3
+				&& ciGetFiringRangeScore(34) == 3;
 #endif
-	case WEAPON_AR53:
-		return ciGetFiringRangeScore(19) == 3
-			&& ciGetFiringRangeScore(20) == 3
-			&& ciGetFiringRangeScore(26) == 3
-			&& ciGetFiringRangeScore(28) == 3;
-	case WEAPON_RCP45:
-		return ciGetFiringRangeScore(21) == 3
-			&& ciGetFiringRangeScore(22) == 3
-			&& ciGetFiringRangeScore(23) == 3;
+		case WEAPON_AR53:
+			return ciGetFiringRangeScore(19) == 3
+				&& ciGetFiringRangeScore(20) == 3
+				&& ciGetFiringRangeScore(26) == 3
+				&& ciGetFiringRangeScore(28) == 3;
+		case WEAPON_RCP45:
+			return ciGetFiringRangeScore(21) == 3
+				&& ciGetFiringRangeScore(22) == 3
+				&& ciGetFiringRangeScore(23) == 3;
+		}
+	}
+	else {
+		switch (weapon) {
+		case WEAPON_PP9I:
+			return frIsWeaponFullyComplete(WEAPON_FALCON2) == 1
+				&& frIsWeaponFullyComplete(WEAPON_FALCON2_SILENCER) == 1
+				&& frIsWeaponFullyComplete(WEAPON_FALCON2_SCOPE) == 1;
+		case WEAPON_CC13:
+			return frIsWeaponFullyComplete(WEAPON_MAGSEC4) == 1
+				&& frIsWeaponFullyComplete(WEAPON_MAULER) == 1
+				&& frIsWeaponFullyComplete(WEAPON_PHOENIX) == 1
+				&& frIsWeaponFullyComplete(WEAPON_DY357MAGNUM) == 1
+				&& frIsWeaponFullyComplete(WEAPON_DY357LX) == 1;
+		case WEAPON_KL01313:
+			return frIsWeaponFullyComplete(WEAPON_CMP150) == 1
+				&& frIsWeaponFullyComplete(WEAPON_CYCLONE) == 1
+				&& frIsWeaponFullyComplete(WEAPON_CALLISTO) == 1
+				&& frIsWeaponFullyComplete(WEAPON_RCP120) == 1;
+		case WEAPON_KF7SPECIAL:
+			return frIsWeaponFullyComplete(WEAPON_LAPTOPGUN) == 1
+				&& frIsWeaponFullyComplete(WEAPON_DRAGON) == 1
+				&& frIsWeaponFullyComplete(WEAPON_K7AVENGER) == 1
+				&& frIsWeaponFullyComplete(WEAPON_AR34) == 1
+				&& frIsWeaponFullyComplete(WEAPON_SUPERDRAGON) == 1;
+		case WEAPON_ZZT:
+			return frIsWeaponFullyComplete(WEAPON_SHOTGUN) == 1
+				&& frIsWeaponFullyComplete(WEAPON_SNIPERRIFLE) == 1
+				&& frIsWeaponFullyComplete(WEAPON_ROCKETLAUNCHER) == 1
+				&& frIsWeaponFullyComplete(WEAPON_SLAYER) == 1;
+		case WEAPON_DMC:
+			return frIsWeaponFullyComplete(WEAPON_TIMEDMINE) == 1
+				&& frIsWeaponFullyComplete(WEAPON_PROXIMITYMINE) == 1
+				&& frIsWeaponFullyComplete(WEAPON_REMOTEMINE) == 1;
+		case WEAPON_AR53:
+			return frIsWeaponFullyComplete(WEAPON_FARSIGHT) == 1
+				&& frIsWeaponFullyComplete(WEAPON_CROSSBOW) == 1
+				&& frIsWeaponFullyComplete(WEAPON_COMBATKNIFE) == 1
+				&& frIsWeaponFullyComplete(WEAPON_GRENADE) == 1;
+		case WEAPON_RCP45:
+			return frIsWeaponFullyComplete(WEAPON_TRANQUILIZER) == 1
+				&& frIsWeaponFullyComplete(WEAPON_REAPER) == 1
+				&& frIsWeaponFullyComplete(WEAPON_DEVASTATOR) == 1;
+		}
 	}
 
 	return false;
@@ -1428,6 +1530,7 @@ void frSetCompleted(void)
 		frSaveScoreIfBest(frweaponindex, g_FrData.difficulty + 1);
 		g_FrData.menutype = FRMENUTYPE_COMPLETED;
 		collectFiringRangeItem(g_FrWeaponNum, g_FrData.difficulty);
+		completedTrainingMedals[g_FrWeaponNum - 2][g_FrData.difficulty] = 1;
 
 		// Check if classic weapon is unlocked
 		if (g_FrData.difficulty == FRDIFFICULTY_GOLD) {

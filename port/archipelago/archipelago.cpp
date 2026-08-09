@@ -80,6 +80,7 @@ extern u32 unlockedCharacters[5];
 
 extern u32 completedMissions[21][3];
 extern u32 completedChallenges[30];
+extern u32 completedTrainingMedals[33][3];
 
 int deathLink;
 bool pendingDeathLink;
@@ -1111,6 +1112,12 @@ bool Initialize() {
                 }
                 else if (location >= 310 && location < 340) {
                     completedChallenges[location - 310] = 1;
+                }
+                else if (location >= 340 && location < 439) {
+                    int weaponIndex = (location - 340) / 3;
+                    int difficulty = (location - 340) % 3;
+
+                    completedTrainingMedals[weaponIndex][difficulty] = 1;
                 }
             }
 		}
