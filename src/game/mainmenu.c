@@ -34,6 +34,7 @@
 #include "data.h"
 #include "types.h"
 
+extern u32 unlockedWeapons[94];
 extern u32 unlockedMissions[NUM_SOLOSTAGES][3];
 extern u32 completedMissions[NUM_SOLOSTAGES][3];
 
@@ -684,6 +685,117 @@ MenuItemHandlerResult menuhandlerSfxVolume(s32 operation, struct menuitem *item,
 	return 0;
 }
 
+MenuItemHandlerResult menuhandlerUnlockedWeaponsList(s32 operation, struct menuitem *item, union handlerdata *data)
+{
+	Gfx *gdl;
+	struct menuitemrenderdata *renderdata;
+	s32 x;
+	s32 y;
+
+	static u8 g_FrFocusedSlotIndex = 0;
+
+	switch (operation) {
+	case MENUOP_GETOPTGROUPCOUNT:
+		data->list.value = 0;
+		break;
+	case MENUOP_GETOPTGROUPTEXT:
+		return 0;
+	case MENUOP_GETGROUPSTARTINDEX:
+		data->list.groupstartindex = 0;
+		break;
+	case MENUOP_GETOPTIONCOUNT:
+		data->list.value = 42;
+		break;
+	case MENUOP_GETOPTIONTEXT:
+		g_FrFocusedSlotIndex = data->list.value;
+		return 0;
+	case MENUOP_SET:
+		g_FrFocusedSlotIndex = data->list.value;
+		return 0;
+	case MENUOP_GETSELECTEDINDEX:
+		data->list.value = g_FrFocusedSlotIndex;
+		break;
+	case MENUOP_LISTITEMFOCUS:
+		if (data->list.value < 33) {
+			g_InventoryWeapon = data->list.value + 2;
+		}
+		else {
+			// Skip Combat Boost
+			g_InventoryWeapon = data->list.value + 3;
+		}
+		g_Menus[g_MpPlayerNum].training.weaponnum = g_InventoryWeapon;
+		g_FrFocusedSlotIndex = data->list.value;
+
+		break;
+
+	case MENUOP_GETOPTIONHEIGHT:
+		data->list.value = LINEHEIGHT;
+		break;
+
+	case MENUOP_RENDER:
+		gdl = data->type19.gdl;
+		renderdata = data->type19.renderdata2;
+
+		x = renderdata->x + 10;
+		y = renderdata->y + 1;
+
+		gdl = text0f153628(gdl);
+
+		int weaponnum = 0;
+		if (data->type19.unk04 < 33) {
+			weaponnum = data->type19.unk04 + 2;
+		}
+		else {
+			// Skip Combat Boost
+			weaponnum = data->type19.unk04 + 3;
+		}
+
+		if (unlockedWeapons[weaponnum] == 0) {
+			gdl = textRenderProjected(gdl, &x, &y, bgunGetName(weaponnum), g_CharsHandelGothicSm, g_FontHandelGothicSm,
+						0xff0000ff, viGetWidth(), viGetHeight(), 0, 0);
+		}
+		else {
+			gdl = textRenderProjected(gdl, &x, &y, bgunGetName(weaponnum), g_CharsHandelGothicSm, g_FontHandelGothicSm,
+						renderdata->colour, viGetWidth(), viGetHeight(), 0, 0);
+		}
+		
+		gdl = text0f153780(gdl);
+
+		return (uintptr_t)gdl;
+	}
+
+	return 0;
+}
+
+struct menuitem g_UnlockedWeaponsMenuItems[] = {
+	{
+		MENUITEMTYPE_LIST,
+		0,
+		MENUITEMFLAG_LIST_CUSTOMRENDER,
+		0x000000a0,
+		0,
+		menuhandlerUnlockedWeaponsList,
+	},
+	{
+		MENUITEMTYPE_MARQUEE,
+		0,
+		MENUITEMFLAG_SMALLFONT | MENUITEMFLAG_MARQUEE_FADEBOTHSIDES,
+		(uintptr_t)&invMenuTextWeaponDescription,
+		0,
+		NULL,
+	},
+	{ MENUITEMTYPE_END },
+};
+
+struct menudialogdef g_UnlockedWeaponsMenuDialog = {	
+	MENUDIALOGTYPE_DEFAULT,
+	(uintptr_t)"Weapons\n",
+	g_UnlockedWeaponsMenuItems,
+	NULL,
+	MENUDIALOGFLAG_LITERAL_TEXT,
+	NULL,
+};
+
 MenuDialogHandlerResult menudialogBriefing(s32 operation, struct menudialogdef *dialogdef, union handlerdata *data)
 {
 	if (operation == MENUOP_TICK) {
@@ -720,7 +832,7 @@ struct menudialogdef g_PreAndPostMissionBriefingMenuDialog = {
 	g_PreAndPostMissionBriefingMenuItems,
 	menudialogBriefing,
 	MENUDIALOGFLAG_DISABLEITEMSCROLL,
-	NULL,
+	&g_UnlockedWeaponsMenuDialog,
 };
 
 MenuItemHandlerResult menuhandlerAcceptMission(s32 operation, struct menuitem *item, union handlerdata *data)
