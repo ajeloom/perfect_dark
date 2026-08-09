@@ -112,6 +112,16 @@ void APConfigRegisterUInt(const char* key, u32* var, u32 min, u32 max)
 	}
 }
 
+void APConfigRegisterString(const char *key, char *var, u32 maxstr)
+{
+	struct configentry *cfg = APConfigFindOrAddEntry(key);
+	if (cfg) {
+		cfg->type = CFG_STR;
+		cfg->ptr = var;
+		cfg->max_str = maxstr;
+	}
+}
+
 static void APConfigSetFromString(const char *key, const char *val)
 {
 	struct configentry *cfg = APConfigFindEntry(key);
@@ -125,6 +135,9 @@ static void APConfigSetFromString(const char *key, const char *val)
 				tmp_u32 = APConfigClampUInt(tmp_u32, cfg->min_u32, cfg->max_u32);
 			}
 			*(u32*)cfg->ptr = tmp_u32;
+			break;
+		case CFG_STR:
+			strncpy(cfg->ptr, val, cfg->max_str ? cfg->max_str - 1 : 4096);
 			break;
 		default:
 			break;

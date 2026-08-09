@@ -22,6 +22,7 @@ const char *GetSlotName();
 const char *GetPassword();
 const char *GetStatus();
 void PrintCommands();
+void DisconnectAP();
 
 #ifdef __cplusplus
 }

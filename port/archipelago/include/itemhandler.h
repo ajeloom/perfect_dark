@@ -1,6 +1,6 @@
 #include <PR/ultratypes.h>
 
-void resetAP();
+void resetAP(int restartGame);
 void collectMissionItem(u8 missionIndex, u8 difficulty);
 void collectObjectiveItem(u8 missionIndex, u8 difficulty, u8 objIndex);
 void collectChallengeItem(u32 challengeIndex);

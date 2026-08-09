@@ -1,4 +1,5 @@
 #include "archipelago.h"
+#include "apmenu.h"
 
 #include "apclient.hpp"
 #include "apuuid.hpp"
@@ -81,6 +82,8 @@ extern u32 unlockedCharacters[5];
 extern u32 completedMissions[21][3];
 extern u32 completedChallenges[30];
 extern u32 completedTrainingMedals[33][3];
+
+int failedToConnectTotal = 0;
 
 int deathLink;
 bool pendingDeathLink;
@@ -887,16 +890,24 @@ VOID InputCommand()
 		else if (line.find("/connect") == 0) {
 			printf("Missing parameter : Make sure to type '/connect {SERVER_IP}:{SERVER_PORT} {SLOT_NAME} [password:{PASSWORD}]\n");
 		}
+        else if (line.find("/reconnect") == 0) {
+            URI = GetSavedAddress();
+            slotName = GetSavedSlotName();
+            password = GetSavedPassword();
+
+            Initialize();
+		}
         else if (line.find("/version") == 0) {
             printf("Version: %s\n", clientVersion);
 		}
         else if (line.find("/disconnect") == 0) {
             if (ap) {
+                ap->reset();
                 delete ap;
                 ap = nullptr;
 
                 status = "Not connected\n";
-                resetAP();
+                resetAP(true);
                 system("cls");
                 printf("You are now disconnected\n");
                 PrintCommands();
@@ -909,15 +920,16 @@ bool Initialize() {
     // Generate a uuid
     std::string uuid = ap_get_uuid(UUID_FILE);
 
+    std::string uri = URI;
     if (URI.find("localhost") == 0 && URI.find("://") == std::string::npos) {
-        URI = "ws://" + URI;
+        uri = "ws://" + uri;
     }
 
     if (ap != nullptr) {
         ap->reset();
     }
 
-    ap = new APClient(uuid, "Perfect Dark", URI);
+    ap = new APClient(uuid, "Perfect Dark", uri);
 
     ap->set_receive_own_locations(true);
 
@@ -950,6 +962,7 @@ bool Initialize() {
         // printf("socket connected\n");
         connected = true;
         status = "Connected\n";
+        failedToConnectTotal = 0;
     });
 
     // Called when connect or a ping failed - no action required, reconnect is automatic
@@ -957,6 +970,7 @@ bool Initialize() {
         printf("socket error: %s\n", msg.c_str());
         error = true;
         status = "Not connected\n";
+        failedToConnectTotal++;
     });
 	
     // Called when the socket gets disconnected - no action required, reconnect is automatic
@@ -969,6 +983,8 @@ bool Initialize() {
 	ap->set_slot_connected_handler([](const json& data) {
         ap->StatusUpdate(APClient::ClientStatus::PLAYING);
         printf("Connected and ready to go as %s\n", ap->get_player_alias(ap->get_player_number()).c_str());
+
+        SaveLoginInfo();
 
         if (data.contains("options")) {
             if (data.at("options").contains("goal")) {
@@ -1369,7 +1385,33 @@ void PrintCommands()
         printf(" - '!help' - Prints the help message related to Archipelago.\n");
     }
 	printf(" - '/connect {SERVER_IP}:{SERVER_PORT} {SLOT_NAME} [password:{PASSWORD}]' - to connect to the room\n");
+    printf(" - '/reconnect - to connect to the last connected room\n");
     printf(" - '/version' - to show the version of the client\n");
     printf(" - '/disconnect' - to exit the room\n");
 	printf("--------------------------------------------------------------------------------------------------\n");
+    if (GetSavedAddress()[0] != '\0' 
+            && GetSavedSlotName()[0] != '\0') {
+        printf("Last connected room:\n");
+        printf(" - Address: %s\n", GetSavedAddress());
+        printf(" - Slot name: %s\n", GetSavedSlotName());
+        printf(" - Password: %s\n", GetSavedPassword());
+        printf("Use /reconnect to rejoin this room.\n");
+        printf("--------------------------------------------------------------------------------------------------\n");
+    }
+}
+
+void DisconnectAP()
+{
+    if (ap) {
+        ap->reset();
+        delete ap;
+        ap = nullptr;
+
+        status = "Not connected\n";
+        resetAP(false);
+        printf("--------------------------------------------------------------------------------------------------\n");
+        printf("Failed to join room.\n");
+
+        failedToConnectTotal = 0;
+    }
 }

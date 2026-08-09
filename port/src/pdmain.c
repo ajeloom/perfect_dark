@@ -75,6 +75,8 @@
 #include "system.h"
 #include "archipelago.h"
 
+extern int failedToConnectTotal;
+
 extern u8 *g_MempHeap;
 extern u32 g_MempHeapSize;
 
@@ -580,7 +582,12 @@ void mainTick(void)
 		memaPrint();
 		profileSetMarker(PROFILE_MAINTICK_END);
 
-		PollServer();
+		if (failedToConnectTotal < 3) {
+			PollServer();
+		}
+		else {
+			DisconnectAP();
+		}
 	}
 }
 

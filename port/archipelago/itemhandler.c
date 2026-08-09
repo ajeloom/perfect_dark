@@ -295,7 +295,7 @@ int progressiveOtherWeaponNumbers[10] = {
     WEAPON_FARSIGHT,
 };
 
-void resetAP()
+void resetAP(int restartGame)
 {
 	s32 i;
 	s32 j;
@@ -339,7 +339,9 @@ void resetAP()
     completionGoal = 0;
     skedarRequirements = 0;
 
-    func0f0f820c(NULL, -7);
+    if (restartGame) {
+        func0f0f820c(NULL, -7);
+    }
 }
 
 void collectMissionItem(u8 missionIndex, u8 difficulty)

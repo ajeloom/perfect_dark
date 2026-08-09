@@ -1,3 +1,4 @@
+#include "apmenu.h"
 #include <PR/ultratypes.h>
 #include "bss.h"
 #include "data.h"
@@ -73,6 +74,10 @@ extern int hasWeaponCheats;
 extern int hasNPCs;
 
 extern int deathLink;
+
+static char savedAddress[256];
+static char savedSlotName[256];
+static char savedPassword[256];
 
 static MenuItemHandlerResult menuhandlerMissionChecklist(s32 operation, struct menuitem *item, union handlerdata *data)
 {
@@ -1786,6 +1791,36 @@ struct menudialogdef g_ArchipelagoMenuDialog = {
 	MENUDIALOGFLAG_LITERAL_TEXT,
 	NULL,
 };
+
+void SaveLoginInfo()
+{
+	// printf("Saved login\n");
+	snprintf(savedAddress, sizeof(savedAddress), "%s", GetServerAddress());
+	snprintf(savedSlotName, sizeof(savedSlotName), "%s", GetSlotName());
+	snprintf(savedPassword, sizeof(savedPassword), "%s", GetPassword());
+}
+
+char *GetSavedAddress()
+{
+	return savedAddress;
+}
+
+char *GetSavedSlotName()
+{
+	return savedSlotName;
+}
+
+char *GetSavedPassword()
+{
+	return savedPassword;
+}
+
+PD_CONSTRUCTOR static void APConfigLoginInit(void)
+{
+	APConfigRegisterString("LastLogin.Address", savedAddress, 256);
+	APConfigRegisterString("LastLogin.SlotName", savedSlotName, 256);
+	APConfigRegisterString("LastLogin.Password", savedPassword, 256);
+}
 
 PD_CONSTRUCTOR static void APConfigRandomOptionsInit(void)
 {
