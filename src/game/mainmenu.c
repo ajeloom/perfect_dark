@@ -35,6 +35,7 @@
 #include "types.h"
 
 extern u32 unlockedMissions[NUM_SOLOSTAGES][3];
+extern u32 completedMissions[NUM_SOLOSTAGES][3];
 
 extern int completionGoal;
 extern int skedarRequirements;
@@ -1862,7 +1863,8 @@ MenuItemHandlerResult menuhandlerMissionList(s32 operation, struct menuitem *ite
 			for (k = 0; k < 3; k++) {
 				s32 relx = 63 + k * 17;
 
-				if ((g_GameFile.coopcompletions[k] & (1 << stageindex)) == 0) {
+				// Color stars if the mission location is completed
+				if (completedMissions[stageindex][k] == 0) {
 #if VERSION >= VERSION_NTSC_1_0
 					gDPSetEnvColorViaWord(gdl++, 0xffffff00 | ((renderdata->colour & 0xff) * 63 / 256));
 #else
@@ -1907,7 +1909,8 @@ MenuItemHandlerResult menuhandlerMissionList(s32 operation, struct menuitem *ite
 			for (k = 0; k < 3; k++) {
 				s32 relx = 63 + k * 17;
 
-				if (g_GameFile.besttimes[stageindex][k] == 0) {
+				// Color stars if the mission location is completed
+				if (completedMissions[stageindex][k] == 0) {
 					// Set transparency
 #if VERSION >= VERSION_NTSC_1_0
 					gDPSetEnvColorViaWord(gdl++, 0xffffff00 | ((renderdata->colour & 0xff) * 63 / 256));

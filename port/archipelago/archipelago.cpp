@@ -78,6 +78,8 @@ int areCheatsInItemPool = -1;
 int hasNPCs;
 extern u32 unlockedCharacters[5];
 
+extern u32 completedMissions[21][3];
+
 int deathLink;
 bool pendingDeathLink;
 
@@ -1095,6 +1097,17 @@ bool Initialize() {
 
             if (data.at("options").contains("deathlink")) {
                 deathLink = data.at("options").at("deathlink");
+            }
+
+            // Set completed locations
+            std::set<int64_t> locations = ap->get_checked_locations();
+            for (const auto& location : locations) {
+                if (location >= 247 && location < 310) {
+                    int missionIndex = (location - 247) / 3;
+                    int difficulty = (location - 247) % 3;
+
+                    completedMissions[missionIndex][difficulty] = 1;
+                }
             }
 		}
 
