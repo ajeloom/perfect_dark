@@ -2559,6 +2559,14 @@ bool aiUnlockDoor(void)
 	u8 *cmd = g_Vars.ailist + g_Vars.aioffset;
 	struct defaultobj *obj = objFindByTagId(cmd[2]);
 
+	// Lock the player from reaching Elvis if Alien Medpack is locked
+	if (g_Vars.stagenum == STAGE_ESCAPE
+			&& g_MissionConfig.difficulty == DIFF_A
+			&& unlockedWeapons[WEAPON_AUTOSURGEON] == 0) {
+		g_Vars.aioffset += 4;
+		return false;
+	}
+
 	if (obj && obj->prop && obj->prop->type == PROPTYPE_DOOR) {
 		struct doorobj *door = (struct doorobj *) obj;
 		u8 bits = cmd[3];
