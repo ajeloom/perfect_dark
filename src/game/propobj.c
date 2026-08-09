@@ -17856,7 +17856,18 @@ s32 objTestForPickup(struct prop *prop)
 								&& weapon->weaponnum != WEAPON_REMOTEMINE
 								&& weapon->weaponnum != WEAPON_RCP120
 								&& weapon->weaponnum != WEAPON_DEVASTATOR
+								&& weapon->weaponnum != WEAPON_LAPTOPGUN
 								&& weapon->weaponnum != progressiveWeaponNumbers[progressiveWeapon]) {
+							return TICKOP_NONE;
+						}
+
+						// Can't pick up Laptop Gun if on anything that is not Mines, Grenade, and N-Bomb
+						if (weapon->weaponnum == WEAPON_LAPTOPGUN
+								&& progressiveWeaponNumbers[progressiveWeapon] != WEAPON_TIMEDMINE
+								&& progressiveWeaponNumbers[progressiveWeapon] != WEAPON_PROXIMITYMINE
+								&& progressiveWeaponNumbers[progressiveWeapon] != WEAPON_GRENADE
+								&& progressiveWeaponNumbers[progressiveWeapon] != WEAPON_REMOTEMINE
+								&& progressiveWeaponNumbers[progressiveWeapon] != WEAPON_NBOMB) {
 							return TICKOP_NONE;
 						}
 					}

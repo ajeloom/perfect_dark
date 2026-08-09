@@ -1259,6 +1259,16 @@ void invRemoveLockedWeapons(void)
 				continue;
 			}
 
+			// Don't clear Laptop Gun on certain weapons
+			if ((progressiveWeaponNumbers[progressiveWeapon] == WEAPON_TIMEDMINE
+					|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_PROXIMITYMINE
+					|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_GRENADE
+					|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_REMOTEMINE
+					|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_NBOMB)
+					&& i == WEAPON_LAPTOPGUN) {
+				continue;
+			}
+
 			if (g_Vars.stagenum == STAGE_G5BUILDING 
 					&& i == WEAPON_REMOTEMINE
 					&& unlockedWeapons[WEAPON_REMOTEMINE] == 1) {
