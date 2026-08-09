@@ -1213,7 +1213,7 @@ struct menuitem g_GameOptionsMenuItems[] = {
 		MENUITEMTYPE_SELECTABLE,
 		1,
 		MENUITEMFLAG_LITERAL_TEXT,
-		(uintptr_t)"Skedar Requirements:                 \n",
+		(uintptr_t)"Skedar Requirements:                    \n",
 		(uintptr_t)&GetOption,
 		NULL,
 	},
@@ -1793,7 +1793,7 @@ PD_CONSTRUCTOR static void APConfigRandomOptionsInit(void)
     APConfigRegisterUInt("RandomOptions.RandomMusic", &randomMusic, 0, 1);
 	APConfigRegisterUInt("RandomOptions.RandomCharacters", &randomCharacters, 0, 1);
 	APConfigRegisterUInt("RandomOptions.RandomEnemyWeapons", &randomEnemyWeapons, 0, 1);
-	APConfigRegisterUInt("RandomOptions.randomBuddyWeapons", &randomBuddyWeapons, 0, 1);
+	APConfigRegisterUInt("RandomOptions.RandomBuddyWeapons", &randomBuddyWeapons, 0, 1);
 	APConfigRegisterUInt("RandomOptions.JoannaHead", &randomJoHead, 4, 85);
 	APConfigRegisterUInt("RandomOptions.VelvetHead", &randomVDHead, 4, 85);
 	APConfigRegisterUInt("RandomOptions.ElvisHead", &randomElvisHead, 4, 85);
