@@ -29,7 +29,9 @@
 #include "mpsetups.h"
 
 extern u32 unlockedChallenges[30];
+extern u32 completedChallenges[30];
 
+extern int hasChallenges;
 extern int completionGoal;
 extern int challengeStars;
 extern int requiredChallengeStars;
@@ -4839,13 +4841,17 @@ MenuItemHandlerResult mpChallengesListMenuHandler(s32 operation, struct menuitem
 
 		for (i = 0; i < maxchrs; i++) {
 #if VERSION >= VERSION_NTSC_1_0
-			if (challengeIsCompletedByAnyChrWithNumPlayersBySlot(data->type19.unk04, i + 1)) {
+			// Display challenge stars from completed locations
+			// Show challenge stars from save data if challenges are disabled
+			if (completedChallenges[data->type19.unk04] == 1
+					|| (challengeIsCompletedByAnyChrWithNumPlayersBySlot(data->type19.unk04, i + 1) && hasChallenges == 0)) {
 				gDPSetEnvColorViaWord(gdl++, (renderdata->colour & 0xff) * 0xff >> 8 | 0xffe56500);
 			} else {
 				gDPSetEnvColorViaWord(gdl++, (renderdata->colour & 0xff) * 0xff >> 8 | 0x43430000);
 			}
 #else
-			if (challengeIsCompletedByAnyChrWithNumPlayersBySlot(data->type19.unk04, i + 1)) {
+			if (completedChallenges[data->type19.unk04] == 1
+					|| (challengeIsCompletedByAnyChrWithNumPlayersBySlot(data->type19.unk04, i + 1) && hasChallenges == 0)) {
 				gDPSetEnvColorViaWord(gdl++, 0xffe565ff);
 			} else {
 				gDPSetEnvColorViaWord(gdl++, 0x434300ff);

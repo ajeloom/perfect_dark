@@ -79,6 +79,7 @@ int hasNPCs;
 extern u32 unlockedCharacters[5];
 
 extern u32 completedMissions[21][3];
+extern u32 completedChallenges[30];
 
 int deathLink;
 bool pendingDeathLink;
@@ -1107,6 +1108,9 @@ bool Initialize() {
                     int difficulty = (location - 247) % 3;
 
                     completedMissions[missionIndex][difficulty] = 1;
+                }
+                else if (location >= 310 && location < 340) {
+                    completedChallenges[location - 310] = 1;
                 }
             }
 		}
