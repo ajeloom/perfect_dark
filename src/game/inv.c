@@ -1240,21 +1240,12 @@ void invRemoveLockedWeapons(void)
 	else if (weaponProgressionType == WEAPONPROG_ONEGUN) {
 		for (i = WEAPON_FALCON2; i <= WEAPON_PSYCHOSISGUN; i++) {
 			// Don't clear weapons on some missions
-			if ((g_Vars.stagenum == STAGE_EXTRACTION
-					|| g_Vars.stagenum == STAGE_VILLA
-					|| g_Vars.stagenum == STAGE_CHICAGO
-					|| g_Vars.stagenum == STAGE_G5BUILDING
-					|| g_Vars.stagenum == STAGE_INFILTRATION
-					|| g_Vars.stagenum == STAGE_RESCUE
-					|| g_Vars.stagenum == STAGE_ESCAPE
-					|| g_Vars.stagenum == STAGE_AIRBASE
-					|| g_Vars.stagenum == STAGE_AIRFORCEONE
-					|| g_Vars.stagenum == STAGE_CRASHSITE
-					|| g_Vars.stagenum == STAGE_DEEPSEA
-					|| g_Vars.stagenum == STAGE_ATTACKSHIP
-					|| g_Vars.stagenum == STAGE_MBR
-					|| g_Vars.stagenum == STAGE_MAIANSOS
-					|| g_Vars.stagenum == STAGE_WAR)
+			// Don't clear Laser on certain weapons
+			if ((progressiveWeaponNumbers[progressiveWeapon] == WEAPON_DEVASTATOR
+					|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_COMBATKNIFE
+					|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_CROSSBOW
+					|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_TRANQUILIZER
+					|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_PSYCHOSISGUN)
 					&& i == WEAPON_LASER) {
 				continue;
 			}
