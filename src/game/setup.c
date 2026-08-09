@@ -37,6 +37,8 @@
 #include "data.h"
 #include "types.h"
 
+extern u32 unlockedCharacters[5];
+
 extern bool randomEnemyWeapons;
 
 s32 g_SetupCurMpLocation;
@@ -474,6 +476,17 @@ void setupCreateObject(struct defaultobj *obj, s32 cmdindex)
 			if (obj->type == OBJTYPE_WEAPON) {
 				prop2 = func0f08ae0c((struct weaponobj *)obj, g_ModelStates[modelnum].modeldef);
 			} else {
+				// Don't spawn Elvis Hoverbed if Elvis is missing
+				switch (obj->pad) {
+					case PAD_TRA_03BD:
+						if ((g_Vars.stagenum == STAGE_RESCUE
+								|| g_Vars.stagenum == STAGE_ESCAPE 
+								|| g_Vars.stagenum == STAGE_MAIANSOS)
+								&& unlockedCharacters[CHARACTER_ELVIS] == 0) {
+							return;
+						}
+				}
+
 				prop2 = objInitWithAutoModel(obj);
 			}
 

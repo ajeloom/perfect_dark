@@ -47,6 +47,8 @@ extern int progressiveWeapon;
 extern int weaponProgressionType;
 extern int progressiveWeaponNumbers[43];
 
+extern u32 unlockedCharacters[5];
+
 #if PIRACYCHECKS
 u32 xorBaffbeff(u32 value)
 {
@@ -210,6 +212,56 @@ s32 objectiveCheck(s32 index)
 {
 	u32 stack[5];
 	s32 objstatus = OBJECTIVE_COMPLETE;
+
+	// Fail objectives if character is locked
+	if (g_Vars.stagenum == STAGE_INVESTIGATION) {
+		// Locate Dr. Caroll
+		if (index == 4 && unlockedCharacters[CHARACTER_DRCAROLL] == 0) {
+			return OBJECTIVE_FAILED;
+		}
+	}
+	else if (g_Vars.stagenum == STAGE_EXTRACTION) {
+		// Defeat Cassandra's bodyguards
+		if (index == 3 && unlockedCharacters[CHARACTER_CASSANDRA] == 0) {
+			return OBJECTIVE_FAILED;
+		}
+	}
+	else if (g_Vars.stagenum == STAGE_G5BUILDING) {
+		// Holograph meeting conspirators
+		if (index == 2 && unlockedCharacters[CHARACTER_CASSANDRA] == 0) {
+			return OBJECTIVE_FAILED;
+		}
+	}
+	else if (g_Vars.stagenum == STAGE_INFILTRATION) {
+		// Make contact with CI spy
+		if (index == 4 && unlockedCharacters[CHARACTER_JONATHAN] == 0) {
+			return OBJECTIVE_FAILED;
+		}
+	}
+	else if (g_Vars.stagenum == STAGE_RESCUE) {
+		// Rescue the crash Survivor
+		if (index == 4 && unlockedCharacters[CHARACTER_ELVIS] == 0) {
+			return OBJECTIVE_FAILED;
+		}
+	}
+	else if (g_Vars.stagenum == STAGE_AIRFORCEONE) {
+		// Detach UFO from Air Force One
+		if (index == 4 && unlockedCharacters[CHARACTER_ELVIS] == 0) {
+			return OBJECTIVE_FAILED;
+		}
+	}
+	else if (g_Vars.stagenum == STAGE_CRASHSITE) {
+		// Locate and rescue President
+		if (index == 4 && unlockedCharacters[CHARACTER_ELVIS] == 0) {
+			return OBJECTIVE_FAILED;
+		}
+	}
+	else if (g_Vars.stagenum == STAGE_DUEL) {
+		// Defeat Jonathan Dark
+		if (index == 1 && unlockedCharacters[CHARACTER_JONATHAN] == 0) {
+			return OBJECTIVE_FAILED;
+		}
+	}
 
 	if (index < ARRAYCOUNT(g_Objectives)) {
 		if (g_Objectives[index] == NULL) {
@@ -425,6 +477,49 @@ void objectivesCheckAll(void)
 					} else if (status == OBJECTIVE_FAILED) {
 						strcat(buffer, langGet(L_MISC_047)); // "Failed"
 						objectivesShowHudmsg(buffer, HUDMSGTYPE_OBJECTIVEFAILED);
+
+						// Show missing character message
+						char *name = "\0";
+						if (g_Vars.stagenum == STAGE_INVESTIGATION
+								&& i == 4) {
+							name = "Dr. Caroll";
+						}
+						else if (g_Vars.stagenum == STAGE_EXTRACTION
+								&& i == 3) {
+							name = "Cassandra";
+						}
+						else if (g_Vars.stagenum == STAGE_G5BUILDING
+								&& i == 2) {
+							name = "Cassandra";
+						}
+						else if (g_Vars.stagenum == STAGE_INFILTRATION
+								&& i == 4) {
+							name = "Jonathan";
+						}
+						else if (g_Vars.stagenum == STAGE_RESCUE
+								&& i == 4) {
+							name = "Elvis";
+						}
+						else if (g_Vars.stagenum == STAGE_AIRFORCEONE
+								&& i == 4) {
+							name = "Elvis";
+						}
+						else if (g_Vars.stagenum == STAGE_CRASHSITE
+								&& i == 4) {
+							name = "Elvis";
+						}
+						else if (g_Vars.stagenum == STAGE_DUEL
+								&& i == 1) {
+							name = "Jonathan";
+						}
+
+						if (name != "\0") {
+							for (s32 j = 0; j < PLAYERCOUNT(); j++) {
+								setCurrentPlayerNum(j);
+								sprintf(buffer, "%s is missing.\n", name);
+								hudmsgCreate(buffer, HUDMSGTYPE_DEFAULT);
+							}
+						}
 					}
 #else
 					if (status == OBJECTIVE_COMPLETE) {

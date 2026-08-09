@@ -24,6 +24,8 @@
 #include "data.h"
 #include "types.h"
 
+extern u32 unlockedCharacters[5];
+
 s32 g_NumActiveHeadsPerGender;
 u32 var8009cd24;
 s32 g_ActiveMaleHeads[8];
@@ -408,6 +410,148 @@ void bodyAllocateChr(s32 stagenum, struct packedchr *packed, s32 cmdindex)
 		model = body0f02ce8c(bodynum, headnum, NULL, headmodeldef, false, NULL, false, false);
 	} else {
 		model = bodyAllocateModel(bodynum, headnum, packed->spawnflags);
+	}
+
+	// Don't allocate important characters if locked
+	switch (packed->padnum) {
+		// Cassandra
+		case PAD_AME_01C2: // Defection
+			if (g_Vars.stagenum == STAGE_DEFECTION
+					&& unlockedCharacters[CHARACTER_CASSANDRA] == 0) {
+				return;
+			}
+		case PAD_ARK_01C9: // Extraction
+			if (g_Vars.stagenum == STAGE_EXTRACTION
+					&& unlockedCharacters[CHARACTER_CASSANDRA] == 0) {
+				return;
+			}
+		case PAD_DEPO_0088: // G5 Building
+			if (g_Vars.stagenum == STAGE_G5BUILDING
+					&& unlockedCharacters[CHARACTER_CASSANDRA] == 0) {
+				return;
+			}
+		case PAD_LEE_00DB: // Attack Ship
+			if (g_Vars.stagenum == STAGE_ATTACKSHIP
+					&& unlockedCharacters[CHARACTER_CASSANDRA] == 0) {
+				return;
+			}
+		case PAD_WAX_0133: // Mr. Blonde's Revenge
+			if (g_Vars.stagenum == STAGE_MBR
+					&& unlockedCharacters[CHARACTER_CASSANDRA] == 0) {
+				return;
+			}
+			break;
+
+		// Cassandra's Bodyguards
+		case PAD_ARK_01C5:
+		case PAD_ARK_01C6:
+		case PAD_ARK_01C7:
+		case PAD_ARK_01C8:
+		case PAD_ARK_01CC:
+			if (g_Vars.stagenum == STAGE_EXTRACTION
+					&& unlockedCharacters[CHARACTER_CASSANDRA] == 0) {
+				return;
+			}
+			break;
+
+		// Dr. Caroll
+		case PAD_EAR_010C: // Investigation
+			if (g_Vars.stagenum == STAGE_INVESTIGATION
+					&& unlockedCharacters[CHARACTER_DRCAROLL] == 0) {
+				return;
+			}
+		case PAD_ARK_0210: // Extraction
+			if (g_Vars.stagenum == STAGE_EXTRACTION
+					&& unlockedCharacters[CHARACTER_DRCAROLL] == 0) {
+				return;
+			}
+		case PAD_PAM_0193: // Deep Sea
+			if (g_Vars.stagenum == STAGE_DEEPSEA
+					&& unlockedCharacters[CHARACTER_DRCAROLL] == 0) {
+				return;
+			}
+			break;
+
+		// Jonathan
+		case PAD_LUE_0196: // Infiltration
+			if (g_Vars.stagenum == STAGE_INFILTRATION
+					&& unlockedCharacters[CHARACTER_JONATHAN] == 0) {
+				return;
+			}
+		case PAD_LIP_020A: // Rescue
+			if (g_Vars.stagenum == STAGE_RESCUE
+					&& unlockedCharacters[CHARACTER_JONATHAN] == 0) {
+				return;
+			}
+		case PAD_TRA_03F9: // Escape
+			if (g_Vars.stagenum == STAGE_ESCAPE
+					&& unlockedCharacters[CHARACTER_JONATHAN] == 0) {
+				return;
+			}
+		case PAD_IMP_0051: // Defense
+		case PAD_IMP_00BA: // Defense (Beta)
+			if (g_Vars.stagenum == STAGE_DEFENSE
+					&& unlockedCharacters[CHARACTER_JONATHAN] == 0) {
+				return;
+			}
+		case PAD_ATE_0023: // Duel
+			if (unlockedCharacters[CHARACTER_JONATHAN] == 0) {
+				return;
+			}
+			break;
+
+		// Elvis
+		case PAD_TRA_010A: // Escape
+			if (g_Vars.stagenum == STAGE_ESCAPE
+					&& unlockedCharacters[CHARACTER_ELVIS] == 0) {
+				return;
+			}
+		case PAD_RIT_008A: // Air Force One
+			if (g_Vars.stagenum == STAGE_AIRFORCEONE
+					&& unlockedCharacters[CHARACTER_ELVIS] == 0) {
+				return;
+			}
+		case PAD_AZT_0106: // Crash Site
+		case PAD_AZT_011F: // Crash Site (Outro)
+			if (g_Vars.stagenum == STAGE_CRASHSITE
+					&& unlockedCharacters[CHARACTER_ELVIS] == 0) {
+				return;
+			}
+		case PAD_DAM_0024: // Pelagic II
+			if (g_Vars.stagenum == STAGE_PELAGIC
+					&& unlockedCharacters[CHARACTER_ELVIS] == 0) {
+				return;
+			}
+		case PAD_PAM_002E: // Deep Sea
+			if (g_Vars.stagenum == STAGE_DEEPSEA
+					&& unlockedCharacters[CHARACTER_ELVIS] == 0) {
+				return;
+			}
+		case PAD_LEE_00FE: // Attack Ship
+			if (g_Vars.stagenum == STAGE_ATTACKSHIP
+					&& unlockedCharacters[CHARACTER_ELVIS] == 0) {
+				return;
+			}
+		case PAD_SHO_00D9: // Skedar Ruins
+			if (g_Vars.stagenum == STAGE_SKEDARRUINS
+					&& unlockedCharacters[CHARACTER_ELVIS] == 0) {
+				return;
+			}
+			break;
+
+		// President
+		case PAD_RIT_00A0: // Air Force One
+			if (g_Vars.stagenum == STAGE_AIRFORCEONE
+					&& unlockedCharacters[CHARACTER_PRESIDENT] == 0) {
+				return;
+			}
+		case PAD_AZT_01B6: // Crash Site
+		case PAD_AZT_0110: // Crash Site (Outro)
+			if (g_Vars.stagenum == STAGE_CRASHSITE
+					&& unlockedCharacters[CHARACTER_PRESIDENT] == 0) {
+				return;
+			}
+			break;
 	}
 
 	if (model != NULL) {

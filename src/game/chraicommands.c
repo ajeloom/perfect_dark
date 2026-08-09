@@ -55,7 +55,7 @@
 extern bool randomMusic;
 extern u32 unlockedWeapons[94];
 extern int weaponProgressionType;
-
+extern u32 unlockedCharacters[5];
 extern bool randomEnemyWeapons;
 
 /**
@@ -2867,6 +2867,14 @@ bool aiIfDifficultyLessThan(void)
 {
 	u8 *cmd = g_Vars.ailist + g_Vars.aioffset;
 
+	// Don't go to Special Agent Walk Trigger label
+	if (g_Vars.stagenum == STAGE_DUEL 
+			&& unlockedCharacters[CHARACTER_JONATHAN] == 0
+			&& g_MissionConfig.difficulty == DIFF_SA) {
+		g_Vars.aioffset = chraiGoToLabel(g_Vars.ailist, g_Vars.aioffset, cmd[3]);
+		return false;
+	}
+
 	if (lvGetDifficulty() < cmd[2]) {
 		g_Vars.aioffset = chraiGoToLabel(g_Vars.ailist, g_Vars.aioffset, cmd[3]);
 	} else {
@@ -3437,6 +3445,16 @@ bool aiSetStageFlag(void)
 {
 	u8 *cmd = g_Vars.ailist + g_Vars.aioffset;
 	u32 flags = (cmd[3] << 16) | (cmd[4] << 8) | cmd[5] | (cmd[2] << 24);
+
+	if (g_Vars.stagenum == STAGE_DUEL 
+			&& unlockedCharacters[CHARACTER_JONATHAN] == 0
+			&& g_MissionConfig.difficulty == DIFF_PA
+			&& flags == 0x00000800) {
+		// Skip to Trent if Jonathan is missing
+		g_Vars.aioffset = chraiGoToLabel(g_Vars.ailist, g_Vars.aioffset, 0x06);
+		return false;
+	}
+
 	chrSetStageFlag(g_Vars.chrdata, flags);
 	g_Vars.aioffset += 6;
 

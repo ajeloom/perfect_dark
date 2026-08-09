@@ -100,6 +100,8 @@
 #include "video.h"
 #endif
 
+extern u32 unlockedCharacters[5];
+
 struct sndstate *g_MiscSfxAudioHandles[3];
 u32 var800aa5bc;
 s32 g_MiscSfxActiveTypes[3];
@@ -2332,6 +2334,16 @@ void lvTick(void)
 				mainEndStage();
 			}
 		}
+	}
+
+	// Don't start the mission if character is locked
+	if ((g_Vars.stagenum == STAGE_RESCUE
+			&& unlockedCharacters[CHARACTER_JONATHAN] == 0)
+			|| (g_Vars.stagenum == STAGE_ATTACKSHIP
+			&& unlockedCharacters[CHARACTER_CASSANDRA] == 0)
+			|| (g_Vars.stagenum == STAGE_SKEDARRUINS
+			&& unlockedCharacters[CHARACTER_ELVIS] == 0)) {
+		mainEndStage();
 	}
 
 	g_StageTimeElapsed60 += g_Vars.lvupdate60;

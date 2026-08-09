@@ -69,7 +69,9 @@ int shorterChallenges = 0;
 int hasWeaponTraining;
 int hasDeviceTraining;
 int hasHolotraining;
-int hasUnlockCheats = -1;
+
+int hasNPCs;
+extern u32 unlockedCharacters[5];
 
 int deathLink;
 bool pendingDeathLink;
@@ -319,7 +321,12 @@ std::string itemNames[] = {
     "Progressive SMG",
     "Progressive Rifle",
     "Progressive Explosive",
-    "Progressive Other Weapon"
+    "Progressive Other Weapon",
+    "Cassandra",
+    "Dr. Caroll",
+    "Jonathan",
+    "Elvis",
+    "President"
 };
 
 std::map<int, std::string> locationNames = {
@@ -1055,8 +1062,14 @@ bool Initialize() {
                 hasHolotraining = data.at("options").at("holotraining");
             }
 
-            if (data.at("options").contains("unlock_cheats")) {
-                hasUnlockCheats = data.at("options").at("unlock_cheats");
+            if (data.at("options").contains("npcs")) {
+                hasNPCs = data.at("options").at("npcs");
+
+                if (hasNPCs == 0) {
+                    for (int i = 0; i < 5; i++) {
+                        unlockedCharacters[i] = 1;
+                    }
+                }
             }
 
             if (data.at("options").contains("deathlink")) {

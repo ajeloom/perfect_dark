@@ -26,6 +26,7 @@
 #define AP_ITEM_CHALLENGE_STAR 238
 #define AP_ITEM_SKEDAR_RUINS 239
 #define AP_ITEM_VICTORY 240
+#define AP_ITEM_CHARACTER_START 246
 
 #define AP_ITEM_PROG_PISTOL 241
 #define AP_ITEM_PROG_SMG 242
@@ -57,6 +58,7 @@ u32 unlockedMissions[NUM_SOLOSTAGES][3];
 u32 unlockedChallenges[30];
 u32 unlockedWeapons[94];
 u32 unlockedCheats[42];
+u32 unlockedCharacters[5];
 
 extern int completionGoal;
 extern int skedarRequirements;
@@ -328,6 +330,10 @@ void resetAP()
 		unlockedCheats[i] = 0;
 	}
 
+    for (i = 0; i < ARRAYCOUNT(unlockedCharacters); i++) {
+		unlockedCharacters[i] = 0;
+	}
+
     completionGoal = 0;
     skedarRequirements = 0;
 
@@ -472,6 +478,13 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
         }
         
         hudmsgCreate(buffer, HUDMSGTYPE_DEFAULT);
+    }
+
+    // Character
+    if (itemID >= AP_ITEM_CHARACTER_START) {
+        unlockedCharacters[itemID - AP_ITEM_CHARACTER_START] = 1;
+
+        return;
     }
 
     // Progressive Weapon

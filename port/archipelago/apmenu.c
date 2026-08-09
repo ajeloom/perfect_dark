@@ -67,6 +67,7 @@ extern int hasWeaponTraining;
 extern int hasDeviceTraining;
 extern int hasHolotraining;
 extern int hasUnlockCheats;
+extern int hasNPCs;
 
 extern int deathLink;
 
@@ -1176,6 +1177,9 @@ const char *GetOption(struct menuitem *item)
 			option = hasUnlockCheats;
 			break;
 		case 16:
+			option = hasNPCs;
+			break;
+		case 17:
 			option = deathLink;
 			break;
 	}
@@ -1319,6 +1323,14 @@ struct menuitem g_GameOptionsMenuItems[] = {
 	{
 		MENUITEMTYPE_SELECTABLE,
 		16,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"NPCs:\n",
+		(uintptr_t)&GetOption,
+		NULL,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		17,
 		MENUITEMFLAG_LITERAL_TEXT,
 		(uintptr_t)"Death Link:\n",
 		(uintptr_t)&GetOption,
