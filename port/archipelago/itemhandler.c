@@ -513,13 +513,13 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
                     }
                 }
                 else if (weaponProgressionType == WEAPONPROG_ONEGUN) {
-                    if (progressiveWeapon > 1) {
-                        invRemoveItemByNum(progressiveWeaponNumbers[progressiveWeapon - 1]);
-                    }
+                    invRemoveLockedWeapons();
 
                     invGetProgressiveWeapons();
 
-                    if (g_Vars.currentplayer->gunctrl.weaponnum == progressiveWeaponNumbers[progressiveWeapon - 1]) {
+                    // Swap weapons if it is not in your inventory or still holding previous progressive weapon
+                    if (g_Vars.currentplayer->gunctrl.weaponnum == progressiveWeaponNumbers[progressiveWeapon - 1]
+                            || !invHasSingleWeaponExcAllGuns(g_Vars.currentplayer->gunctrl.weaponnum)) {
                         bgunEquipWeapon2(HAND_RIGHT, progressiveWeaponNumbers[progressiveWeapon]);
                     }
                 }
@@ -536,13 +536,13 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
                     }
                 }
                 else if (weaponProgressionType == WEAPONPROG_ONEGUN) {
-                    if (progressiveWeapon > 1) {
-                        invRemoveItemByNum(progressiveWeaponNumbers[progressiveWeapon - 1]);
-                    }
+                    invRemoveLockedWeapons();
 
                     invGetProgressiveWeapons();
 
-                    if (g_Vars.currentplayer->gunctrl.weaponnum == progressiveWeaponNumbers[progressiveWeapon - 1]) {
+                    // Swap weapons if it is not in your inventory or still holding previous progressive weapon
+                    if (g_Vars.currentplayer->gunctrl.weaponnum == progressiveWeaponNumbers[progressiveWeapon - 1]
+                            || !invHasSingleWeaponExcAllGuns(g_Vars.currentplayer->gunctrl.weaponnum)) {
                         bgunEquipWeapon2(HAND_RIGHT, progressiveWeaponNumbers[progressiveWeapon]);
                     }
                 }
