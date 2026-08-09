@@ -1291,11 +1291,6 @@ void invRemoveLockedWeapons(void)
 				continue;
 			}
 
-			if (g_Vars.stagenum == STAGE_SKEDARRUINS 
-					&& i == WEAPON_DEVASTATOR
-					&& unlockedWeapons[WEAPON_DEVASTATOR] == 1) {
-				continue;
-			}
 
 			if (i != progressiveWeaponNumbers[progressiveWeapon]) {
 				invRemoveItemByNum(i);
@@ -1517,9 +1512,16 @@ void invGetProgressiveWeapons(void)
 			}
 		}
 
+		// Need a weapon to blow up the wall
 		if (g_Vars.stagenum == STAGE_SKEDARRUINS
-				&& unlockedWeapons[WEAPON_DEVASTATOR] == 1) {
-			invGiveSingleWeapon(WEAPON_DEVASTATOR);
+				&& progressiveWeaponNumbers[progressiveWeapon] == WEAPON_NBOMB) {
+			invGiveSingleWeapon(WEAPON_TIMEDMINE);
+		}
+
+		// Need extra weapon to sacrifice
+		if (g_Vars.stagenum == STAGE_SKEDARRUINS
+				&& progressiveWeapon > 1) {
+			invGiveSingleWeapon(WEAPON_COMBATKNIFE);
 		}
 
 		// Need weapon to kill dataDyne Captain
