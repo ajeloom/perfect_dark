@@ -2092,6 +2092,11 @@ bool aiIfChrHasWeaponEquipped(void)
 			passes = true;
 		}
 
+		// Let the player sacrifice any weapon
+		if (g_Vars.stagenum == STAGE_SKEDARRUINS) {
+			passes = true;
+		}
+
 		setCurrentPlayerNum(prevplayernum);
 	}
 
@@ -3715,6 +3720,16 @@ bool aiSetObjFlag2(void)
 	u8 *cmd = g_Vars.ailist + g_Vars.aioffset;
 	u32 flags = (cmd[4] << 16) | (cmd[5] << 8) | cmd[6] | (cmd[3] << 24);
 	struct defaultobj *obj = objFindByTagId(cmd[2]);
+
+	// Set the object flag for getting close to the altar
+	if (g_Vars.stagenum == STAGE_SKEDARRUINS
+			&& flags == 0x00002000
+			&& obj 
+			&& obj->prop) {
+		obj->flags2 |= flags;
+		g_Vars.aioffset += 7;
+		return false;
+	}
 
 	if (obj && obj->prop) {
 		obj->flags2 |= flags;
