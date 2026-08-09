@@ -66,7 +66,10 @@ extern int shorterChallenges;
 extern int hasWeaponTraining;
 extern int hasDeviceTraining;
 extern int hasHolotraining;
-extern int hasUnlockCheats;
+extern int hasCompletionCheats;
+extern int hasTimedCheats;
+extern int hasWeaponCheats;
+
 extern int hasNPCs;
 
 extern int deathLink;
@@ -1174,12 +1177,18 @@ const char *GetOption(struct menuitem *item)
 			option = hasHolotraining;
 			break;
 		case 15:
-			option = hasUnlockCheats;
+			option = hasCompletionCheats;
 			break;
 		case 16:
-			option = hasNPCs;
+			option = hasTimedCheats;
 			break;
 		case 17:
+			option = hasWeaponCheats;
+			break;
+		case 18:
+			option = hasNPCs;
+			break;
+		case 19:
 			option = deathLink;
 			break;
 	}
@@ -1316,7 +1325,7 @@ struct menuitem g_GameOptionsMenuItems[] = {
 		MENUITEMTYPE_SELECTABLE,
 		15,
 		MENUITEMFLAG_LITERAL_TEXT,
-		(uintptr_t)"Cheat Unlocks:\n",
+		(uintptr_t)"Completion Cheats:\n",
 		(uintptr_t)&GetOption,
 		NULL,
 	},
@@ -1324,13 +1333,29 @@ struct menuitem g_GameOptionsMenuItems[] = {
 		MENUITEMTYPE_SELECTABLE,
 		16,
 		MENUITEMFLAG_LITERAL_TEXT,
-		(uintptr_t)"NPCs:\n",
+		(uintptr_t)"Timed Cheats:\n",
 		(uintptr_t)&GetOption,
 		NULL,
 	},
 	{
 		MENUITEMTYPE_SELECTABLE,
 		17,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Weapon Cheats:\n",
+		(uintptr_t)&GetOption,
+		NULL,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		18,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"NPCs:\n",
+		(uintptr_t)&GetOption,
+		NULL,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		19,
 		MENUITEMFLAG_LITERAL_TEXT,
 		(uintptr_t)"Death Link:\n",
 		(uintptr_t)&GetOption,

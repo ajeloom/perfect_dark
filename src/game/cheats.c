@@ -15,8 +15,8 @@
 #include "string.h"
 #include "types.h"
 
-extern int hasUnlockCheats;
 extern u32 unlockedCheats[42];
+extern int areCheatsInItemPool;
 
 u32 g_CheatsActiveBank0;
 u32 g_CheatsActiveBank1;
@@ -150,7 +150,10 @@ u32 cheatIsUnlocked(s32 cheat_id)
 		unlocked++;
 	}
 
-	unlocked += cheatCheckIsCompleted(cheat_id);
+	// Check if the requirements to unlock a cheat is met
+	if (areCheatsInItemPool == 0) {
+		unlocked += cheatCheckIsCompleted(cheat_id);
+	}
 
 	return unlocked;
 }

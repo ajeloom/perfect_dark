@@ -83,7 +83,9 @@ extern int hasChallenges;
 extern int hasWeaponTraining;
 extern int hasDeviceTraining;
 extern int hasHolotraining;
-extern int hasUnlockCheats;
+extern int hasCompletionCheats;
+extern int hasTimedCheats;
+extern int hasWeaponCheats;
 
 extern bool showLocationName;
 
@@ -405,7 +407,7 @@ void collectHolotrainingItem(s32 holoIndex)
 void collectCompleteCheatItem(u8 missionIndex)
 {
     uint64_t location = missionIndex + AP_COMPLETE_CHEAT_OFFSET;
-	if (hasUnlockCheats == 1) {
+	if (hasCompletionCheats == 1) {
 		InternalCollectAPItem(location);
 	}
 }
@@ -413,7 +415,7 @@ void collectCompleteCheatItem(u8 missionIndex)
 void collectTimedCheatItem(u8 missionIndex)
 {
     uint64_t location = missionIndex + AP_TIMED_CHEAT_OFFSET;
-	if (hasUnlockCheats == 1) {
+	if (hasTimedCheats == 1) {
 		InternalCollectAPItem(location);
 	}
 }
@@ -421,7 +423,7 @@ void collectTimedCheatItem(u8 missionIndex)
 void collectClassicWeaponCheatItem(u8 weaponIndex)
 {
     uint64_t location = (weaponIndex - WEAPON_PP9I) + AP_CLASSIC_WEAPON_CHEAT_OFFSET;
-	if (hasUnlockCheats == 1) {
+	if (hasWeaponCheats == 1) {
 		InternalCollectAPItem(location);
 	}
 }

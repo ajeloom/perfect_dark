@@ -70,6 +70,11 @@ int hasWeaponTraining;
 int hasDeviceTraining;
 int hasHolotraining;
 
+int hasCompletionCheats = -1;
+int hasTimedCheats = -1;
+int hasWeaponCheats = -1;
+int areCheatsInItemPool = -1;
+
 int hasNPCs;
 extern u32 unlockedCharacters[5];
 
@@ -1060,6 +1065,22 @@ bool Initialize() {
 
             if (data.at("options").contains("holotraining")) {
                 hasHolotraining = data.at("options").at("holotraining");
+            }
+
+            if (data.at("options").contains("completion_cheats")) {
+                hasCompletionCheats = data.at("options").at("completion_cheats");
+            }
+
+            if (data.at("options").contains("timed_cheats")) {
+                hasTimedCheats = data.at("options").at("timed_cheats");
+            }
+
+            if (data.at("options").contains("weapon_cheats")) {
+                hasWeaponCheats = data.at("options").at("weapon_cheats");
+            }
+
+            if (data.at("options").contains("include_cheats_in_pool")) {
+                areCheatsInItemPool = data.at("options").at("include_cheats_in_pool");
             }
 
             if (data.at("options").contains("npcs")) {
