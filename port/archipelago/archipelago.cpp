@@ -1060,6 +1060,11 @@ bool Initialize() {
 
             if (data.at("options").contains("challenges")) {
                 hasChallenges = data.at("options").at("challenges");
+
+                if (completionGoal >= 2
+                        || (completionGoal == 0 && skedarRequirements >= 2)) {
+                    hasChallenges = 1;
+                }
             }
 
             if (data.at("options").contains("required_challenge_stars")) {
