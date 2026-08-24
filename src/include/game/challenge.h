@@ -47,5 +47,6 @@ bool challengeIsCompletedByPlayerWithNumPlayers(s32 mpchrnum, s32 index, s32 num
 void challengeSetCompletedByPlayerWithNumPlayers(u32 mpchrnum, s32 index, s32 numplayers, bool completed);
 void challengeConsiderMarkingComplete(void);
 bool challengeIsFeatureUnlocked(s32 feature);
+u32 challengeAPGetNumCompleted(void);
 
 #endif

@@ -49,6 +49,7 @@
 #define AP_TIMED_CHEAT_OFFSET 473
 #define AP_CLASSIC_WEAPON_CHEAT_OFFSET 490
 #define AP_COLLECT_ALL_STARS_LOCATION 498
+#define AP_MPFEATURE_OFFSET 499
 
 u32 completedMissions[NUM_SOLOSTAGES][3];
 u32 completedAgentObjectives[NUM_SOLOSTAGES][3];
@@ -91,6 +92,8 @@ extern int hasTimedCheats;
 extern int hasWeaponCheats;
 
 extern int hasNPCs;
+extern int hasMPUnlocks;
+
 extern bool showLocationName;
 
 int progressiveWeaponNumbers[43] = {
@@ -435,6 +438,14 @@ void collectClassicWeaponCheatItem(u8 weaponIndex)
 {
     uint64_t location = (weaponIndex - WEAPON_PP9I) + AP_CLASSIC_WEAPON_CHEAT_OFFSET;
 	if (hasWeaponCheats == 1) {
+		InternalCollectAPItem(location);
+	}
+}
+
+void collectMPFeatureItem(u32 mpFeature)
+{
+    uint64_t location = mpFeature + AP_MPFEATURE_OFFSET;
+	if (hasMPUnlocks == 1) {
 		InternalCollectAPItem(location);
 	}
 }

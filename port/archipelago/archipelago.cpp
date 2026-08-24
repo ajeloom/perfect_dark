@@ -79,6 +79,8 @@ int areCheatsInItemPool = -1;
 int hasNPCs;
 extern u32 unlockedCharacters[6];
 
+int hasMPUnlocks;
+
 extern u32 completedMissions[21][3];
 extern u32 completedChallenges[30];
 extern u32 completedTrainingMedals[33][3];
@@ -820,6 +822,86 @@ std::map<int, std::string> locationNames = {
     {496, "Cheat Unlock: Get gold medals for FarSight XR-20, Crossbow, Combat Knife, and Grenade"},
     {497, "Cheat Unlock: Get gold medals for Tranquilizer, Reaper, and Devastator"},
     {498, "Collect All Stars"},
+    // {499, "Complete Challenges: Unused First Unlock"},
+    {500, "Complete 1 Challenge: FarSight XR-20 Unlock"},
+    {501, "Complete 7 Challenges: Tranquilizer Unlock"},
+    {502, "Complete 4 Challenges: SuperDragon Unlock"},
+    {503, "Complete 13 Challenges: Slayer Unlock"},
+    {504, "Complete 3 Challenges: Falcon 2 (Silencer) Unlock"},
+    {505, "Complete 8 Challenges: Falcon 2 (Scope) Unlock"},
+    {506, "Complete 16 Challenges: Mauler Unlock"},
+    {507, "Complete 14 Challenges: Phoenix Unlock"},
+    {508, "Complete 20 Challenges: DY357-LX Unlock"},
+    {509, "Complete 17 Challenges: Callisto NTG Unlock"},
+    {510, "Complete 5 Challenges: Laptop Gun Unlock"},
+    // {511, "Complete Challenges: K7 Avenger Unlock"},
+    {512, "Complete 19 Challenges: RC-P120 Unlock"},
+    {513, "Complete 2 Challenges: Shotgun Unlock"},
+    {514, "Complete 9 Challenges: Reaper Unlock"},
+    {515, "Complete 11 Challenges: Devastator Unlock"},
+    {516, "Complete 18 Challenges: Crossbow Unlock"},
+    {517, "Complete 21 Challenges: N-Bomb Unlock"},
+    {518, "Complete 12 Challenges: Proximity Mine Unlock"},
+    {519, "Complete 6 Challenges: Remote Mine Unlock"},
+    // {520, "Complete Challenges: X-Ray Scanner Unlock"},
+    // {521, "Complete Challenges: Shield Unlock"},
+    {522, "Complete 10 Challenges: Cloaking Device Unlock"},
+    {523, "Complete 15 Challenges: Combat Boost Unlock"},
+    {524, "Complete 7 Challenges: Hard Bot Difficulty Unlock"},
+    {525, "Complete 12 Challenges: Perfect Bot Difficulty Unlock"},
+    // {526, "Complete Challenges: Unused 1B Unlock"},
+    {527, "Complete 22 Challenges: Dark Bot Difficulty Unlock"},
+    {528, "Complete 8 Challenges: Slow Motion Unlock"},
+    {529, "Complete 3 Challenges: One-Hit Kills Unlock"},
+    // {530, "Complete Challenges: King of the Hill Unlock"},
+    {531, "Complete 2 Challenges: Hold the Briefcase Unlock"},
+    {532, "Complete 4 Challenges: Capture the Case Unlock"},
+    // {533, "Complete Challenges: Unused 22 Unlock"},
+    {534, "Complete 17 Challenges: Car Park Unlock"},
+    {535, "Complete 1 Challenge: Complex Unlock"},
+    {536, "Complete 3 Challenges: Warehouse Unlock"},
+    {537, "Complete 5 Challenges: Ravine Unlock"},
+    {538, "Complete 6 Challenges: Temple Unlock"},
+    {539, "Complete 9 Challenges: G5 Building Unlock"},
+    {540, "Complete 11 Challenges: Grid Unlock"},
+    {541, "Complete 12 Challenges: Felicity Unlock"},
+    {542, "Complete 14 Challenges: Villa Unlock"},
+    {543, "Complete 16 Challenges: Sewers Unlock"},
+    {544, "Complete 22 Challenges: Ruins Unlock"},
+    {545, "Complete 18 Challenges: Base Unlock"},
+    // {546, "Complete Challenges: Unused 2F Unlock"},
+    {547, "Complete 20 Challenges: Fortress Unlock"},
+    // {548, "Complete Challenges: Unused 31 Unlock"},
+    {549, "Complete 1 Challenge: dataDyne Female Guard Unlock"},
+    {550, "Complete 2 Challenges: Office Suit and Office Casual Unlock"},
+    {551, "Complete 4 Challenges: Carrington Villa Outfits Unlock"},
+    {552, "Complete 5 Challenges: Trent Unlock"},
+    {553, "Complete 5 Challenges: NSA Lackey Unlock"},
+    {554, "Complete 6 Challenges: G5 Building Outfits Unlock"},
+    {555, "Complete 7 Challenges: Mr. Blonde Unlock"},
+    {556, "Complete 9 Challenges: CIA Agent and FBI Agent Unlock"},
+    {557, "Complete 10 Challenges: A51 Infiltration Outfits Unlock"},
+    {558, "Complete 11 Challenges: Lab Technician Outfits Unlock"},
+    {559, "Complete 12 Challenges: Biotechnician Unlock"},
+    {560, "Complete 14 Challenges: Elvis and Maian Soldier Unlock"},
+    {561, "Complete 17 Challenges: Alaskan Guard Unlock"},
+    {562, "Complete 16 Challenges: Air Force One Outfits Unlock"},
+    {563, "Complete 7 Challenges: 8 Bots and Dinner Jacket Outfits Unlock"},
+    {564, "Complete 18 Challenges: Party Frock, Party (Ripped), Evening Wear, and President Unlock"},
+    {565, "Complete 19 Challenges: President's Clone Unlock"},
+    {566, "Complete 18 Challenges: Presidential Security Unlock"},
+    {567, "Complete 19 Challenges: NSA Bodyguard Unlock"},
+    {568, "Complete 24 Challenges: Pelagic II Outfits Unlock"},
+    {569, "Complete 8 Challenges: Joanna Trench Unlock"},
+    // {570, "Complete Challenges: Unused Jo Snow Unlock"},
+    // {571, "Complete Challenges: Unused 48 Unlock"},
+    // {572, "Complete Challenges: Unused 49 Unlock"},
+    {573, "Complete 17 Challenges: Joanna Arctic Unlock"},
+    // {574, "Complete Challenges: Unused 4B Unlock"},
+    // {575, "Complete Challenges: Jonathan Unlock"},
+    {576, "Complete 12 Challenges: Pop a Cap Unlock"},
+    {577, "Complete 6 Challenges: Hacker Central Unlock"},
+    // {578, "Complete Challenges: Laser Unlock"},
 };
 
 void AP_Init()
@@ -1117,6 +1199,10 @@ bool Initialize() {
                         unlockedCharacters[i] = 1;
                     }
                 }
+            }
+
+            if (data.at("options").contains("multiplayer_unlocks")) {
+                hasMPUnlocks = data.at("options").at("multiplayer_unlocks");
             }
 
             if (data.at("options").contains("deathlink")) {

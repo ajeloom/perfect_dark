@@ -10,6 +10,7 @@ void collectHolotrainingItem(s32 holoIndex);
 void collectCompleteCheatItem(u8 missionIndex);
 void collectTimedCheatItem(u8 missionIndex);
 void collectClassicWeaponCheatItem(u8 weaponIndex);
+void collectMPFeatureItem(u32 mpFeature);
 void printSentItemMessage(const char* itemname, const char* recipient, const char* location);
 void handleItem(int itemID, const char* itemname, const char* sender, const char* location);
 void GetNextProgressiveWeapon(int weaponNumbersArray[], int currentWeaponNumber);
