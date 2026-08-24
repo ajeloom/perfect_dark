@@ -12394,6 +12394,19 @@ void bgunGiveAmmoForProgressiveWeapons(void)
 		bgunSetAmmoQuantity(AMMOTYPE_PSYCHOSIS, 4);
 	}
 	else if (weaponProgressionType == WEAPONPROG_ONEGUN) {
+		// Give infinite ammo to Laptop Gun if on Mines, Grenade, and N-Bomb
+		if (progressiveWeaponNumbers[progressiveWeapon] == WEAPON_TIMEDMINE
+				|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_PROXIMITYMINE
+				|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_GRENADE
+				|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_REMOTEMINE
+				|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_NBOMB) {
+			s32 priammotype = bgunGetAmmoTypeForWeapon(WEAPON_LAPTOPGUN, FUNC_PRIMARY);
+			s32 secammotype = bgunGetAmmoTypeForWeapon(WEAPON_LAPTOPGUN, FUNC_SECONDARY);
+
+			bgunSetAmmoQuantity(priammotype, g_AmmoTypes[priammotype].capacity / 2);
+			bgunSetAmmoQuantity(secammotype, g_AmmoTypes[secammotype].capacity / 2);
+		}
+
 		if (progressiveWeaponNumbers[progressiveWeapon] == WEAPON_PSYCHOSISGUN) {
 			bgunSetAmmoQuantity(AMMOTYPE_PSYCHOSIS, 100);
 			return;
@@ -12415,19 +12428,6 @@ void bgunGiveAmmoForProgressiveWeapons(void)
 
 		bgunSetAmmoQuantity(priammotype, g_AmmoTypes[priammotype].capacity / 2);
 		bgunSetAmmoQuantity(secammotype, g_AmmoTypes[secammotype].capacity / 2);
-
-		// Give infinite ammo to Laptop Gun if on Mines, Grenade, and N-Bomb
-		if (progressiveWeaponNumbers[progressiveWeapon] == WEAPON_TIMEDMINE
-				|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_PROXIMITYMINE
-				|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_GRENADE
-				|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_REMOTEMINE
-				|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_NBOMB) {
-			priammotype = bgunGetAmmoTypeForWeapon(WEAPON_LAPTOPGUN, FUNC_PRIMARY);
-			secammotype = bgunGetAmmoTypeForWeapon(WEAPON_LAPTOPGUN, FUNC_SECONDARY);
-
-			bgunSetAmmoQuantity(priammotype, g_AmmoTypes[priammotype].capacity / 2);
-			bgunSetAmmoQuantity(secammotype, g_AmmoTypes[secammotype].capacity / 2);
-		}
 	}
 }
 
