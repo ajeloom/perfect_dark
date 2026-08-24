@@ -334,6 +334,7 @@ void resetAP(int restartGame)
 
     unlockedWeapons[WEAPON_NONE] = 1;
     unlockedWeapons[WEAPON_UNARMED] = 1;
+    unlockedWeapons[WEAPON_DISABLED] = 1;
 
     for (i = 0; i < ARRAYCOUNT(unlockedCheats); i++) {
 		unlockedCheats[i] = 0;
