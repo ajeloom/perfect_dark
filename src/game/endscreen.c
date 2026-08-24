@@ -611,8 +611,38 @@ void endscreenContinue(s32 context)
 {
 	if (g_Vars.antiplayernum >= 0) {
 		menuPopDialog();
-	} else if (g_Vars.coopplayernum >= 0 && PLAYERCOUNT() >= 2 && context == 0) {
-		menuPopDialog();
+	} else if (g_Vars.coopplayernum >= 0 && PLAYERCOUNT() >= 2) {
+		if (context == 0) {
+			menuPopDialog();
+		}
+		else if (context == 1) {
+			if (isStageDifficultyUnlocked(g_MissionConfig.stageindex + 1, g_MissionConfig.difficulty) == 0) {
+				menuPushRootDialog(&g_MissionContinueOrReplyMenuDialog, MENUROOT_COOPCONTINUE);
+			} else if (stageGetIndex(g_MissionConfig.stagenum) < 0
+						|| g_Vars.stagenum == STAGE_CITRAINING
+						|| g_MissionConfig.stageindex >= SOLOSTAGEINDEX_MBR) {
+				menuPushRootDialog(&g_MissionContinueOrReplyMenuDialog, MENUROOT_COOPCONTINUE);
+			} else {
+				endscreenResetModels();
+				menuPushRootDialog(endscreenAdvance(), MENUROOT_COOPCONTINUE);
+			}
+		}
+		else if (context == 2) {
+			if (g_Vars.stagenum == STAGE_SKEDARRUINS) {
+				// Pressed continue
+				// Commit to starting credits
+				g_MissionConfig.stagenum = STAGE_CREDITS;
+				titleSetNextStage(g_MissionConfig.stagenum);
+				lvSetDifficulty(g_MissionConfig.difficulty);
+				titleSetNextMode(TITLEMODE_SKIP);
+				mainChangeToStage(g_MissionConfig.stagenum);
+				viBlack(true);
+			}
+			else {
+				menuPopDialog();
+				menuPopDialog();
+			}
+		}	
 	} else {
 		if (g_Vars.stagenum == STAGE_SKEDARRUINS) {
 			if (context == 2 || g_Menus[g_MpPlayerNum].endscreen.isfirstcompletion) {
