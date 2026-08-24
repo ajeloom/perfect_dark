@@ -81,6 +81,7 @@ int hasNPCs;
 extern u32 unlockedCharacters[6];
 
 int hasMPUnlocks;
+int hasAlternateExits;
 
 extern u32 completedMissions[21][3];
 extern u32 completedChallenges[30];
@@ -904,6 +905,18 @@ std::map<int, std::string> locationNames = {
     {576, "Complete 12 Challenges: Pop a Cap Unlock"},
     {577, "Complete 6 Challenges: Hacker Central Unlock"},
     // {578, "Complete Challenges: Laser Unlock"},
+    {579, "Complete A51 Escape (Agent): UFO Escape"},
+    {580, "Complete A51 Escape (Agent): Alternate Escape"},
+    {581, "Complete A51 Escape (Special Agent): UFO Escape"},
+    {582, "Complete A51 Escape (Special Agent): Alternate Escape"},
+    {583, "Complete A51 Escape (Perfect Agent): UFO Escape"},
+    {584, "Complete A51 Escape (Perfect Agent): Alternate Escape"},
+    {585, "Complete Air Base (Agent): Shuttle Exit"},
+    {586, "Complete Air Base (Agent): Ladder Exit"},
+    {587, "Complete Air Base (Special Agent): Shuttle Exit"},
+    {588, "Complete Air Base (Special Agent): Ladder Exit"},
+    {589, "Complete Air Base (Perfect Agent): Shuttle Exit"},
+    {590, "Complete Air Base (Perfect Agent): Ladder Exit"},
 };
 
 void AP_Init()
@@ -1205,6 +1218,10 @@ bool Initialize() {
 
             if (data.at("options").contains("multiplayer_unlocks")) {
                 hasMPUnlocks = data.at("options").at("multiplayer_unlocks");
+            }
+
+            if (data.at("options").contains("alternate_exits")) {
+                hasAlternateExits = data.at("options").at("alternate_exits");
             }
 
             if (data.at("options").contains("deathlink")) {

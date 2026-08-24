@@ -59,6 +59,7 @@ extern u32 unlockedCharacters[6];
 extern bool randomEnemyWeapons;
 
 extern s16 warpPad;
+extern int exitNum;
 
 /**
  * @cmd 0000
@@ -8735,6 +8736,17 @@ bool aiSetSavefileFlag(void)
 	gamefileSetFlag(cmd[2]);
 	g_Vars.aioffset += 3;
 
+	if (g_Vars.stagenum == STAGE_ESCAPE) {
+		if (cmd[2] == 0x3c) {
+			exitNum = 1;
+		}
+	}
+	else if (g_Vars.stagenum == STAGE_AIRBASE) {
+		if (cmd[2] == 0x3d) {
+			exitNum = 1;
+		}
+	}
+
 	return false;
 }
 
@@ -8746,6 +8758,17 @@ bool aiUnsetSavefileFlag(void)
 	u8 *cmd = g_Vars.ailist + g_Vars.aioffset;
 	gamefileUnsetFlag(cmd[2]);
 	g_Vars.aioffset += 3;
+
+	if (g_Vars.stagenum == STAGE_ESCAPE) {
+		if (cmd[2] == 0x3c) {
+			exitNum = 0;
+		}
+	}
+	else if (g_Vars.stagenum == STAGE_AIRBASE) {
+		if (cmd[2] == 0x3d) {
+			exitNum = 0;
+		}
+	}
 
 	return false;
 }

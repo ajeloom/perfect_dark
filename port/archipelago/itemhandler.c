@@ -50,6 +50,7 @@
 #define AP_CLASSIC_WEAPON_CHEAT_OFFSET 490
 #define AP_COLLECT_ALL_STARS_LOCATION 498
 #define AP_MPFEATURE_OFFSET 499
+#define AP_ALTERNATE_EXIT_OFFSET 579
 
 extern int lastReceivedItemIndex;
 
@@ -96,6 +97,7 @@ extern int hasWeaponCheats;
 
 extern int hasNPCs;
 extern int hasMPUnlocks;
+extern int hasAlternateExits;
 
 extern bool showLocationName;
 
@@ -450,6 +452,21 @@ void collectMPFeatureItem(u32 mpFeature)
 {
     uint64_t location = mpFeature + AP_MPFEATURE_OFFSET;
 	if (hasMPUnlocks == 1) {
+		InternalCollectAPItem(location);
+	}
+}
+
+void collectAlternateExitItem(u8 missionIndex, u8 difficulty, u8 exitNum)
+{
+    if (missionIndex == SOLOSTAGEINDEX_ESCAPE) {
+        missionIndex = 0;
+    }
+    else if (missionIndex == SOLOSTAGEINDEX_AIRBASE) {
+        missionIndex = 1;
+    }
+
+    uint64_t location = (missionIndex * 6) + (difficulty * 2) + AP_ALTERNATE_EXIT_OFFSET + exitNum;
+	if (hasAlternateExits == 1) {
 		InternalCollectAPItem(location);
 	}
 }

@@ -34,6 +34,8 @@
 
 extern u32 completedMissions[NUM_SOLOSTAGES][3];
 
+int exitNum = 0;
+
 MenuItemHandlerResult endscreenHandleDeclineMission(s32 operation, struct menuitem *item, union handlerdata *data)
 {
 	if (operation == MENUOP_SET) {
@@ -1465,6 +1467,11 @@ void endscreenPrepare(void)
 				completedMissions[g_MissionConfig.stageindex][g_MissionConfig.difficulty] = true;
 
 				collectMissionItem(g_MissionConfig.stageindex, g_MissionConfig.difficulty);
+			}
+
+			if (g_MissionConfig.stageindex == SOLOSTAGEINDEX_ESCAPE
+					|| g_MissionConfig.stageindex == SOLOSTAGEINDEX_AIRBASE) {
+				collectAlternateExitItem(g_MissionConfig.stageindex, g_MissionConfig.difficulty, exitNum);
 			}
 
 			menuPushRootDialog(&g_SoloMissionEndscreenCompletedMenuDialog, MENUROOT_ENDSCREEN);
