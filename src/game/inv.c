@@ -1514,7 +1514,11 @@ void invGetProgressiveWeapons(void)
 
 		// Need a weapon to blow up the wall
 		if (g_Vars.stagenum == STAGE_SKEDARRUINS
-				&& progressiveWeaponNumbers[progressiveWeapon] == WEAPON_NBOMB) {
+				&& progressiveWeapon >= 30 
+				&& progressiveWeaponNumbers[progressiveWeapon] != WEAPON_ROCKETLAUNCHER
+				&& progressiveWeaponNumbers[progressiveWeapon] != WEAPON_DEVASTATOR
+				&& progressiveWeaponNumbers[progressiveWeapon] != WEAPON_SUPERDRAGON
+				&& progressiveWeaponNumbers[progressiveWeapon] != WEAPON_PHOENIX) {
 			invGiveSingleWeapon(WEAPON_TIMEDMINE);
 		}
 
@@ -1554,6 +1558,14 @@ void invGetProgressiveWeapons(void)
 
 		if (progressiveExplosive > 0) {
 			invGiveSingleWeapon(progressiveExplosiveNumbers[progressiveExplosive]);
+
+			// Need a weapon to blow up the wall
+			if (g_Vars.stagenum == STAGE_SKEDARRUINS
+					&& progressiveExplosiveNumbers[progressiveExplosive] == WEAPON_NBOMB
+					&& progressivePistolNumbers[progressivePistol] != WEAPON_PHOENIX
+					&& progressiveRifleNumbers[progressiveRifle] != WEAPON_SUPERDRAGON) {
+				invGiveSingleWeapon(WEAPON_TIMEDMINE);
+			}
 		}
 
 		if (progressiveOtherWeapon > 0) {
