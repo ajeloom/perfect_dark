@@ -1685,7 +1685,10 @@ void endscreenPushCoop(void)
 		}
 
 		endscreenSetCoopCompleted();
-		collectMissionItem(g_MissionConfig.stageindex, g_MissionConfig.difficulty);
+		if (completedMissions[g_MissionConfig.stageindex][g_MissionConfig.difficulty] == false) {
+			completedMissions[g_MissionConfig.stageindex][g_MissionConfig.difficulty] = true;
+			collectMissionItem(g_MissionConfig.stageindex, g_MissionConfig.difficulty);
+		}
 	}
 
 	if (g_Vars.currentplayer == g_Vars.bond) {
