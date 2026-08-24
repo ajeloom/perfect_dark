@@ -161,7 +161,7 @@ int main(int argc, const char **argv)
 	}
 
 	AP_Init();
-	resetAP(true);
+	resetAP(false);
 
 	mainProc();
 	

@@ -7,7 +7,10 @@
 #include "game/hudmsg.h"
 #include "game/inv.h"
 #include "game/menu.h"
+#include "game/pdmode.h"
 #include "game/playermgr.h"
+#include "game/title.h"
+#include "lib/main.h"
 #include "archipelago.h"
 
 #define AP_ITEM_AGENT_START 95
@@ -343,7 +346,10 @@ void resetAP(int restartGame)
     hasNPCs = 0;
 
     if (restartGame) {
-        func0f0f820c(NULL, -7);
+        titleSetNextStage(STAGE_CITRAINING);
+        setNumPlayers(1);
+        titleSetNextMode(TITLEMODE_SKIP);
+        mainChangeToStage(STAGE_CITRAINING);
     }
 }
 
