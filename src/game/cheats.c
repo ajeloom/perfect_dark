@@ -108,6 +108,8 @@ struct cheat g_Cheats[] = {
 // #endif
 };
 
+const s32 cheatCount = ARRAYCOUNT(g_Cheats);
+
 u32 cheatCheckIsCompleted(s32 cheat_id)
 {
 	struct cheat *cheat = &g_Cheats[cheat_id];

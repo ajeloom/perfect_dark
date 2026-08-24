@@ -34,6 +34,10 @@
 #include "data.h"
 #include "types.h"
 
+extern struct cheat g_Cheats[];
+extern const s32 cheatCount;
+static char g_TimedCheatText[24];
+
 extern u32 unlockedWeapons[94];
 extern u32 unlockedMissions[NUM_SOLOSTAGES][3];
 extern u32 completedMissions[NUM_SOLOSTAGES][3];
@@ -922,6 +926,33 @@ MenuDialogHandlerResult menudialog00103608(s32 operation, struct menudialogdef *
 	return 0;
 }
 
+MenuItemHandlerResult menuhandlerShowTimeToBeat(s32 operation, struct menuitem *item, union handlerdata *data)
+{
+	s32 cheat_id;
+
+	for (cheat_id = 0; cheat_id < cheatCount; cheat_id++) {
+		struct cheat *cheat = &g_Cheats[cheat_id];
+
+		if ((cheat->flags & CHEATFLAG_FIRINGRANGE)
+				|| (cheat->flags & CHEATFLAG_COMPLETION)) {
+			continue;
+		} 
+
+		if (cheat->stage_index == g_MissionConfig.stageindex
+				&& cheat->difficulty == g_MissionConfig.difficulty
+				&& completedMissions[g_MissionConfig.stageindex][g_MissionConfig.difficulty] == 0) {
+			s32 mins = cheat->time / 60;
+			s32 secs = cheat->time % 60;
+
+			snprintf(g_TimedCheatText, sizeof(g_TimedCheatText), "Time to beat: %d:%02d\n", mins, secs);
+			return 0;
+		}
+	}
+
+	snprintf(g_TimedCheatText, sizeof(g_TimedCheatText), "");
+	return 0;
+}
+
 struct menuitem g_AcceptMissionMenuItems[] = {
 	{
 		MENUITEMTYPE_OBJECTIVES,
@@ -930,6 +961,14 @@ struct menuitem g_AcceptMissionMenuItems[] = {
 		0,
 		0,
 		NULL,
+	},
+	{
+		MENUITEMTYPE_LABEL,
+		0,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)g_TimedCheatText,
+		0,
+		menuhandlerShowTimeToBeat,
 	},
 	{
 		MENUITEMTYPE_SELECTABLE,
