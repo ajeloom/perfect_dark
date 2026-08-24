@@ -319,13 +319,9 @@ void challengeSetCurrentBySlot(s32 slotnum)
 	g_MpChallengeIndex = 0;
 
 	for (challengeindex = 0; challengeindex < ARRAYCOUNT(g_MpChallenges); challengeindex++) {
-		if (challengeIsAvailableToAnyPlayer(challengeindex)) {
-			if (slotnum == 0) {
-				g_MpChallengeIndex = challengeindex;
-				break;
-			}
-
-			slotnum--;
+		if (slotnum == challengeindex) {
+			g_MpChallengeIndex = challengeindex;
+			break;
 		}
 	}
 
