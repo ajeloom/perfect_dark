@@ -5,6 +5,7 @@
 #include "game/bossfile.h"
 #include "game/challenge.h"
 #include "game/cheats.h"
+#include "game/chraction.h"
 #include "game/debug.h"
 #include "game/filemgr.h"
 #include "game/game_0b0fd0.h"
@@ -37,6 +38,8 @@
 extern struct cheat g_Cheats[];
 extern const s32 cheatCount;
 static char g_TimedCheatText[24];
+
+s16 warpPad = -1;
 
 extern u32 unlockedWeapons[94];
 extern u32 unlockedMissions[NUM_SOLOSTAGES][3];
@@ -4928,29 +4931,86 @@ char *mainMenuTextLabel(struct menuitem *item)
 	return langGet(nocheats[item->param]);
 }
 
+MenuItemHandlerResult menuhandlerTeleport(s32 operation, struct menuitem *item, union handlerdata *data)
+{
+	if (operation == MENUOP_SET) {
+		warpPad = (s16)item->param3;
+		chrSetStageFlag(NULL, 0x08000000); // CONSIDER_WARP
+		menuPopDialog();
+		menuPopDialog();
+	}
+
+	return 0;
+}
+
+struct menuitem g_CiRoomMenuItems[] = {
+	{
+		MENUITEMTYPE_SELECTABLE,
+		0,
+		MENUITEMFLAG_BIGFONT | MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Firing Range\n",
+		20,
+		menuhandlerTeleport,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		0,
+		MENUITEMFLAG_BIGFONT | MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Device Room\n",
+		289,
+		menuhandlerTeleport,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		0,
+		MENUITEMFLAG_BIGFONT | MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Holo Room\n",
+		627,
+		menuhandlerTeleport,
+	},
+	{ MENUITEMTYPE_END },
+};
+
+struct menudialogdef g_CiTeleportMenuDialog = {
+	MENUDIALOGTYPE_DEFAULT,
+	(uintptr_t)"Warp Menu\n",
+	g_CiRoomMenuItems,
+	menudialogMainMenu,
+	MENUDIALOGFLAG_STARTSELECTS | MENUDIALOGFLAG_LITERAL_TEXT,
+	NULL,
+};
+
 struct menuitem g_MainMenuMenuItems[] = {
+	{
+		MENUITEMTYPE_SELECTABLE,
+		0,
+		MENUITEMFLAG_SELECTABLE_OPENSDIALOG | MENUITEMFLAG_BIGFONT | MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Archipelago\n", // Archipelago
+		0x00000001,
+		(void *)&g_ArchipelagoMenuDialog,
+	},
 	{
 		MENUITEMTYPE_SELECTABLE,
 		0,
 		MENUITEMFLAG_SELECTABLE_CLOSESDIALOG | MENUITEMFLAG_BIGFONT,
 		L_MISC_446, // "Carrington Institute"
-		0x00000001,
+		0x00000002,
 		NULL,
 	},
 	{
 		MENUITEMTYPE_SELECTABLE,
 		0,
 		MENUITEMFLAG_SELECTABLE_OPENSDIALOG | MENUITEMFLAG_BIGFONT | MENUITEMFLAG_LITERAL_TEXT,
-		(uintptr_t)"Archipelago\n", // Archipelago
-		0x00000002,
-		(void *)&g_ArchipelagoMenuDialog,
+		(uintptr_t)"Training Rooms\n",
+		0x00000003,
+		(void *)&g_CiTeleportMenuDialog,
 	},
 	{
 		MENUITEMTYPE_SELECTABLE,
 		0,
 		MENUITEMFLAG_BIGFONT,
 		(uintptr_t)&mainMenuTextLabel,
-		0x00000003,
+		0x00000004,
 		menuhandlerMainMenuSoloMissions,
 	},
 	{
@@ -4958,7 +5018,7 @@ struct menuitem g_MainMenuMenuItems[] = {
 		1,
 		MENUITEMFLAG_BIGFONT,
 		(uintptr_t)&mainMenuTextLabel,
-		0x00000004,
+		0x00000005,
 		menuhandlerMainMenuCombatSimulator,
 	},
 	{
@@ -4966,7 +5026,7 @@ struct menuitem g_MainMenuMenuItems[] = {
 		2,
 		MENUITEMFLAG_BIGFONT,
 		(uintptr_t)&mainMenuTextLabel,
-		0x00000005,
+		0x00000006,
 		menuhandlerMainMenuCooperative,
 	},
 	{
@@ -4974,7 +5034,7 @@ struct menuitem g_MainMenuMenuItems[] = {
 		3,
 		MENUITEMFLAG_BIGFONT | MENUITEMFLAG_ALWAYSDISABLED,
 		(uintptr_t)&mainMenuTextLabel,
-		0x00000006,
+		0x00000007,
 		menuhandlerMainMenuCounterOperative,
 	},
 	{
@@ -4982,7 +5042,7 @@ struct menuitem g_MainMenuMenuItems[] = {
 		0,
 		MENUITEMFLAG_SELECTABLE_OPENSDIALOG | MENUITEMFLAG_BIGFONT,
 		L_OPTIONS_187, // "Change Agent..."
-		0x00000007,
+		0x00000008,
 		(void *)&g_ChangeAgentMenuDialog,
 	},
 #ifndef PLATFORM_N64
@@ -4991,7 +5051,7 @@ struct menuitem g_MainMenuMenuItems[] = {
 		0,
 		MENUITEMFLAG_SELECTABLE_OPENSDIALOG | MENUITEMFLAG_BIGFONT | MENUITEMFLAG_LITERAL_TEXT,
 		(uintptr_t)"Exit Game",
-		0x00000008,
+		0x00000009,
 		(void *)&g_ExitGameMenuDialog,
 	},
 #endif

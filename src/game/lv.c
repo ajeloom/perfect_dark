@@ -103,6 +103,8 @@
 extern int hasNPCs;
 extern u32 unlockedCharacters[6];
 
+extern s16 warpPad;
+
 struct sndstate *g_MiscSfxAudioHandles[3];
 u32 var800aa5bc;
 s32 g_MiscSfxActiveTypes[3];
@@ -301,6 +303,8 @@ void lvReset(s32 stagenum)
 	g_Vars.autocutgroupskip = false;
 
 	g_MiscAudioHandle = NULL;
+
+	warpPad = -1;
 
 	musicReset();
 	modelmgrSetLvResetting(true);

@@ -58,6 +58,8 @@ extern int weaponProgressionType;
 extern u32 unlockedCharacters[6];
 extern bool randomEnemyWeapons;
 
+extern s16 warpPad;
+
 /**
  * @cmd 0000
  */
@@ -5349,6 +5351,13 @@ bool aiChrMoveToPad(void)
 		} else {
 			s32 padnum = cmd[4] | (cmd[3] << 8);
 			padnum = chrResolvePadId(chr, padnum);
+
+			// Warp player to the pad in Carrington Institute
+			if (g_Vars.stagenum == STAGE_CITRAINING
+					&& warpPad != -1 
+					&& chr->chrnum == 5010) {
+				padnum = warpPad;
+			}
 
 			if (padnum >= 0) {
 				padUnpack(padnum, PADFIELD_POS | PADFIELD_LOOK | PADFIELD_ROOM, &pad);
