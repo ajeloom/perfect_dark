@@ -28,6 +28,8 @@
 #include "input.h"
 #include "mpsetups.h"
 
+extern u32 unlockedWeapons[94];
+
 extern u32 unlockedChallenges[30];
 extern u32 completedChallenges[30];
 
@@ -305,6 +307,63 @@ MenuItemHandlerResult menuhandlerMpWeaponSlot(s32 operation, struct menuitem *it
 		data->dropdown.value = mpGetNumWeaponOptions();
 		break;
 	case MENUOP_GETOPTIONTEXT:
+		int weaponSetList[49] = {
+			WEAPON_NONE,
+			WEAPON_FALCON2,
+	 		WEAPON_FALCON2_SILENCER,
+			WEAPON_FALCON2_SCOPE,
+			WEAPON_MAGSEC4,
+			WEAPON_MAULER,
+			WEAPON_PHOENIX,
+			WEAPON_DY357MAGNUM,
+			WEAPON_DY357LX,
+			WEAPON_CMP150,
+			WEAPON_CYCLONE,
+			WEAPON_CALLISTO,
+			WEAPON_RCP120,
+			WEAPON_LAPTOPGUN,
+			WEAPON_DRAGON,
+			WEAPON_K7AVENGER,
+			WEAPON_AR34,
+			WEAPON_SUPERDRAGON,
+			WEAPON_SHOTGUN,
+			WEAPON_REAPER,
+			WEAPON_SNIPERRIFLE,
+			WEAPON_FARSIGHT,
+			WEAPON_DEVASTATOR,
+			WEAPON_ROCKETLAUNCHER,
+			WEAPON_SLAYER,
+			WEAPON_COMBATKNIFE,
+			WEAPON_CROSSBOW,
+			WEAPON_TRANQUILIZER,
+			WEAPON_GRENADE,
+			WEAPON_NBOMB,
+			WEAPON_TIMEDMINE,
+			WEAPON_PROXIMITYMINE,
+			WEAPON_REMOTEMINE,
+			WEAPON_LASER,
+			WEAPON_XRAYSCANNER,
+			WEAPON_NIGHTVISION,
+			WEAPON_IRSCANNER,
+			WEAPON_CLOAKINGDEVICE,
+			WEAPON_COMBATBOOST,
+			WEAPON_PP9I,
+			WEAPON_CC13,
+			WEAPON_KL01313,
+			WEAPON_KF7SPECIAL,
+			WEAPON_ZZT,
+			WEAPON_DMC,
+			WEAPON_AR53,
+			WEAPON_RCP45,
+			WEAPON_MPSHIELD,
+			WEAPON_DISABLED,
+		};
+
+		if (unlockedWeapons[weaponSetList[data->dropdown.value]] == 0) {
+			sprintf(g_StringPointer, "(Locked) %s\n", mpGetWeaponLabel(data->dropdown.value));
+			return (uintptr_t)g_StringPointer;
+		}
+		
 		return (uintptr_t) mpGetWeaponLabel(data->dropdown.value);
 	case MENUOP_SET:
 		mpSetWeaponSlot(item->param3, data->dropdown.value);
