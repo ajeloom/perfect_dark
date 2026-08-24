@@ -51,12 +51,15 @@
 #define AP_COLLECT_ALL_STARS_LOCATION 498
 #define AP_MPFEATURE_OFFSET 499
 
+extern int lastReceivedItemIndex;
+
 u32 completedMissions[NUM_SOLOSTAGES][3];
 u32 completedAgentObjectives[NUM_SOLOSTAGES][3];
 u32 completedSpecialAgentObjectives[NUM_SOLOSTAGES][4];
 u32 completedPerfectAgentObjectives[NUM_SOLOSTAGES][5];
 u32 completedChallenges[30];
 u32 completedTrainingMedals[33][3];
+u32 completedLocations[578];
 
 u32 unlockedMissions[NUM_SOLOSTAGES][3];
 u32 unlockedChallenges[30];
@@ -484,25 +487,30 @@ void printSentItemMessage(const char* itemname, const char* recipient, const cha
 	hudmsgCreate(buffer, HUDMSGTYPE_DEFAULT);
 }
 
-void handleItem(int itemID, const char* itemname, const char* sender, const char* location)
+void handleItem(int itemID, const char* itemname, const char* sender, const char* location, int itemIndex)
 {
     char buffer[300] = "";
 
-    itemname = CheckString(itemname);
-    sender = CheckString(sender);
-    location = CheckString(location);
+    if (itemIndex > lastReceivedItemIndex) {
+        itemname = CheckString(itemname);
+        sender = CheckString(sender);
+        location = CheckString(location);
 
-    for (s32 i = 0; i < PLAYERCOUNT(); i++) {
-		setCurrentPlayerNum(i);
+        // Print item received message
+        for (s32 i = 0; i < PLAYERCOUNT(); i++) {
+            setCurrentPlayerNum(i);
 
-        if (showLocationName) {
-            sprintf(buffer, "Got %s from %s (%s)\n", itemname, sender, location);
+            if (showLocationName) {
+                sprintf(buffer, "Got %s from %s (%s)\n", itemname, sender, location);
+            }
+            else {
+                sprintf(buffer, "Got %s from %s\n", itemname, sender);
+            }
+            
+            hudmsgCreate(buffer, HUDMSGTYPE_DEFAULT);
         }
-        else {
-            sprintf(buffer, "Got %s from %s\n", itemname, sender);
-        }
-        
-        hudmsgCreate(buffer, HUDMSGTYPE_DEFAULT);
+
+        lastReceivedItemIndex = itemIndex;
     }
 
     // Character

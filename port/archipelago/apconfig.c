@@ -101,6 +101,17 @@ static inline const char *APConfigGetSection(char *sec, const struct configentry
 	return sec;
 }
 
+void APConfigRegisterInt(const char *key, s32 *var, s32 min, s32 max)
+{
+	struct configentry *cfg = APConfigFindOrAddEntry(key);
+	if (cfg) {
+		cfg->type = CFG_S32;
+		cfg->ptr = var;
+		cfg->min_s32 = min;
+		cfg->max_s32 = max;
+	}
+}
+
 void APConfigRegisterUInt(const char* key, u32* var, u32 min, u32 max)
 {
 	struct configentry* cfg = APConfigFindOrAddEntry(key);
@@ -127,8 +138,16 @@ static void APConfigSetFromString(const char *key, const char *val)
 	struct configentry *cfg = APConfigFindEntry(key);
 	if (!cfg) return;
 
+	s32 tmp_s32;
 	u32 tmp_u32;
 	switch (cfg->type) {
+		case CFG_S32:
+			tmp_s32 = strtol(val, NULL, 0);
+			if (cfg->min_s32 < cfg->max_s32) {
+				tmp_s32 = APConfigClampInt(tmp_s32, cfg->min_s32, cfg->max_s32);
+			}
+			*(s32 *)cfg->ptr = tmp_s32;
+			break;
 		case CFG_U32:
 			tmp_u32 = strtoul(val, NULL, 0);
 			if (cfg->min_u32 < cfg->max_u32) {

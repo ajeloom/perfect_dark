@@ -34,6 +34,7 @@ std::string password;
 std::string status = "Not connected\n";
 
 int nextCheckToGet = 0;
+extern int lastReceivedItemIndex;
 
 int completionGoal;
 int skedarRequirements;
@@ -84,6 +85,7 @@ int hasMPUnlocks;
 extern u32 completedMissions[21][3];
 extern u32 completedChallenges[30];
 extern u32 completedTrainingMedals[33][3];
+extern u32 completedLocations[578];
 
 int failedToConnectTotal = 0;
 
@@ -1227,6 +1229,8 @@ bool Initialize() {
 
                     completedTrainingMedals[weaponIndex][difficulty] = 1;
                 }
+
+                completedLocations[location] = 1;
             }
 		}
 
@@ -1280,6 +1284,11 @@ bool Initialize() {
             return;
         }
 
+        // Reset last item received count
+        if (lastReceivedItemIndex > items.size() - 1) {
+            lastReceivedItemIndex = -1;
+        }
+
         for (const auto& item : items) {
             QueueItem(item);
         }
@@ -1294,7 +1303,10 @@ bool Initialize() {
                 std::string recipient = ap->get_player_alias(item.player);
                 std::string location = locationNames[item.location];
 
-                printSentItemMessage(itemname.c_str(), recipient.c_str(), location.c_str());
+                if (completedLocations[item.location] == 0) {
+                    printSentItemMessage(itemname.c_str(), recipient.c_str(), location.c_str());
+                    completedLocations[item.location] = 1;
+                }
             }
         }
     });
@@ -1427,7 +1439,7 @@ void QueueItem(APClient::NetworkItem item) {
         location = locationNames[item.location];
     }
 
-    handleItem(item.item, itemname.c_str(), sender.c_str(), location.c_str());
+    handleItem(item.item, itemname.c_str(), sender.c_str(), location.c_str(), item.index);
 }
 
 char SendDeathLink()

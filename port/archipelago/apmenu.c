@@ -24,6 +24,8 @@ bool randomCharacters;
 bool randomEnemyWeapons;
 bool randomBuddyWeapons;
 
+int lastReceivedItemIndex;
+
 u32 randomJoHead;
 u32 randomVDHead;
 u32 randomElvisHead;
@@ -1813,6 +1815,11 @@ char *GetSavedSlotName()
 char *GetSavedPassword()
 {
 	return savedPassword;
+}
+
+PD_CONSTRUCTOR static void APConfigItemIndexInit(void)
+{
+	APConfigRegisterInt("Item.LastReceivedItemIndex", &lastReceivedItemIndex, -1, 1000);
 }
 
 PD_CONSTRUCTOR static void APConfigLoginInit(void)
