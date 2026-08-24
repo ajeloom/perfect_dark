@@ -55,7 +55,7 @@
 extern bool randomMusic;
 extern u32 unlockedWeapons[94];
 extern int weaponProgressionType;
-extern u32 unlockedCharacters[5];
+extern u32 unlockedCharacters[6];
 extern bool randomEnemyWeapons;
 
 /**

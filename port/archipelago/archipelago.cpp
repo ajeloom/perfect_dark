@@ -77,7 +77,7 @@ int hasWeaponCheats = -1;
 int areCheatsInItemPool = -1;
 
 int hasNPCs;
-extern u32 unlockedCharacters[5];
+extern u32 unlockedCharacters[6];
 
 extern u32 completedMissions[21][3];
 extern u32 completedChallenges[30];
@@ -334,6 +334,7 @@ std::string itemNames[] = {
     "Progressive Rifle",
     "Progressive Explosive",
     "Progressive Other Weapon",
+    "Carrington",
     "Cassandra",
     "Dr. Caroll",
     "Jonathan",
@@ -1112,7 +1113,7 @@ bool Initialize() {
                 hasNPCs = data.at("options").at("npcs");
 
                 if (hasNPCs == 0) {
-                    for (int i = 0; i < 5; i++) {
+                    for (int i = 0; i < 6; i++) {
                         unlockedCharacters[i] = 1;
                     }
                 }

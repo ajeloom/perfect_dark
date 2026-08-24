@@ -58,7 +58,7 @@ u32 unlockedMissions[NUM_SOLOSTAGES][3];
 u32 unlockedChallenges[30];
 u32 unlockedWeapons[94];
 u32 unlockedCheats[42];
-u32 unlockedCharacters[5];
+u32 unlockedCharacters[6];
 
 extern int completionGoal;
 extern int skedarRequirements;
@@ -87,6 +87,7 @@ extern int hasCompletionCheats;
 extern int hasTimedCheats;
 extern int hasWeaponCheats;
 
+extern int hasNPCs;
 extern bool showLocationName;
 
 int progressiveWeaponNumbers[43] = {
@@ -339,6 +340,8 @@ void resetAP(int restartGame)
     completionGoal = 0;
     skedarRequirements = 0;
 
+    hasNPCs = 0;
+
     if (restartGame) {
         func0f0f820c(NULL, -7);
     }
@@ -487,7 +490,6 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
     // Character
     if (itemID >= AP_ITEM_CHARACTER_START) {
         unlockedCharacters[itemID - AP_ITEM_CHARACTER_START] = 1;
-
         return;
     }
 

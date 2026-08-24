@@ -37,7 +37,7 @@
 #include "data.h"
 #include "types.h"
 
-extern u32 unlockedCharacters[5];
+extern u32 unlockedCharacters[6];
 
 extern bool randomEnemyWeapons;
 

@@ -100,7 +100,8 @@
 #include "video.h"
 #endif
 
-extern u32 unlockedCharacters[5];
+extern int hasNPCs;
+extern u32 unlockedCharacters[6];
 
 struct sndstate *g_MiscSfxAudioHandles[3];
 u32 var800aa5bc;
@@ -2339,11 +2340,25 @@ void lvTick(void)
 	// Don't start the mission if character is locked
 	if ((g_Vars.stagenum == STAGE_RESCUE
 			&& unlockedCharacters[CHARACTER_JONATHAN] == 0)
+			|| (g_Vars.stagenum == STAGE_DEFENSE
+			&& unlockedCharacters[CHARACTER_CARRINGTON] == 0)
 			|| (g_Vars.stagenum == STAGE_ATTACKSHIP
 			&& unlockedCharacters[CHARACTER_CASSANDRA] == 0)
 			|| (g_Vars.stagenum == STAGE_SKEDARRUINS
 			&& unlockedCharacters[CHARACTER_ELVIS] == 0)) {
 		mainEndStage();
+	}
+
+	// Delete Carrington if he is in Carrington Institute but is locked
+	if (g_Vars.stagenum == STAGE_CITRAINING
+			&& unlockedCharacters[CHARACTER_CARRINGTON] == 0
+			&& hasNPCs == 1) {
+		struct chrdata *chr = chrFindByLiteralId(0x00);
+
+		if (chr != NULL) {
+			chr->hidden |= CHRHFLAG_DELETING;
+			chr = NULL;
+		}
 	}
 
 	g_StageTimeElapsed60 += g_Vars.lvupdate60;

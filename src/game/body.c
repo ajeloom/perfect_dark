@@ -24,7 +24,7 @@
 #include "data.h"
 #include "types.h"
 
-extern u32 unlockedCharacters[5];
+extern u32 unlockedCharacters[6];
 
 s32 g_NumActiveHeadsPerGender;
 u32 var8009cd24;
@@ -414,6 +414,22 @@ void bodyAllocateChr(s32 stagenum, struct packedchr *packed, s32 cmdindex)
 
 	// Don't allocate important characters if locked
 	switch (packed->padnum) {
+		// Carrington
+		case PAD_ELD_00DC: // Villa
+			if (g_Vars.stagenum == STAGE_VILLA
+					&& unlockedCharacters[CHARACTER_CARRINGTON] == 0) {
+				// printf("Villa: deleting Carrington\n");
+				return;
+			}
+			break;
+		case PAD_IMP_0142: // CI Defense
+			if (g_Vars.stagenum == STAGE_DEFENSE
+					&& unlockedCharacters[CHARACTER_CARRINGTON] == 0) {
+				// printf("CI Defense: deleting Carrington\n");
+				return;
+			}
+			break;
+
 		// Cassandra
 		case PAD_AME_01C2: // Defection
 			if (g_Vars.stagenum == STAGE_DEFECTION

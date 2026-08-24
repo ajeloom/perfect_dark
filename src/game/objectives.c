@@ -47,7 +47,7 @@ extern int progressiveWeapon;
 extern int weaponProgressionType;
 extern int progressiveWeaponNumbers[43];
 
-extern u32 unlockedCharacters[5];
+extern u32 unlockedCharacters[6];
 
 #if PIRACYCHECKS
 u32 xorBaffbeff(u32 value)
@@ -223,6 +223,12 @@ s32 objectiveCheck(s32 index)
 	else if (g_Vars.stagenum == STAGE_EXTRACTION) {
 		// Defeat Cassandra's bodyguards
 		if (index == 3 && unlockedCharacters[CHARACTER_CASSANDRA] == 0) {
+			return OBJECTIVE_FAILED;
+		}
+	}
+	else if (g_Vars.stagenum == STAGE_VILLA) {
+		// Rescue Carrington
+		if (index == 5 && unlockedCharacters[CHARACTER_CARRINGTON] == 0) {
 			return OBJECTIVE_FAILED;
 		}
 	}
@@ -487,6 +493,10 @@ void objectivesCheckAll(void)
 						else if (g_Vars.stagenum == STAGE_EXTRACTION
 								&& i == 3) {
 							name = "Cassandra";
+						}
+						else if (g_Vars.stagenum == STAGE_VILLA
+								&& i == 5) {
+							name = "Carrington";
 						}
 						else if (g_Vars.stagenum == STAGE_G5BUILDING
 								&& i == 2) {
