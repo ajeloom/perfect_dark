@@ -1191,16 +1191,18 @@ void playerSpawn(void)
 			} else
 #endif
 			{
-				bgunEquipWeapon2(HAND_LEFT, g_DefaultWeapons[HAND_LEFT]);
-				bgunEquipWeapon2(HAND_RIGHT, g_DefaultWeapons[HAND_RIGHT]);
+				// Only equip weapon for combat sim and not co-op
+				if (g_Vars.normmplayerisrunning)  {
+					bgunEquipWeapon2(HAND_LEFT, g_DefaultWeapons[HAND_LEFT]);
+					bgunEquipWeapon2(HAND_RIGHT, g_DefaultWeapons[HAND_RIGHT]);
+				}
 			}
 
-			// Equip progressive weapon in combat sim
+			// Get progressive weapons in combat sim
 			if (weaponProgressionType != WEAPONPROG_DISABLED 
 					&& g_Vars.normmplayerisrunning
 					&& allowProgWeaponInChallenges == 1) {
 				invGetProgressiveWeapons();
-
 			}
 
 #if VERSION >= VERSION_NTSC_1_0
@@ -1844,7 +1846,7 @@ void player0f0b9a20(void)
 	if (weaponProgressionType == WEAPONPROG_DISABLED
 			|| weaponProgressionType == WEAPONPROG_VANILLA_ALLGUNS) {
 		if (unlockedWeapons[g_DefaultWeapons[HAND_LEFT]] == 0) {
-			bgunEquipWeapon2(HAND_LEFT, WEAPON_UNARMED);
+			bgunEquipWeapon2(HAND_LEFT, WEAPON_NONE);
 		}
 
 		if (unlockedWeapons[g_DefaultWeapons[HAND_RIGHT]] == 0) {
@@ -1859,6 +1861,7 @@ void player0f0b9a20(void)
 			&& g_Vars.stagenum != STAGE_AIRFORCEONE
 			&& g_Vars.stagenum != STAGE_MAIANSOS
 			&& !g_Vars.normmplayerisrunning) {
+		bgunEquipWeapon2(HAND_LEFT, WEAPON_NONE);
 		bgunEquipWeapon2(HAND_RIGHT, progressiveWeaponNumbers[progressiveWeapon]);
 	}
 	else if (weaponProgressionType == WEAPONPROG_TYPES
@@ -1868,6 +1871,7 @@ void player0f0b9a20(void)
 			&& g_Vars.stagenum != STAGE_AIRFORCEONE
 			&& g_Vars.stagenum != STAGE_MAIANSOS
 			&& !g_Vars.normmplayerisrunning) {
+		bgunEquipWeapon2(HAND_LEFT, WEAPON_NONE);
 		bgunEquipWeapon2(HAND_RIGHT, progressivePistolNumbers[progressivePistol]);
 	}
 
@@ -1885,9 +1889,12 @@ void playerEndCutscene(void)
 		g_PlayerTriggerGeFadeIn = false;
 		bmoveSetModeForAllPlayers(MOVEMODE_WALK);
 
-		for (s32 i = 0; i < PLAYERCOUNT(); i++) {
-			setCurrentPlayerNum(i);
-			invRemoveLockedWeapons();
+		// Only remove locked weapons in missions
+		if (!g_Vars.normmplayerisrunning) {
+			for (s32 i = 0; i < PLAYERCOUNT(); i++) {
+				setCurrentPlayerNum(i);
+				invRemoveLockedWeapons();
+			}
 		}
 	}
 }
