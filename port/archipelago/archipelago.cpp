@@ -26,7 +26,7 @@ APClient* ap;
 
 #define VERSION_TUPLE {0, 6, 7}
 
-char* clientVersion = "0.4.0";
+char* clientVersion = "0.5.0";
 
 std::string URI;
 std::string slotName;
