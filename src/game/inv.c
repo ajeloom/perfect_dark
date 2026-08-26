@@ -1291,6 +1291,17 @@ void invRemoveLockedWeapons(void)
 				continue;
 			}
 
+			if (g_Vars.stagenum == STAGE_SKEDARRUINS
+					&& i == WEAPON_COMBATKNIFE
+					&& unlockedWeapons[WEAPON_COMBATKNIFE] == 1) {
+				continue;
+			}
+
+			if (g_Vars.stagenum == STAGE_SKEDARRUINS
+					&& i == WEAPON_TIMEDMINE
+					&& unlockedWeapons[WEAPON_TIMEDMINE] == 1) {
+				continue;
+			}
 
 			if (i != progressiveWeaponNumbers[progressiveWeapon]) {
 				invRemoveItemByNum(i);

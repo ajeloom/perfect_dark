@@ -12407,6 +12407,16 @@ void bgunGiveAmmoForProgressiveWeapons(void)
 			bgunSetAmmoQuantity(secammotype, g_AmmoTypes[secammotype].capacity / 2);
 		}
 
+		if (g_Vars.stagenum == STAGE_SKEDARRUINS
+				&& progressiveWeapon > 1) {
+			bgunSetAmmoQuantity(AMMOTYPE_KNIFE, g_AmmoTypes[AMMOTYPE_KNIFE].capacity);
+		}
+
+		if (g_Vars.stagenum == STAGE_SKEDARRUINS
+				&& progressiveWeapon >= 30) {
+			bgunSetAmmoQuantity(AMMOTYPE_TIMED_MINE, g_AmmoTypes[AMMOTYPE_TIMED_MINE].capacity);
+		}
+
 		if (progressiveWeaponNumbers[progressiveWeapon] == WEAPON_PSYCHOSISGUN) {
 			bgunSetAmmoQuantity(AMMOTYPE_PSYCHOSIS, 100);
 			return;
