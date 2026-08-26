@@ -53,6 +53,7 @@
 
 extern int dkModeTrap;
 extern int smallJoTrap;
+extern int smallCharactersTrap;
 
 void rng2SetSeed(u32 seed);
 
@@ -2673,7 +2674,8 @@ s32 chrTick(struct prop *prop)
 			modelSetDistanceScale(0.3125f);
 		}
 
-		if (smallJoTrap && chr->prop->type == PROPTYPE_PLAYER) {
+		if ((smallJoTrap && chr->prop->type == PROPTYPE_PLAYER)
+				|| (smallCharactersTrap && chr->prop->type != PROPTYPE_PLAYER)) {
 			f32 scale = g_HeadsAndBodies[chr->bodynum].scale * 0.10000001f;
 			scale *= 0.4;
 
@@ -2681,13 +2683,15 @@ s32 chrTick(struct prop *prop)
 				modelSetScale(model, scale);
 			}
 		}
-		else if (!smallJoTrap && chr->prop->type == PROPTYPE_PLAYER) {
+		else if ((!smallJoTrap && chr->prop->type == PROPTYPE_PLAYER)
+				|| (!smallCharactersTrap && chr->prop->type != PROPTYPE_PLAYER)) {
 			f32 scale = g_HeadsAndBodies[chr->bodynum].scale * 0.10000001f;
 
 			if (model->scale != scale) {
 				modelSetScale(model, scale);
 			}
 		}
+
 		g_ModelJointPositionedFunc = &chrHandleJointPositioned;
 		g_CurModelChr = chr;
 
@@ -3641,7 +3645,7 @@ Gfx *chrRender(struct prop *prop, Gfx *gdl, bool xlupass)
 							shadowalpha = shadowalpha * (400 - gaptoground) * 0.004f;
 						}
 
-						if (cheatIsActive(CHEAT_SMALLCHARACTERS)) {
+						if (cheatIsActive(CHEAT_SMALLCHARACTERS) || smallCharactersTrap) {
 							radius *= 0.4f;
 						}
 
