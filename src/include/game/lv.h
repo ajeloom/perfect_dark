@@ -47,6 +47,11 @@ void lvSetMpScoreLimit(u32 limit);
 void lvSetMpTeamScoreLimit(u32 limit);
 f32 lvGetStageTimeInSeconds(void);
 s32 lvGetStageTime60(void);
+void checkTrap(int *trap, s32 *trapTimeElapsed, u8 trapName);
+Gfx *renderTrapHud(Gfx *gdl, u8 trapName, s32 trapTime);
+s8 findTrapSlot(u8 trap);
+void addTrapToSlot(u8 trap);
+void updateTrapSlots(void);
 void spawnSkedar(s32 pad_id);
 
 #endif

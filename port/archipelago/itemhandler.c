@@ -6,6 +6,7 @@
 #include "game/bondgun.h"
 #include "game/hudmsg.h"
 #include "game/inv.h"
+#include "game/lv.h"
 #include "game/menu.h"
 #include "game/pdmode.h"
 #include "game/playermgr.h"
@@ -1108,6 +1109,10 @@ void GetNextProgressiveWeapon(int weaponNumbersArray[], int currentWeaponNumber)
 
 void giveTrap(int *trap, s32 *trapTime, s32 amount, u8 trapName)
 {
+    if (*trap == 0) {
+        addTrapToSlot(trapName);
+    }
+
     *trap += 1;
     *trapTime += amount;
 }

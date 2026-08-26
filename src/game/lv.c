@@ -106,8 +106,27 @@ extern u32 unlockedCharacters[6];
 
 extern s16 warpPad;
 
+extern int dkModeTrap;
+extern int smallJoTrap;
+extern int smallCharactersTrap;
 extern int slowMotionTrap;
+extern int enemyRocketsTrap;
+extern int perfectDarknessTrap;
+extern int fastAnimationsTrap;
 extern int skedarTrap;
+
+s32 dkModeTrapTime = 0;
+s32 smallJoTrapTime = 0;
+s32 smallCharactersTrapTime = 0;
+s32 slowMotionTrapTime = 0;
+s32 enemyRocketsTrapTime = 0;
+s32 perfectDarknessTrapTime = 0;
+s32 fastAnimationsTrapTime = 0;
+s32 skedarTrapTime = 0;
+
+s8 trapSlots[8];
+
+bool updatedTrapSlots = false;
 
 extern bool turnedOnLights;
 extern bool turnedOffLights;
@@ -165,6 +184,10 @@ void lvInit(void)
 {
 	g_Vars.lockscreen = 0;
 	g_Vars.joydisableframestogo = -1;
+
+	for (s32 i = 0; i < ARRAYCOUNT(trapSlots); i++) {
+		trapSlots[i] = -1;
+	}
 }
 
 void lvResetMiscSfx(void)
@@ -1817,6 +1840,58 @@ Gfx *lvRender(Gfx *gdl)
 	}
 #endif
 
+	if (dkModeTrap) {
+		gdl = renderTrapHud(gdl, TRAP_DKMODE, dkModeTrapTime);
+	}
+
+	if (smallJoTrap) {
+		gdl = renderTrapHud(gdl, TRAP_SMALLJO, smallJoTrapTime);
+	}
+
+	if (smallCharactersTrap) {
+		gdl = renderTrapHud(gdl, TRAP_SMALLCHARACTERS, smallCharactersTrapTime);
+	}
+
+	if (slowMotionTrap) {
+		gdl = renderTrapHud(gdl, TRAP_SLOMO, slowMotionTrapTime);
+	}
+
+	if (enemyRocketsTrap) {
+		gdl = renderTrapHud(gdl, TRAP_ENEMYROCKETS, enemyRocketsTrapTime);
+	}
+
+	if (perfectDarknessTrap) {
+		gdl = renderTrapHud(gdl, TRAP_PERFECTDARKNESS, perfectDarknessTrapTime);
+	}
+	
+	if (fastAnimationsTrap) {
+		gdl = renderTrapHud(gdl, TRAP_FASTANIMATIONS, fastAnimationsTrapTime);
+	}
+
+	if (skedarTrap) {
+		s8 slot = findTrapSlot(TRAP_SKEDAR);
+		if (g_Vars.stagenum == STAGE_CITRAINING) {
+			if (slot != -1) {
+				gdl = renderTrapHud(gdl, TRAP_SKEDAR, skedarTrapTime);
+			}
+			else {
+				addTrapToSlot(TRAP_SKEDAR);
+			}
+		}
+		else {
+			if (slot != -1) {
+				trapSlots[slot] = -1;
+			}
+		}
+	}
+	else {
+		skedarTrapTime = 0;
+		s8 slot = findTrapSlot(TRAP_SKEDAR);
+		if (slot != -1) {
+			trapSlots[slot] = -1;
+		}
+	}
+
 #if VERSION < VERSION_NTSC_1_0
 	if ((uintptr_t)gdl < (uintptr_t)g_GfxBuffers[g_GfxActiveBufferIndex]
 			|| (uintptr_t)gdl > (uintptr_t)g_GfxBuffers[g_GfxActiveBufferIndex + 1]) {
@@ -2280,6 +2355,26 @@ void lvTick(void)
 
 	g_NumReasonsToEndMpMatch = 0;
 
+	// Handle traps
+	checkTrap(&dkModeTrap, &dkModeTrapTime, TRAP_DKMODE);
+	checkTrap(&smallJoTrap, &smallJoTrapTime, TRAP_SMALLJO);
+	checkTrap(&smallCharactersTrap, &smallCharactersTrapTime, TRAP_SMALLCHARACTERS);
+	checkTrap(&slowMotionTrap, &slowMotionTrapTime, TRAP_SLOMO);
+	checkTrap(&enemyRocketsTrap, &enemyRocketsTrapTime, TRAP_ENEMYROCKETS);
+	checkTrap(&perfectDarknessTrap, &perfectDarknessTrapTime, TRAP_PERFECTDARKNESS);
+	checkTrap(&fastAnimationsTrap, &fastAnimationsTrapTime, TRAP_FASTANIMATIONS);
+
+	if (dkModeTrap
+			|| smallJoTrap
+			|| smallCharactersTrap
+			|| slowMotionTrap
+			|| enemyRocketsTrap
+			|| perfectDarknessTrap
+			|| fastAnimationsTrap
+			|| skedarTrap) {
+		updateTrapSlots();
+	}
+
 	if (!spawnedSkedar 
 			&& g_Vars.stagenum != STAGE_CITRAINING
 			&& g_Vars.stagenum < STAGE_TITLE
@@ -2654,6 +2749,158 @@ u32 func0f16ce04(u32 arg0)
 	return arg0;
 }
 
+void checkTrap(int *trap, s32 *trapTimeElapsed, u8 trapName)
+{
+	if (*trapTimeElapsed > 0) {
+		*trapTimeElapsed -= g_Vars.lvupdate60;
+	}
+	else {
+		if (*trap != 0) {
+			*trap = 0;
+			*trapTimeElapsed = 0;
+
+			s8 slot = findTrapSlot(trapName);
+			if (slot != -1) {
+				trapSlots[slot] = -1;
+			}
+		}
+	}
+}
+
+Gfx *renderTrapHud(Gfx *gdl, u8 trapName, s32 trapTime)
+{
+	char name[32]; 
+	switch (trapName) {
+		case TRAP_DKMODE:
+			sprintf(name, "DK Mode");
+			break;
+		case TRAP_SMALLJO:
+			sprintf(name, "Small Jo");
+			break;
+		case TRAP_SMALLCHARACTERS:
+			sprintf(name, "Small Chars");
+			break;
+		case TRAP_SLOMO:
+			sprintf(name, "Slo Mo");
+			break;
+		case TRAP_ENEMYROCKETS:
+			sprintf(name, "Rockets");
+			break;
+		case TRAP_PERFECTDARKNESS:
+			sprintf(name, "Darkness");
+			break;
+		case TRAP_FASTANIMATIONS:
+			sprintf(name, "Fast Anims");
+			break;
+		case TRAP_SKEDAR:
+			sprintf(name, "Skedar");
+			break;
+	}
+
+	if (trapName == TRAP_SKEDAR) {
+		s32 x = 5;
+		s32 y = 5 + (10 * findTrapSlot(trapName));
+
+		if (videoGetDisplayFPS()) {
+			y += 23;
+		}
+
+		const u8 a = 200;
+		u32 color = 0xff000000 | a;
+		char buffer[64];
+
+		if (g_CharsNumeric && g_FontNumeric) {
+			sprintf(buffer, "%s: %d\n", name, skedarTrap);
+
+			gSPSetExtraGeometryModeEXT(gdl++, g_HudAlignModeL);
+
+			gdl = text0f153628(gdl);
+			gdl = textRender(gdl, &x, &y, buffer, g_CharsHandelGothicXs, g_FontHandelGothicXs, color, 0x000000a0, viGetWidth(), viGetHeight(), 0, 0);
+			gdl = text0f153780(gdl);
+
+			gSPClearExtraGeometryModeEXT(gdl++, g_HudAlignModeL);
+		}
+
+		return gdl;
+	}
+
+	s32 mins = trapTime / TICKS(3600);
+	s32 secs60 = trapTime - mins * TICKS(3600);
+
+	s32 x = 5;
+	s32 y = 5 + (10 * findTrapSlot(trapName));
+
+	if (videoGetDisplayFPS()) {
+		y += 23;
+	}
+
+	const u8 a = 200;
+	u32 color = 0xff000000 | a;
+	char buffer[64];
+
+	if (g_CharsNumeric && g_FontNumeric) {
+		if (mins >= 1) {
+			sprintf(buffer, "%s: %02d:%02d:%02d\n", name, mins, secs60 / TICKS(60), (secs60 - (secs60 / TICKS(60)) * TICKS(60)) * 100 / TICKS(60));
+		} else {
+			sprintf(buffer, "%s: %02d:%02d\n", name, secs60 / TICKS(60), (secs60 - (secs60 / TICKS(60)) * TICKS(60)) * 100 / TICKS(60));
+		}
+
+		gSPSetExtraGeometryModeEXT(gdl++, g_HudAlignModeL);
+
+		gdl = text0f153628(gdl);
+		gdl = textRender(gdl, &x, &y, buffer, g_CharsHandelGothicXs, g_FontHandelGothicXs, color, 0x000000a0, viGetWidth(), viGetHeight(), 0, 0);
+		gdl = text0f153780(gdl);
+
+		gSPClearExtraGeometryModeEXT(gdl++, g_HudAlignModeL);
+	}
+
+	return gdl;
+}
+
+s8 findTrapSlot(u8 trap)
+{
+	for (s32 i = 0; i < ARRAYCOUNT(trapSlots); i++) {
+		if (trapSlots[i] == trap) {
+			return i;
+		}
+	} 
+
+	return -1;
+}
+
+void addTrapToSlot(u8 trap)
+{
+	for (s32 i = 0; i < ARRAYCOUNT(trapSlots); i++) {
+		if (trapSlots[i] == -1) {
+			trapSlots[i] = trap;
+			return;
+		}
+	}
+}
+
+void updateTrapSlots(void)
+{
+	if (!updatedTrapSlots) {
+		updatedTrapSlots = true;
+		for (s32 i = 0; i < ARRAYCOUNT(trapSlots); i++) {
+			if (trapSlots[i] != -1) {
+				continue;
+			}
+
+			// Check if there are any traps
+			for (s32 j = i + 1; j < ARRAYCOUNT(trapSlots); j++) {
+				if (trapSlots[j] != -1) {
+					trapSlots[i] = trapSlots[j];
+					trapSlots[j] = -1;
+					break;
+				}
+			}
+		}
+
+		updatedTrapSlots = false;
+	}
+	
+}
 
 void spawnSkedar(s32 pad_id)
 {
