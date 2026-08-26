@@ -838,124 +838,10 @@ bool challengeIsCompleteForEndscreen(void)
 
 			if (completedChallenges[g_MpChallengeIndex] == false) {
 				completedChallenges[g_MpChallengeIndex] = true;
-
 				collectChallengeItem(g_MpChallengeIndex);
-
-				u32 total = challengeAPGetNumCompleted();
-				switch (total) {
-					case 1:
-						collectMPFeatureItem(MPFEATURE_WEAPON_FARSIGHT);
-						collectMPFeatureItem(MPFEATURE_STAGE_COMPLEX);
-						collectMPFeatureItem(MPFEATURE_CHR_FEMGUARD);
-						break;
-					case 2:
-						collectMPFeatureItem(MPFEATURE_WEAPON_SHOTGUN);
-						collectMPFeatureItem(MPFEATURE_SCENARIO_HTB);
-						collectMPFeatureItem(MPFEATURE_CHR_OFFICEWORKER);
-						break;
-					case 3:
-						collectMPFeatureItem(MPFEATURE_WEAPON_FALCON2SILENCED);
-						collectMPFeatureItem(MPFEATURE_ONEHITKILLS);
-						collectMPFeatureItem(MPFEATURE_STAGE_WAREHOUSE);
-						break;
-					case 4:
-						collectMPFeatureItem(MPFEATURE_WEAPON_SUPERDRAGON);
-						collectMPFeatureItem(MPFEATURE_SCENARIO_CTC);
-						collectMPFeatureItem(MPFEATURE_CHR_VILLACHRS);
-						break;
-					case 5:
-						collectMPFeatureItem(MPFEATURE_WEAPON_LAPTOPGUN);
-						collectMPFeatureItem(MPFEATURE_STAGE_RAVINE);
-						collectMPFeatureItem(MPFEATURE_CHR_TRENT);
-						collectMPFeatureItem(MPFEATURE_CHR_NSALACKEY);
-						break;
-					case 6:
-						collectMPFeatureItem(MPFEATURE_WEAPON_REMOTEMINE);
-						collectMPFeatureItem(MPFEATURE_STAGE_TEMPLE);
-						collectMPFeatureItem(MPFEATURE_CHR_G5);
-						collectMPFeatureItem(MPFEATURE_SCENARIO_HTM);
-						break;
-					case 7:
-						collectMPFeatureItem(MPFEATURE_WEAPON_TRANQUILIZER);
-						collectMPFeatureItem(MPFEATURE_BOTDIFF_HARD);
-						collectMPFeatureItem(MPFEATURE_CHR_MRBLONDE);
-						collectMPFeatureItem(MPFEATURE_8BOTS);
-						break;
-					case 8:
-						collectMPFeatureItem(MPFEATURE_WEAPON_FALCON2SCOPE);
-						collectMPFeatureItem(MPFEATURE_SLOWMOTION);
-						collectMPFeatureItem(MPFEATURE_CHR_JOTRENCH);
-						break;
-					case 9:
-						collectMPFeatureItem(MPFEATURE_WEAPON_REAPER);
-						collectMPFeatureItem(MPFEATURE_STAGE_G5BUILDING);
-						collectMPFeatureItem(MPFEATURE_CHR_CIAFBI);
-						break;
-					case 10:
-						collectMPFeatureItem(MPFEATURE_WEAPON_CLOAKINGDEVICE);
-						collectMPFeatureItem(MPFEATURE_CHR_INFILTRATION);
-						break;
-					case 11:
-						collectMPFeatureItem(MPFEATURE_WEAPON_DEVASTATOR);
-						collectMPFeatureItem(MPFEATURE_STAGE_GRID);
-						collectMPFeatureItem(MPFEATURE_CHR_LABTECH);
-						break;
-					case 12:
-						collectMPFeatureItem(MPFEATURE_WEAPON_PROXIMITYMINE);
-						collectMPFeatureItem(MPFEATURE_BOTDIFF_PERFECT);
-						collectMPFeatureItem(MPFEATURE_STAGE_FELICITY);
-						collectMPFeatureItem(MPFEATURE_CHR_BIOTECH);
-						collectMPFeatureItem(MPFEATURE_SCENARIO_PAC);
-						break;
-					case 13:
-						collectMPFeatureItem(MPFEATURE_WEAPON_SLAYER);
-						break;
-					case 14:
-						collectMPFeatureItem(MPFEATURE_WEAPON_PHOENIX);
-						collectMPFeatureItem(MPFEATURE_STAGE_VILLA);
-						collectMPFeatureItem(MPFEATURE_CHR_ELVIS);
-						break;
-					case 15:
-						collectMPFeatureItem(MPFEATURE_WEAPON_COMBATBOOST);
-						break;
-					case 16:
-						collectMPFeatureItem(MPFEATURE_WEAPON_MAULER);
-						collectMPFeatureItem(MPFEATURE_STAGE_SEWERS);
-						collectMPFeatureItem(MPFEATURE_CHR_AF1);
-						break;
-					case 17:
-						collectMPFeatureItem(MPFEATURE_WEAPON_CALLISTO);
-						collectMPFeatureItem(MPFEATURE_STAGE_CARPARK);
-						collectMPFeatureItem(MPFEATURE_CHR_ALASKANGUARD);
-						collectMPFeatureItem(MPFEATURE_CHR_DARKSNOW);
-						break;
-					case 18:
-						collectMPFeatureItem(MPFEATURE_WEAPON_CROSSBOW);
-						collectMPFeatureItem(MPFEATURE_STAGE_BASE);
-						collectMPFeatureItem(MPFEATURE_CHR_CI);
-						collectMPFeatureItem(MPFEATURE_CHR_PRESSECURITY);
-						break;
-					case 19:
-						collectMPFeatureItem(MPFEATURE_WEAPON_RCP120);
-						collectMPFeatureItem(MPFEATURE_CHR_PRESCLONE);
-						collectMPFeatureItem(MPFEATURE_CHR_STRIPES);
-						break;
-					case 20:
-						collectMPFeatureItem(MPFEATURE_WEAPON_DY357LX);
-						collectMPFeatureItem(MPFEATURE_STAGE_FORTRESS);
-						break;
-					case 21:
-						collectMPFeatureItem(MPFEATURE_WEAPON_NBOMB);
-						break;
-					case 22:
-						collectMPFeatureItem(MPFEATURE_BOTDIFF_DARK);
-						collectMPFeatureItem(MPFEATURE_STAGE_RUINS);
-						break;
-					case 24:
-						collectMPFeatureItem(MPFEATURE_CHR_PELAGIC);
-						break;
-				}
 			}
+				
+			challengeAPCheckNumCompleted();
 		}
 	}
 
@@ -1017,15 +903,127 @@ bool challengeIsFeatureUnlockedByDefault(s32 featurenum)
 	return true;
 }
 
-u32 challengeAPGetNumCompleted(void)
+void challengeAPCheckNumCompleted(void)
 {
 	u32 total = 0;
 
 	for (s32 i = 0; i < ARRAYCOUNT(completedChallenges); i++) {
-		if (completedChallenges[i] == 1) {
+		if (completedChallenges[i] == 1 && unlockedChallenges[i] == 1) {
 			total++;
 		}
-	}
 
-	return total;
+		switch (total) {
+			case 1:
+				collectMPFeatureItem(MPFEATURE_WEAPON_FARSIGHT);
+				collectMPFeatureItem(MPFEATURE_STAGE_COMPLEX);
+				collectMPFeatureItem(MPFEATURE_CHR_FEMGUARD);
+				break;
+			case 2:
+				collectMPFeatureItem(MPFEATURE_WEAPON_SHOTGUN);
+				collectMPFeatureItem(MPFEATURE_SCENARIO_HTB);
+				collectMPFeatureItem(MPFEATURE_CHR_OFFICEWORKER);
+				break;
+			case 3:
+				collectMPFeatureItem(MPFEATURE_WEAPON_FALCON2SILENCED);
+				collectMPFeatureItem(MPFEATURE_ONEHITKILLS);
+				collectMPFeatureItem(MPFEATURE_STAGE_WAREHOUSE);
+				break;
+			case 4:
+				collectMPFeatureItem(MPFEATURE_WEAPON_SUPERDRAGON);
+				collectMPFeatureItem(MPFEATURE_SCENARIO_CTC);
+				collectMPFeatureItem(MPFEATURE_CHR_VILLACHRS);
+				break;
+			case 5:
+				collectMPFeatureItem(MPFEATURE_WEAPON_LAPTOPGUN);
+				collectMPFeatureItem(MPFEATURE_STAGE_RAVINE);
+				collectMPFeatureItem(MPFEATURE_CHR_TRENT);
+				collectMPFeatureItem(MPFEATURE_CHR_NSALACKEY);
+				break;
+			case 6:
+				collectMPFeatureItem(MPFEATURE_WEAPON_REMOTEMINE);
+				collectMPFeatureItem(MPFEATURE_STAGE_TEMPLE);
+				collectMPFeatureItem(MPFEATURE_CHR_G5);
+				collectMPFeatureItem(MPFEATURE_SCENARIO_HTM);
+				break;
+			case 7:
+				collectMPFeatureItem(MPFEATURE_WEAPON_TRANQUILIZER);
+				collectMPFeatureItem(MPFEATURE_BOTDIFF_HARD);
+				collectMPFeatureItem(MPFEATURE_CHR_MRBLONDE);
+				collectMPFeatureItem(MPFEATURE_8BOTS);
+				break;
+			case 8:
+				collectMPFeatureItem(MPFEATURE_WEAPON_FALCON2SCOPE);
+				collectMPFeatureItem(MPFEATURE_SLOWMOTION);
+				collectMPFeatureItem(MPFEATURE_CHR_JOTRENCH);
+				break;
+			case 9:
+				collectMPFeatureItem(MPFEATURE_WEAPON_REAPER);
+				collectMPFeatureItem(MPFEATURE_STAGE_G5BUILDING);
+				collectMPFeatureItem(MPFEATURE_CHR_CIAFBI);
+				break;
+			case 10:
+				collectMPFeatureItem(MPFEATURE_WEAPON_CLOAKINGDEVICE);
+				collectMPFeatureItem(MPFEATURE_CHR_INFILTRATION);
+				break;
+			case 11:
+				collectMPFeatureItem(MPFEATURE_WEAPON_DEVASTATOR);
+				collectMPFeatureItem(MPFEATURE_STAGE_GRID);
+				collectMPFeatureItem(MPFEATURE_CHR_LABTECH);
+				break;
+			case 12:
+				collectMPFeatureItem(MPFEATURE_WEAPON_PROXIMITYMINE);
+				collectMPFeatureItem(MPFEATURE_BOTDIFF_PERFECT);
+				collectMPFeatureItem(MPFEATURE_STAGE_FELICITY);
+				collectMPFeatureItem(MPFEATURE_CHR_BIOTECH);
+				collectMPFeatureItem(MPFEATURE_SCENARIO_PAC);
+				break;
+			case 13:
+				collectMPFeatureItem(MPFEATURE_WEAPON_SLAYER);
+				break;
+			case 14:
+				collectMPFeatureItem(MPFEATURE_WEAPON_PHOENIX);
+				collectMPFeatureItem(MPFEATURE_STAGE_VILLA);
+				collectMPFeatureItem(MPFEATURE_CHR_ELVIS);
+				break;
+			case 15:
+				collectMPFeatureItem(MPFEATURE_WEAPON_COMBATBOOST);
+				break;
+			case 16:
+				collectMPFeatureItem(MPFEATURE_WEAPON_MAULER);
+				collectMPFeatureItem(MPFEATURE_STAGE_SEWERS);
+				collectMPFeatureItem(MPFEATURE_CHR_AF1);
+				break;
+			case 17:
+				collectMPFeatureItem(MPFEATURE_WEAPON_CALLISTO);
+				collectMPFeatureItem(MPFEATURE_STAGE_CARPARK);
+				collectMPFeatureItem(MPFEATURE_CHR_ALASKANGUARD);
+				collectMPFeatureItem(MPFEATURE_CHR_DARKSNOW);
+				break;
+			case 18:
+				collectMPFeatureItem(MPFEATURE_WEAPON_CROSSBOW);
+				collectMPFeatureItem(MPFEATURE_STAGE_BASE);
+				collectMPFeatureItem(MPFEATURE_CHR_CI);
+				collectMPFeatureItem(MPFEATURE_CHR_PRESSECURITY);
+				break;
+			case 19:
+				collectMPFeatureItem(MPFEATURE_WEAPON_RCP120);
+				collectMPFeatureItem(MPFEATURE_CHR_PRESCLONE);
+				collectMPFeatureItem(MPFEATURE_CHR_STRIPES);
+				break;
+			case 20:
+				collectMPFeatureItem(MPFEATURE_WEAPON_DY357LX);
+				collectMPFeatureItem(MPFEATURE_STAGE_FORTRESS);
+				break;
+			case 21:
+				collectMPFeatureItem(MPFEATURE_WEAPON_NBOMB);
+				break;
+			case 22:
+				collectMPFeatureItem(MPFEATURE_BOTDIFF_DARK);
+				collectMPFeatureItem(MPFEATURE_STAGE_RUINS);
+				break;
+			case 24:
+				collectMPFeatureItem(MPFEATURE_CHR_PELAGIC);
+				break;
+		}
+	}
 }

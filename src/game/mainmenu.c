@@ -4854,6 +4854,7 @@ MenuItemHandlerResult menuhandlerMainMenuCombatSimulator(s32 operation, struct m
 		g_Vars.coopplayernum = -1;
 		g_Vars.antiplayernum = -1;
 		challengeDetermineUnlockedFeatures();
+		challengeAPCheckNumCompleted();
 		g_Vars.mpsetupmenu = MPSETUPMENU_GENERAL;
 		func0f0f820c(&g_CombatSimulatorMenuDialog, MENUROOT_MPSETUP);
 		func0f0f8300();
