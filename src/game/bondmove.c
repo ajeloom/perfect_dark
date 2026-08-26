@@ -43,6 +43,8 @@
 #include "input.h"
 #include "video.h"
 
+extern int smallJoTrap;
+
 static void bgunProcessQuickDetonate(struct movedata *data, u32 c1buttons, u32 c1buttonsthisframe, u32 buttons1, u32 buttons2) {
 	if ((((c1buttons & (buttons1)) && (c1buttonsthisframe & (buttons2)))
 			|| ((c1buttons & (buttons2)) && (c1buttonsthisframe & (buttons1))))
@@ -2475,7 +2477,7 @@ void bmove0f0cc19c(struct coord *arg)
 		g_Vars.currentplayer->bond2.unk10.y += -(1.0f - g_Vars.currentplayer->vv_cosverta) * g_Vars.currentplayer->bondleandown;
 	}
 
-	if (cheatIsActive(CHEAT_SMALLJO)) {
+	if (cheatIsActive(CHEAT_SMALLJO) || smallJoTrap) {
 		if (g_Vars.currentplayer->bondmovemode == MOVEMODE_BIKE) {
 			mult = g_Vars.currentplayer->bondentert * 0.6f + 0.4f;
 		} else if (g_Vars.currentplayer->bondmovemode == MOVEMODE_WALK && g_Vars.currentplayer->walkinitmove) {

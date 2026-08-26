@@ -27,6 +27,7 @@
 extern u32 unlockedCharacters[6];
 
 extern int dkModeTrap;
+extern int smallJoTrap;
 
 s32 g_NumActiveHeadsPerGender;
 u32 var8009cd24;
@@ -234,7 +235,7 @@ struct model *body0f02ce8c(s32 bodynum, s32 headnum, struct modeldef *bodymodeld
 						scale *= 1.25f;
 					}
 				} else {
-					if (cheatIsActive(CHEAT_SMALLJO)) {
+					if (cheatIsActive(CHEAT_SMALLJO) || smallJoTrap) {
 						scale *= 0.4f;
 					}
 				}

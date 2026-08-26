@@ -18,6 +18,8 @@
 #include "data.h"
 #include "types.h"
 
+extern int smallJoTrap;
+
 struct prop *var8009de70;
 u32 var8009de74;
 struct coord var8009de78;
@@ -1087,7 +1089,7 @@ void bgrab0f0ce924(void)
 		sp80 = g_Vars.currentplayer->headpos.z;
 
 #if VERSION >= VERSION_NTSC_1_0
-		if (cheatIsActive(CHEAT_SMALLJO)) {
+		if (cheatIsActive(CHEAT_SMALLJO) || smallJoTrap) {
 			sp84 *= 0.4f;
 			sp80 *= 0.4f;
 		}

@@ -38,6 +38,7 @@
 #define AP_ITEM_PROG_OTHER_WEAPON 245
 
 #define AP_ITEM_DK_TRAP 252
+#define AP_ITEM_SMALL_JO_TRAP 253
 
 #define AP_AGENT_OBJ_OFFSET 1
 #define AP_SPECIAL_AGENT_OBJ_OFFSET 62
@@ -104,8 +105,10 @@ extern int hasAlternateExits;
 extern bool showLocationName;
 
 int dkModeTrap = 0;
+int smallJoTrap = 0;
 
 extern s32 dkModeTrapTime;
+extern s32 smallJoTrapTime;
 
 int progressiveWeaponNumbers[43] = {
     WEAPON_UNARMED,
@@ -538,6 +541,11 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
         // Only set traps given while playing
         if (itemID == AP_ITEM_DK_TRAP) {
             giveTrap(&dkModeTrap, &dkModeTrapTime, TICKS(1800), TRAP_DKMODE);
+            return;
+        }
+
+        if (itemID == AP_ITEM_SMALL_JO_TRAP) {
+            giveTrap(&smallJoTrap, &smallJoTrapTime, TICKS(1800), TRAP_SMALLJO);
             return;
         }
     }

@@ -52,6 +52,7 @@
 #endif
 
 extern int dkModeTrap;
+extern int smallJoTrap;
 
 void rng2SetSeed(u32 seed);
 
@@ -2672,6 +2673,21 @@ s32 chrTick(struct prop *prop)
 			modelSetDistanceScale(0.3125f);
 		}
 
+		if (smallJoTrap && chr->prop->type == PROPTYPE_PLAYER) {
+			f32 scale = g_HeadsAndBodies[chr->bodynum].scale * 0.10000001f;
+			scale *= 0.4;
+
+			if (model->scale != scale) {
+				modelSetScale(model, scale);
+			}
+		}
+		else if (!smallJoTrap && chr->prop->type == PROPTYPE_PLAYER) {
+			f32 scale = g_HeadsAndBodies[chr->bodynum].scale * 0.10000001f;
+
+			if (model->scale != scale) {
+				modelSetScale(model, scale);
+			}
+		}
 		g_ModelJointPositionedFunc = &chrHandleJointPositioned;
 		g_CurModelChr = chr;
 

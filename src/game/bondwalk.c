@@ -30,6 +30,8 @@
 extern f32 fabsf(f32);
 #endif
 
+extern int smallJoTrap;
+
 void bwalkInit(void)
 {
 	u32 prevmode = g_Vars.currentplayer->bondmovemode;
@@ -1529,7 +1531,7 @@ void bwalk0f0c69b8(void)
 	}
 
 #if VERSION >= VERSION_NTSC_1_0
-	if (cheatIsActive(CHEAT_SMALLJO)) {
+	if (cheatIsActive(CHEAT_SMALLJO) || smallJoTrap) {
 		spc0 *= 0.4f;
 	}
 #endif
@@ -1649,7 +1651,7 @@ void bwalk0f0c69b8(void)
 		spe0 = (g_Vars.currentplayer->speedsideways * spc0 + spc4) * mult;
 
 #if VERSION >= VERSION_NTSC_1_0
-		if (cheatIsActive(CHEAT_SMALLJO)) {
+		if (cheatIsActive(CHEAT_SMALLJO) || smallJoTrap) {
 			spe0 /= 0.4f;
 		}
 #endif
@@ -1662,7 +1664,7 @@ void bwalk0f0c69b8(void)
 		spd8 = g_Vars.currentplayer->headpos.z;
 
 #if VERSION >= VERSION_NTSC_1_0
-		if (cheatIsActive(CHEAT_SMALLJO)) {
+		if (cheatIsActive(CHEAT_SMALLJO) || smallJoTrap) {
 			spdc *= 0.4f;
 		}
 #endif
