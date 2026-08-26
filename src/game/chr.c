@@ -2447,20 +2447,24 @@ s32 chrTick(struct prop *prop)
 			&& !g_Vars.normmplayerisrunning
 			&& chr->aibot == NULL) {
 		if (chr->weapons_held[HAND_RIGHT] != NULL
-				&& chr->weapons_held[HAND_RIGHT]->weapon->weaponnum <= WEAPON_PSYCHOSISGUN
+				&& chr->weapons_held[HAND_RIGHT]->weapon->weaponnum == WEAPON_ROCKETLAUNCHER
 				&& chr->weapons_held[HAND_RIGHT]->weapon->weaponnum != chrStartingWeapons[chr->chrnum]) {
 			weaponDeleteFromChr(chr, HAND_RIGHT);
 			chr->weapons_held[HAND_RIGHT] = NULL;
-			struct prop *prop = chrGiveWeapon(chr, playermgrGetModelOfWeapon(chrStartingWeapons[chr->chrnum]), chrStartingWeapons[chr->chrnum], 0);
-			chrEquipWeapon(prop->weapon, chr);
+			if (chrStartingWeapons[chr->chrnum] != 0) {
+				struct prop *prop = chrGiveWeapon(chr, playermgrGetModelOfWeapon(chrStartingWeapons[chr->chrnum]), chrStartingWeapons[chr->chrnum], 0);
+				chrEquipWeapon(prop->weapon, chr);
+			}
 		}
 		else if (chr->weapons_held[HAND_LEFT] != NULL
-				&& chr->weapons_held[HAND_LEFT]->weapon->weaponnum <= WEAPON_PSYCHOSISGUN
+				&& chr->weapons_held[HAND_LEFT]->weapon->weaponnum == WEAPON_ROCKETLAUNCHER
 				&& chr->weapons_held[HAND_LEFT]->weapon->weaponnum != chrStartingWeapons[chr->chrnum]) {
 			weaponDeleteFromChr(chr, HAND_LEFT);
 			chr->weapons_held[HAND_LEFT] = NULL;
-			struct prop *prop = chrGiveWeapon(chr, playermgrGetModelOfWeapon(chrStartingWeapons[chr->chrnum]), chrStartingWeapons[chr->chrnum], OBJFLAG_WEAPON_LEFTHANDED);
-			chrEquipWeapon(prop->weapon, chr);
+			if (chrStartingWeapons[chr->chrnum] != 0) {
+				struct prop *prop = chrGiveWeapon(chr, playermgrGetModelOfWeapon(chrStartingWeapons[chr->chrnum]), chrStartingWeapons[chr->chrnum], OBJFLAG_WEAPON_LEFTHANDED);
+				chrEquipWeapon(prop->weapon, chr);
+			}
 		}
 	}
 
