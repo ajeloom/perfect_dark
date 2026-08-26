@@ -80,6 +80,7 @@
 #include "game/vtxstore.h"
 #include "game/wallhit.h"
 #include "game/weather.h"
+#include "lib/ailist.h"
 #include "lib/anim.h"
 #include "lib/args.h"
 #include "lib/collision.h"
@@ -2362,6 +2363,17 @@ void lvTick(void)
 		if (chr != NULL) {
 			chr->hidden |= CHRHFLAG_DELETING;
 			chr = NULL;
+		}
+	}
+	else if (g_Vars.stagenum == STAGE_CITRAINING
+			&& unlockedCharacters[CHARACTER_CARRINGTON] == 1
+			&& hasNPCs == 1
+			&& chrFindByLiteralId(0x00) == NULL) {
+		// Spawn Carrington if he is not on the map
+		u8 *ailist = ailistFindById(0x042b);
+		struct prop *prop = chrSpawnAtPad(g_Vars.chrdata, BODY_CARRINGTON, HEAD_CARRINGTON, 0x00f6, ailist, SPAWNFLAG_NOBLOOD | SPAWNFLAG_ALLOWONSCREEN);
+		if (prop) {
+			chrSetChrnum(prop->chr, 0x00);
 		}
 	}
 
