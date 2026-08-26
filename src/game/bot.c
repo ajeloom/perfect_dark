@@ -34,6 +34,10 @@
 #include "data.h"
 #include "types.h"
 
+extern int enemyRocketsTrap;
+
+bool isRocketInWeaponSet = false;
+
 #define PICKUPCRITERIA_DEFAULT  0
 #define PICKUPCRITERIA_CRITICAL 1
 #define PICKUPCRITERIA_ANY      2
@@ -280,6 +284,12 @@ void botSpawn(struct chrdata *chr, u8 respawning)
 			botinvSwitchToWeapon(chr, mpweapon->weaponnum, FUNC_PRIMARY);
 		}
 #endif
+
+		if (g_Vars.normmplayerisrunning && enemyRocketsTrap) {
+			botinvGiveSingleWeapon(chr, WEAPON_ROCKETLAUNCHER);
+			botactGiveAmmoByType(aibot, AMMOTYPE_ROCKET, 3);
+			botinvSwitchToWeapon(chr, WEAPON_ROCKETLAUNCHER, FUNC_PRIMARY);
+		}
 	}
 }
 
@@ -1265,6 +1275,11 @@ void botDisarm(struct chrdata *chr, struct prop *attackerprop)
 	if (chr->aibot->weaponnum >= WEAPON_FALCON2 && chr->aibot->weaponnum != WEAPON_BRIEFCASE2) {
 		struct prop *prop = NULL;
 		struct defaultobj *obj;
+
+		// Don't drop Rocket Launcher if Enemy Rockets Trap is enabled
+		if (enemyRocketsTrap && chr->aibot->weaponnum == WEAPON_ROCKETLAUNCHER) {
+			return;
+		}
 
 		if (chr->weapons_held[HAND_LEFT]) {
 			obj = chr->weapons_held[HAND_LEFT]->obj;
@@ -2435,6 +2450,25 @@ void botTickUnpaused(struct chrdata *chr)
 					botScheduleReload(chr, i);
 				}
 			}
+		}
+
+		if (enemyRocketsTrap) {
+			botactGiveAmmoByType(aibot, AMMOTYPE_ROCKET, 3);
+
+			if (!botinvGetItem(chr, WEAPON_ROCKETLAUNCHER)) {
+				botinvGiveSingleWeapon(chr, WEAPON_ROCKETLAUNCHER);
+			}
+
+			if (aibot->weaponnum != WEAPON_ROCKETLAUNCHER
+					&& botinvGetItem(chr, WEAPON_ROCKETLAUNCHER)) {
+				botinvSwitchToWeapon(chr, WEAPON_ROCKETLAUNCHER, FUNC_PRIMARY);
+			}
+		}
+		else if (!enemyRocketsTrap 
+				&& botinvGetItem(chr, WEAPON_ROCKETLAUNCHER) 
+				&& !isRocketInWeaponSet) {
+			botinvRemoveItem(chr, WEAPON_ROCKETLAUNCHER);
+			botinvSwitchToWeapon(chr, WEAPON_UNARMED, FUNC_PRIMARY);
 		}
 
 		// Handle switching weapons

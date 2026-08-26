@@ -18,6 +18,8 @@
 #include "data.h"
 #include "types.h"
 
+extern bool isRocketInWeaponSet;
+
 struct aibotweaponpreference g_AibotWeaponPreferences[] = {
 	//                             haspriammogoal
 	//                             |  hassecammogoal
@@ -1152,6 +1154,12 @@ void botinvDrop(struct chrdata *chr, s32 weaponnum, u8 dropall)
 					|| (g_Vars.normmplayerisrunning
 						&& g_MpSetup.scenario == MPSCENARIO_HACKERCENTRAL
 						&& item->type_weap.weapon1 == WEAPON_DATAUPLINK)) {
+				// Don't drop Rocket Launcher if it is not in weapon set
+				if (item->type_weap.weapon1 == WEAPON_ROCKETLAUNCHER
+						&& !isRocketInWeaponSet) {
+					continue;
+				}
+
 				s32 modelnum = playermgrGetModelOfWeapon(item->type_weap.weapon1);
 
 				if (modelnum > 0) {

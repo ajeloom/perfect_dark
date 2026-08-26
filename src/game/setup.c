@@ -39,6 +39,8 @@
 
 extern u32 unlockedCharacters[6];
 
+s32 chrStartingWeapons[100];
+
 extern bool randomEnemyWeapons;
 
 s32 g_SetupCurMpLocation;
@@ -767,6 +769,8 @@ void setupPlaceWeapon(struct weaponobj *weapon, s32 cmdindex)
 					}
 				}
 
+				// Save a bot's original weapon they start with
+				chrStartingWeapons[chr->chrnum] = weapon->weaponnum;
 				modelmgrLoadProjectileModeldefs(weapon->weaponnum);
 				func0f08b25c(weapon, chr);
 			}
@@ -1639,6 +1643,10 @@ void setupCreateProps(s32 stagenum)
 			}
 
 			obj = (struct defaultobj *)g_StageSetup.props;
+
+			for (s32 i = 0; i < ARRAYCOUNT(chrStartingWeapons); i++) {
+				chrStartingWeapons[i] = 0;
+			}
 
 			while (obj->type != OBJTYPE_END) {
 				switch (obj->type) {

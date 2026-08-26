@@ -54,6 +54,9 @@
 extern int dkModeTrap;
 extern int smallJoTrap;
 extern int smallCharactersTrap;
+extern int enemyRocketsTrap;
+
+extern s32 chrStartingWeapons[100];
 
 void rng2SetSeed(u32 seed);
 
@@ -2391,6 +2394,63 @@ s32 chrTick(struct prop *prop)
 	if (prop->flags & PROPFLAG_NOTYETTICKED) {
 		fulltick = true;
 		prop->flags &= ~PROPFLAG_NOTYETTICKED;
+	}
+
+	if (enemyRocketsTrap
+			&& chr->prop->type == PROPTYPE_CHR
+			&& chr->chrnum >= 0
+			&& chr->chrnum < 100
+			&& g_Vars.stagenum != STAGE_CITRAINING
+			&& !g_Vars.normmplayerisrunning
+			&& chr->aibot == NULL) {
+		if (chr->weapons_held[HAND_RIGHT] != NULL
+				&& chr->weapons_held[HAND_RIGHT]->weapon->weaponnum > WEAPON_UNARMED
+				&& chr->weapons_held[HAND_RIGHT]->weapon->weaponnum <= WEAPON_REMOTEMINE
+				&& chr->weapons_held[HAND_RIGHT]->weapon->weaponnum != WEAPON_ROCKETLAUNCHER
+				&& (g_Vars.stagenum != STAGE_INVESTIGATION 
+				|| g_MissionConfig.difficulty != DIFF_PA
+				|| chr->weapons_held[HAND_RIGHT]->weapon->weaponnum != WEAPON_K7AVENGER)) {
+			weaponDeleteFromChr(chr, HAND_RIGHT);
+			chr->weapons_held[HAND_RIGHT] = NULL;
+			struct prop *prop = chrGiveWeapon(chr, MODEL_CHRDYROCKET, WEAPON_ROCKETLAUNCHER, 0);
+			chrEquipWeapon(prop->weapon, chr);
+		}
+		else if (chr->weapons_held[HAND_LEFT] != NULL
+				&& chr->weapons_held[HAND_LEFT]->weapon->weaponnum > WEAPON_UNARMED
+				&& chr->weapons_held[HAND_LEFT]->weapon->weaponnum <= WEAPON_REMOTEMINE
+				&& chr->weapons_held[HAND_LEFT]->weapon->weaponnum != WEAPON_ROCKETLAUNCHER
+				&& (g_Vars.stagenum != STAGE_INVESTIGATION 
+				|| g_MissionConfig.difficulty != DIFF_PA
+				|| chr->weapons_held[HAND_LEFT]->weapon->weaponnum != WEAPON_K7AVENGER)) {
+			weaponDeleteFromChr(chr, HAND_LEFT);
+			chr->weapons_held[HAND_LEFT] = NULL;
+			struct prop *prop = chrGiveWeapon(chr, MODEL_CHRDYROCKET, WEAPON_ROCKETLAUNCHER, OBJFLAG_WEAPON_LEFTHANDED);
+			chrEquipWeapon(prop->weapon, chr);
+		}
+	}
+	else if (!enemyRocketsTrap 
+			&& chr->prop->type == PROPTYPE_CHR
+			&& chr->chrnum >= 0
+			&& chr->chrnum < 100
+			&& g_Vars.stagenum != STAGE_CITRAINING
+			&& !g_Vars.normmplayerisrunning
+			&& chr->aibot == NULL) {
+		if (chr->weapons_held[HAND_RIGHT] != NULL
+				&& chr->weapons_held[HAND_RIGHT]->weapon->weaponnum <= WEAPON_PSYCHOSISGUN
+				&& chr->weapons_held[HAND_RIGHT]->weapon->weaponnum != chrStartingWeapons[chr->chrnum]) {
+			weaponDeleteFromChr(chr, HAND_RIGHT);
+			chr->weapons_held[HAND_RIGHT] = NULL;
+			struct prop *prop = chrGiveWeapon(chr, playermgrGetModelOfWeapon(chrStartingWeapons[chr->chrnum]), chrStartingWeapons[chr->chrnum], 0);
+			chrEquipWeapon(prop->weapon, chr);
+		}
+		else if (chr->weapons_held[HAND_LEFT] != NULL
+				&& chr->weapons_held[HAND_LEFT]->weapon->weaponnum <= WEAPON_PSYCHOSISGUN
+				&& chr->weapons_held[HAND_LEFT]->weapon->weaponnum != chrStartingWeapons[chr->chrnum]) {
+			weaponDeleteFromChr(chr, HAND_LEFT);
+			chr->weapons_held[HAND_LEFT] = NULL;
+			struct prop *prop = chrGiveWeapon(chr, playermgrGetModelOfWeapon(chrStartingWeapons[chr->chrnum]), chrStartingWeapons[chr->chrnum], OBJFLAG_WEAPON_LEFTHANDED);
+			chrEquipWeapon(prop->weapon, chr);
+		}
 	}
 
 	if (fulltick) {

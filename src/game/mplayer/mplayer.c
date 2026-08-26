@@ -32,6 +32,10 @@
 #include "system.h"
 #include "mpsetups.h"
 
+extern bool isRocketInWeaponSet;
+
+extern s32 chrStartingWeapons[100];
+
 // bss
 struct chrdata *g_MpAllChrPtrs[MAX_MPCHRS];
 struct mpchrconfig *g_MpAllChrConfigPtrs[MAX_MPCHRS];
@@ -233,6 +237,20 @@ void mpStartMatch(void)
 	titleSetNextMode(TITLEMODE_SKIP);
 
 	g_Vars.perfectbuddynum = 1;
+
+	for (i = 0; i < ARRAYCOUNT(g_MpSetup.weapons); i++) {
+		if (g_MpWeapons[g_MpSetup.weapons[i]].weaponnum == WEAPON_ROCKETLAUNCHER) {
+			isRocketInWeaponSet = true;
+			break;
+		}
+		else if (i == 5) {
+			isRocketInWeaponSet = false;
+		}
+	}
+
+	for (i = 0; i < ARRAYCOUNT(chrStartingWeapons); i++) {
+		chrStartingWeapons[i] = 0;
+	}
 }
 
 void mpReset(void)
