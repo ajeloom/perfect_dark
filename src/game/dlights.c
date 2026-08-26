@@ -1,6 +1,7 @@
 #include <ultra64.h>
 #include "constants.h"
 #include "game/cheats.h"
+#include "game/chraction.h"
 #include "game/dlights.h"
 #include "game/gfxmemory.h"
 #include "game/propsnd.h"
@@ -29,6 +30,11 @@
 #include "data.h"
 #include "types.h"
 #include "platform.h"
+
+extern int perfectDarknessTrap;
+
+bool turnedOnLights = false;
+bool turnedOffLights = false;
 
 const char var7f1a78e0[] = "LIGHTS : Hit occured on light %d in room %d\n";
 const char var7f1a7910[] = "L2(%d) -> ";
@@ -1178,6 +1184,32 @@ void lightsTickPerfectDarkness(void)
 }
 #endif
 
+void lightsTickTrap(void)
+{
+	s32 i;
+
+	if (perfectDarknessTrap) {
+		if (!turnedOffLights) {
+			turnedOffLights = true;
+			turnedOnLights = false;
+			chrSetStageFlag(NULL, 0x00001000); // STAGEFLAG_LIGHTS_OFF
+			for (i = 0; i < g_Vars.roomcount; i++) {
+				roomSetLightsOn(i, false);
+			}
+		}
+	}
+	else {
+		if (!turnedOnLights) {
+			turnedOnLights = true;
+			turnedOffLights = false;
+			chrUnsetStageFlag(NULL, 0x00001000); // STAGEFLAG_LIGHTS_OFF
+			for (i = 0; i < g_Vars.roomcount; i++) {
+				roomSetLightsOn(i, true);
+			}
+		}
+	}
+}
+
 void roomsTickLighting(void)
 {
 #if VERSION >= VERSION_NTSC_1_0
@@ -1199,6 +1231,9 @@ void roomsTickLighting(void)
 #if VERSION >= VERSION_NTSC_1_0
 	if (cheatIsActive(CHEAT_PERFECTDARKNESS)) {
 		lightsTickPerfectDarkness();
+	}
+	else {
+		lightsTickTrap();
 	}
 #else
 	static s32 prevtickmode = 0;

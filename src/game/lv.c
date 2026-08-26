@@ -108,6 +108,9 @@ extern s16 warpPad;
 
 extern int slowMotionTrap;
 
+extern bool turnedOnLights;
+extern bool turnedOffLights;
+
 struct sndstate *g_MiscSfxAudioHandles[3];
 u32 var800aa5bc;
 s32 g_MiscSfxActiveTypes[3];
@@ -308,6 +311,9 @@ void lvReset(s32 stagenum)
 	g_MiscAudioHandle = NULL;
 
 	warpPad = -1;
+
+	turnedOnLights = false;
+	turnedOffLights = false;
 
 	musicReset();
 	modelmgrSetLvResetting(true);

@@ -79,6 +79,7 @@
 #include "string.h"
 
 extern int smallJoTrap;
+extern int perfectDarknessTrap;
 
 void rng2SetSeed(u32 seed);
 
@@ -1629,7 +1630,7 @@ void propCalculateShadeColour(struct prop *prop, u8 *nextcol, u16 floorcol)
 	}
 
 #if VERSION >= VERSION_NTSC_1_0
-	if (obj == NULL || (obj->flags & OBJFLAG_IGNOREROOMCOLOUR) == 0 || cheatIsActive(CHEAT_PERFECTDARKNESS))
+	if (obj == NULL || (obj->flags & OBJFLAG_IGNOREROOMCOLOUR) == 0 || cheatIsActive(CHEAT_PERFECTDARKNESS) || perfectDarknessTrap)
 #else
 	if (obj == NULL || (obj->flags & OBJFLAG_IGNOREROOMCOLOUR) == 0)
 #endif
