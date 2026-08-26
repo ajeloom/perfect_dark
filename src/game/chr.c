@@ -55,6 +55,7 @@ extern int dkModeTrap;
 extern int smallJoTrap;
 extern int smallCharactersTrap;
 extern int enemyRocketsTrap;
+extern int fastAnimationsTrap;
 
 extern s32 chrStartingWeapons[100];
 
@@ -1954,11 +1955,21 @@ void chr0f0220ec(struct chrdata *chr, s32 lvupdate240, bool arg2)
 	} else if (arg2) {
 		if ((chr->hidden & CHRHFLAG_00000800) == 0) {
 			modelGetRootPosition(model, &chr->prevpos);
-			modelTickAnimQuarterSpeed(model, lvupdate240, true);
+			if (chr->prop->type != PROPTYPE_PLAYER && fastAnimationsTrap) {
+				modelTickAnim(model, lvupdate240, true);
+			}
+			else {
+				modelTickAnimQuarterSpeed(model, lvupdate240, true);
+			}
 			modelUpdateInfo(model);
 		}
 	} else {
-		modelTickAnimQuarterSpeed(model, lvupdate240, false);
+		if (chr->prop->type != PROPTYPE_PLAYER && fastAnimationsTrap) {
+			modelTickAnim(model, lvupdate240, false);
+		}
+		else {
+			modelTickAnimQuarterSpeed(model, lvupdate240, false);
+		}
 	}
 }
 

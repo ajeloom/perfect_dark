@@ -35,8 +35,9 @@
 #include "types.h"
 
 extern int enemyRocketsTrap;
-
 bool isRocketInWeaponSet = false;
+
+extern int fastAnimationsTrap;
 
 #define PICKUPCRITERIA_DEFAULT  0
 #define PICKUPCRITERIA_CRITICAL 1
@@ -1111,6 +1112,10 @@ f32 botCalculateMaxSpeed(struct chrdata *chr)
 			speed *= 11.2f;
 			break;
 		}
+	}
+
+	if (fastAnimationsTrap) {
+		speed *= 2.0f;
 	}
 
 	if (botGuessCrouchPos(chr) == CROUCHPOS_SQUAT) {

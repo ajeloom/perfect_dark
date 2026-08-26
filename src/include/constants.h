@@ -4784,3 +4784,4 @@ enum weaponnum {
 #define TRAP_SLOMO 3
 #define TRAP_ENEMYROCKETS 4
 #define TRAP_PERFECTDARKNESS 5
+#define TRAP_FASTANIMATIONS 6
