@@ -26,6 +26,8 @@
 
 extern u32 unlockedCharacters[6];
 
+extern int dkModeTrap;
+
 s32 g_NumActiveHeadsPerGender;
 u32 var8009cd24;
 s32 g_ActiveMaleHeads[8];
@@ -174,7 +176,7 @@ struct model *body0f02ce8c(s32 bodynum, s32 headnum, struct modeldef *bodymodeld
 	struct modelnode *node = NULL;
 	u32 stack[2];
 
-	if (cheatIsActive(CHEAT_DKMODE)) {
+	if (cheatIsActive(CHEAT_DKMODE) || dkModeTrap) {
 		scale *= 0.8f;
 	}
 
@@ -228,7 +230,7 @@ struct model *body0f02ce8c(s32 bodynum, s32 headnum, struct modeldef *bodymodeld
 						scale *= 0.4f;
 					}
 
-					if (cheatIsActive(CHEAT_DKMODE)) {
+					if (cheatIsActive(CHEAT_DKMODE) || dkModeTrap) {
 						scale *= 1.25f;
 					}
 				} else {

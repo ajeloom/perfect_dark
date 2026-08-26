@@ -51,6 +51,8 @@
 #include "video.h"
 #endif
 
+extern int dkModeTrap;
+
 void rng2SetSeed(u32 seed);
 
 #ifdef PLATFORM_N64
@@ -1684,7 +1686,8 @@ void chrHandleJointPositioned(s32 joint, Mtxf *mtx)
 			neckjoint = -1;
 		}
 
-		if (cheatIsActive(CHEAT_DKMODE) && CHRRACE(g_CurModelChr) == RACE_HUMAN) {
+		if ((cheatIsActive(CHEAT_DKMODE) || dkModeTrap)
+				&& CHRRACE(g_CurModelChr) == RACE_HUMAN) {
 			if (joint == neckjoint) {
 				scale = 4.0f;
 			} else if (joint == lshoulderjoint || joint == rshoulderjoint) {
@@ -2665,7 +2668,7 @@ s32 chrTick(struct prop *prop)
 			chr->hidden |= CHRHFLAG_ONBONDSSCREEN;
 		}
 
-		if (cheatIsActive(CHEAT_DKMODE)) {
+		if (cheatIsActive(CHEAT_DKMODE) || dkModeTrap) {
 			modelSetDistanceScale(0.3125f);
 		}
 

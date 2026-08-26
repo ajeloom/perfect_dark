@@ -37,6 +37,8 @@
 #define AP_ITEM_PROG_EXPLOSIVE 244
 #define AP_ITEM_PROG_OTHER_WEAPON 245
 
+#define AP_ITEM_DK_TRAP 252
+
 #define AP_AGENT_OBJ_OFFSET 1
 #define AP_SPECIAL_AGENT_OBJ_OFFSET 62
 #define AP_PERFECT_AGENT_OBJ_OFFSET 144
@@ -100,6 +102,10 @@ extern int hasMPUnlocks;
 extern int hasAlternateExits;
 
 extern bool showLocationName;
+
+int dkModeTrap = 0;
+
+extern s32 dkModeTrapTime;
 
 int progressiveWeaponNumbers[43] = {
     WEAPON_UNARMED,
@@ -528,6 +534,12 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
         }
 
         lastReceivedItemIndex = itemIndex;
+
+        // Only set traps given while playing
+        if (itemID == AP_ITEM_DK_TRAP) {
+            giveTrap(&dkModeTrap, &dkModeTrapTime, TICKS(1800), TRAP_DKMODE);
+            return;
+        }
     }
 
     // Character
@@ -1036,4 +1048,10 @@ void GetNextProgressiveWeapon(int weaponNumbersArray[], int currentWeaponNumber)
             }
         }
     }
+}
+
+void giveTrap(int *trap, s32 *trapTime, s32 amount, u8 trapName)
+{
+    *trap += 1;
+    *trapTime += amount;
 }

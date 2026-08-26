@@ -15,3 +15,4 @@ void collectAlternateExitItem(u8 missionIndex, u8 difficulty, u8 exitNum);
 void printSentItemMessage(const char* itemname, const char* recipient, const char* location);
 void handleItem(int itemID, const char* itemname, const char* sender, const char* location, int itemIndex);
 void GetNextProgressiveWeapon(int weaponNumbersArray[], int currentWeaponNumber);
+void giveTrap(int *trap, s32 *trapTime, s32 amount, u8 trapName);

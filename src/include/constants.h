@@ -4777,3 +4777,5 @@ enum weaponnum {
 #define CHARACTER_JONATHAN 3
 #define CHARACTER_ELVIS 4
 #define CHARACTER_PRESIDENT 5
+
+#define TRAP_DKMODE 0
