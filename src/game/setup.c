@@ -40,6 +40,7 @@
 extern u32 unlockedCharacters[6];
 
 s32 chrStartingWeapons[100];
+s32 chrPadnums[100];
 
 extern bool randomEnemyWeapons;
 
@@ -1607,9 +1608,15 @@ void setupCreateProps(s32 stagenum)
 				numchrs += g_Vars.numaibuddies;
 			}
 
-			chrmgrConfigure(numchrs);
+			chrmgrConfigure(numchrs * 2);
 		} else {
 			chrmgrConfigure(0);
+		}
+
+		// Set numchrs for the Skedar in Combat Sim
+		if (g_Vars.normmplayerisrunning) {
+			s32 numchrs = 10;
+			chrmgrConfigure(numchrs);
 		}
 
 		for (j = 0; j < PLAYERCOUNT(); j++) {
@@ -1646,6 +1653,7 @@ void setupCreateProps(s32 stagenum)
 
 			for (s32 i = 0; i < ARRAYCOUNT(chrStartingWeapons); i++) {
 				chrStartingWeapons[i] = 0;
+				chrPadnums[i] = -1;
 			}
 
 			while (obj->type != OBJTYPE_END) {

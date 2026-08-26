@@ -47,5 +47,6 @@ void lvSetMpScoreLimit(u32 limit);
 void lvSetMpTeamScoreLimit(u32 limit);
 f32 lvGetStageTimeInSeconds(void);
 s32 lvGetStageTime60(void);
+void spawnSkedar(s32 pad_id);
 
 #endif

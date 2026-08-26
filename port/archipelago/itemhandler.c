@@ -44,6 +44,7 @@
 #define AP_ITEM_ENEMY_ROCKETS_TRAP 256
 #define AP_ITEM_PERFECT_DARKNESS_TRAP 257
 #define AP_ITEM_FAST_ANIMATIONS_TRAP 258
+#define AP_ITEM_SKEDAR_TRAP 259
 
 #define AP_AGENT_OBJ_OFFSET 1
 #define AP_SPECIAL_AGENT_OBJ_OFFSET 62
@@ -116,6 +117,7 @@ int slowMotionTrap = 0;
 int enemyRocketsTrap = 0;
 int perfectDarknessTrap = 0;
 int fastAnimationsTrap = 0;
+int skedarTrap = 0;
 
 extern s32 dkModeTrapTime;
 extern s32 smallJoTrapTime;
@@ -124,6 +126,7 @@ extern s32 slowMotionTrapTime;
 extern s32 enemyRocketsTrapTime;
 extern s32 perfectDarknessTrapTime;
 extern s32 fastAnimationsTrapTime;
+extern s32 skedarTrapTime;
 
 int progressiveWeaponNumbers[43] = {
     WEAPON_UNARMED,
@@ -586,6 +589,11 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
 
         if (itemID == AP_ITEM_FAST_ANIMATIONS_TRAP) {
             giveTrap(&fastAnimationsTrap, &fastAnimationsTrapTime, TICKS(1800), TRAP_FASTANIMATIONS);
+            return;
+        }
+
+        if (itemID == AP_ITEM_SKEDAR_TRAP) {
+            giveTrap(&skedarTrap, &skedarTrapTime, TICKS(1800), TRAP_SKEDAR);    
             return;
         }
     }

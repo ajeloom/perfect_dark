@@ -30,6 +30,8 @@ extern int dkModeTrap;
 extern int smallJoTrap;
 extern int smallCharactersTrap;
 
+extern s32 chrPadnums[100];
+
 s32 g_NumActiveHeadsPerGender;
 u32 var8009cd24;
 s32 g_ActiveMaleHeads[8];
@@ -590,6 +592,9 @@ void bodyAllocateChr(s32 stagenum, struct packedchr *packed, s32 cmdindex)
 			}
 			break;
 	}
+
+	// Save the padnum the chr spawns at
+	chrPadnums[packed->chrnum] = packed->padnum;
 
 	if (model != NULL) {
 		angle = atan2f(pad.look.x, pad.look.z);

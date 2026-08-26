@@ -107,9 +107,15 @@ extern u32 unlockedCharacters[6];
 extern s16 warpPad;
 
 extern int slowMotionTrap;
+extern int skedarTrap;
 
 extern bool turnedOnLights;
 extern bool turnedOffLights;
+
+bool spawnedSkedar = false;
+
+extern s32 chrPadnums[100];
+extern bool randomEnemyWeapons;
 
 struct sndstate *g_MiscSfxAudioHandles[3];
 u32 var800aa5bc;
@@ -314,6 +320,8 @@ void lvReset(s32 stagenum)
 
 	turnedOnLights = false;
 	turnedOffLights = false;
+
+	spawnedSkedar = false;
 
 	musicReset();
 	modelmgrSetLvResetting(true);
@@ -2272,6 +2280,31 @@ void lvTick(void)
 
 	g_NumReasonsToEndMpMatch = 0;
 
+	if (!spawnedSkedar 
+			&& g_Vars.stagenum != STAGE_CITRAINING
+			&& g_Vars.stagenum < STAGE_TITLE
+			&& skedarTrap > 0) {
+		spawnedSkedar = true;
+
+		if (!g_Vars.normmplayerisrunning) {
+			for (s32 i = 0; i < ARRAYCOUNT(chrPadnums); i++) {
+				if (chrPadnums[i] == -1) {
+					continue;
+				}
+
+				spawnSkedar(chrPadnums[i]);
+			}
+		}
+		else {
+			for (s32 i = 0; i < g_NumSpawnPoints; i++) {
+				spawnSkedar(g_SpawnPoints[i]);
+			}
+		}
+
+		psCreate(NULL, g_Vars.currentplayer->prop, SFX_SKEDAR_ROAR_052E, -1, -1, 0, 0, PSTYPE_NONE, NULL, -1, NULL, -1, -1, -1, -1);
+		skedarTrap -= 1;
+	}
+
 	// Handle MP match ending
 	if (g_Vars.normmplayerisrunning && g_Vars.stagenum < STAGE_TITLE) {
 		if (g_MpTimeLimit60 > 0) {
@@ -2619,4 +2652,67 @@ s32 lvGetStageTime60(void)
 u32 func0f16ce04(u32 arg0)
 {
 	return arg0;
+}
+
+
+void spawnSkedar(s32 pad_id)
+{
+    u8 *ailist = ailistFindById(GAILIST_SEE_THEN_ATTACK);
+
+    struct prop *prop = chrSpawnAtPad(g_Vars.chrdata, BODY_SKEDAR, HEAD_RANDOM, pad_id, ailist, SPAWNFLAG_BASICGUARD | SPAWNFLAG_ALLOWONSCREEN);
+
+	if (prop) {
+        struct chrdata *chr = prop->chr;
+
+        chr->hidden |= CHRHFLAG_BASICGUARD;
+
+        chr->flags |= CHRFLAG0_SKIPSAFETYCHECKS;
+        chr->flags2 |= CHRFLAG1_CAN_LOOK_AROUND;
+
+        if (cheatIsActive(CHEAT_MARQUIS)) {
+            chr->flags2 &= ~CHRFLAG1_NOHANDCOMBAT;
+            chr->flags2 |= CHRFLAG1_HANDCOMBATONLY;
+        }
+
+        chr->accuracyrating = 20;
+        chr->speedrating = 50;
+
+        f32 maxdamage = (40 | (0 << 8)) * 0.1f;
+        chr->maxdamage = maxdamage;
+
+        f32 amount = (50 | (0 << 8)) * 0.1f;
+        chr->damage -= amount;
+
+        chr->arghrating = 0;
+
+        chrSetShield(chr, 0);
+
+        chr->alertness = 100;
+
+        if (g_Vars.stagenum == STAGE_VILLA
+				|| g_Vars.stagenum == STAGE_CHICAGO) {
+            chr->team = TEAM_20;
+        }
+        else {
+            chr->team = TEAM_ENEMY;
+        }
+        
+        chr->squadron = SQUADRON_01;
+        chr->aibot = NULL;
+
+        if (!g_Vars.normmplayerisrunning && g_MissionConfig.iscoop && g_Vars.numaibuddies > 0) {
+            chr->flags |= CHRFLAG0_AIVSAI;
+        }
+
+        chr->chrflags |= CHRCFLAG_FORCEAUTOAIM;
+        chr->chrflags |= CHRCFLAG_RUNFASTER;
+
+        if (randomEnemyWeapons) {
+            u32 randomWeapon = (rngRandom() % 33) + 2;
+            chrGiveWeapon(chr, playermgrGetModelOfWeapon(randomWeapon), randomWeapon, 0);
+        }
+        else {
+            chrGiveWeapon(chr, MODEL_CHRMAULER, WEAPON_MAULER, 0);
+        }
+    }
 }

@@ -351,7 +351,8 @@ std::string itemNames[] = {
     "Slow Motion Trap",
     "Enemy Rockets Trap",
     "Perfect Darkness Trap",
-    "Fast Animations Trap"
+    "Fast Animations Trap",
+    "Skedar Trap"
 };
 
 std::map<int, std::string> locationNames = {
