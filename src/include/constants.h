@@ -4781,3 +4781,4 @@ enum weaponnum {
 #define TRAP_DKMODE 0
 #define TRAP_SMALLJO 1
 #define TRAP_SMALLCHARACTERS 2
+#define TRAP_SLOMO 3

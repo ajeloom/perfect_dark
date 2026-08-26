@@ -106,6 +106,8 @@ extern u32 unlockedCharacters[6];
 
 extern s16 warpPad;
 
+extern int slowMotionTrap;
+
 struct sndstate *g_MiscSfxAudioHandles[3];
 u32 var800aa5bc;
 s32 g_MiscSfxActiveTypes[3];
@@ -2059,7 +2061,7 @@ s32 lvGetSlowMotionType(void)
 			return SLOWMOTION_SMART;
 		}
 	} else {
-		if (cheatIsActive(CHEAT_SLOMO)) {
+		if (cheatIsActive(CHEAT_SLOMO) || slowMotionTrap) {
 			return SLOWMOTION_ON;
 		}
 		if (debugGetSlowMotion() == SLOWMOTION_ON) {
@@ -2131,7 +2133,7 @@ void lvTick(void)
 		s32 slowmo = lvGetSlowMotionType();
 		g_Vars.lvupdate240 = g_Vars.diffframe240;
 
-		if (slowmo == SLOWMOTION_ON) {
+		if (slowmo == SLOWMOTION_ON || slowMotionTrap) {
 			if (g_Vars.speedpillon == false || g_Vars.in_cutscene) {
 				if (g_Vars.lvupdate240 > LV_SLOMO_TICK_CAP) {
 					g_Vars.lvupdate240 = LV_SLOMO_TICK_RATE;

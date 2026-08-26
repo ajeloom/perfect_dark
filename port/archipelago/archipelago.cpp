@@ -347,7 +347,8 @@ std::string itemNames[] = {
     "President",
     "DK Mode Trap",
     "Small Jo Trap",
-    "Small Characters Trap"
+    "Small Characters Trap",
+    "Slow Motion Trap"
 };
 
 std::map<int, std::string> locationNames = {
