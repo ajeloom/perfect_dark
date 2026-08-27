@@ -25,6 +25,7 @@ extern u32 unlockedChallenges[30];
 extern u32 completedChallenges[30];
 
 extern int shorterChallenges;
+extern bool randomChallengeStage;
 
 u8 g_MpFeaturesForceUnlocked[40];
 u8 g_MpFeaturesUnlocked[80];
@@ -431,6 +432,11 @@ struct mpconfigfull *challengeLoadConfig(s32 confignum, u8 *buffer, s32 len)
 	}
 	else {
 		mpconfig->config = shorterChallengeMpConfigs[confignum];
+	}
+
+	if (randomChallengeStage) {
+		u8 stagenum = mpChooseRandomStage();
+		mpconfig->config.setup.stagenum = stagenum;
 	}
 	
 	mpconfig->strings = *loadedstrings;

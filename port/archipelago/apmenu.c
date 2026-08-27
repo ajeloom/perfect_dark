@@ -23,6 +23,7 @@ bool randomMusic;
 bool randomCharacters;
 bool randomEnemyWeapons;
 bool randomBuddyWeapons;
+bool randomChallengeStage;
 
 int lastReceivedItemIndex;
 
@@ -1633,6 +1634,20 @@ MenuItemHandlerResult menuhandlerRandomBuddyWeapons(s32 operation, struct menuit
 	return 0;
 }
 
+MenuItemHandlerResult menuhandlerRandomChallengeStage(s32 operation, struct menuitem *item, union handlerdata *data)
+{
+	s32 val;
+
+	switch (operation) {
+	case MENUOP_GET:
+		return randomChallengeStage;
+	case MENUOP_SET:
+		randomChallengeStage = data->checkbox.value;
+	}
+
+	return 0;
+}
+
 struct menuitem g_OtherOptionsMenuItems[] = {
 	{
 		MENUITEMTYPE_CHECKBOX,
@@ -1710,6 +1725,14 @@ struct menuitem g_RandomOptionsMenuItems[] = {
 		(uintptr_t)"Random Buddy Weapons\n",
 		0,
 		menuhandlerRandomBuddyWeapons,
+	},
+	{
+		MENUITEMTYPE_CHECKBOX,
+		0,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Random Challenge Stage\n",
+		0,
+		menuhandlerRandomChallengeStage,
 	},
 	{
 		MENUITEMTYPE_SEPARATOR,
@@ -1858,6 +1881,7 @@ PD_CONSTRUCTOR static void APConfigRandomOptionsInit(void)
 	APConfigRegisterUInt("RandomOptions.RandomCharacters", &randomCharacters, 0, 1);
 	APConfigRegisterUInt("RandomOptions.RandomEnemyWeapons", &randomEnemyWeapons, 0, 1);
 	APConfigRegisterUInt("RandomOptions.RandomBuddyWeapons", &randomBuddyWeapons, 0, 1);
+	APConfigRegisterUInt("RandomOptions.RandomChallengeStage", &randomChallengeStage, 0, 1);
 	APConfigRegisterUInt("RandomOptions.JoannaHead", &randomJoHead, 4, 85);
 	APConfigRegisterUInt("RandomOptions.VelvetHead", &randomVDHead, 4, 85);
 	APConfigRegisterUInt("RandomOptions.ElvisHead", &randomElvisHead, 4, 85);
