@@ -487,39 +487,48 @@ void objectivesCheckAll(void)
 						// Show missing character message
 						char *name = "\0";
 						if (g_Vars.stagenum == STAGE_INVESTIGATION
-								&& i == 4) {
+								&& i == 4
+								&& unlockedCharacters[CHARACTER_DRCAROLL] == 0) {
 							name = "Dr. Caroll";
 						}
 						else if (g_Vars.stagenum == STAGE_EXTRACTION
-								&& i == 3) {
+								&& i == 3
+								&& unlockedCharacters[CHARACTER_CASSANDRA] == 0) {
 							name = "Cassandra";
 						}
 						else if (g_Vars.stagenum == STAGE_VILLA
-								&& i == 5) {
+								&& i == 5
+								&& unlockedCharacters[CHARACTER_CARRINGTON] == 0) {
 							name = "Carrington";
 						}
 						else if (g_Vars.stagenum == STAGE_G5BUILDING
-								&& i == 2) {
+								&& i == 2
+								&& unlockedCharacters[CHARACTER_CASSANDRA] == 0) {
 							name = "Cassandra";
 						}
 						else if (g_Vars.stagenum == STAGE_INFILTRATION
-								&& i == 4) {
+								&& i == 4
+								&& unlockedCharacters[CHARACTER_JONATHAN] == 0) {
 							name = "Jonathan";
 						}
 						else if (g_Vars.stagenum == STAGE_RESCUE
-								&& i == 4) {
+								&& i == 4
+								&& unlockedCharacters[CHARACTER_ELVIS] == 0) {
 							name = "Elvis";
 						}
 						else if (g_Vars.stagenum == STAGE_AIRFORCEONE
-								&& i == 4) {
+								&& i == 4
+								&& unlockedCharacters[CHARACTER_ELVIS] == 0) {
 							name = "Elvis";
 						}
 						else if (g_Vars.stagenum == STAGE_CRASHSITE
-								&& i == 4) {
+								&& i == 4
+								&& unlockedCharacters[CHARACTER_ELVIS] == 0) {
 							name = "Elvis";
 						}
 						else if (g_Vars.stagenum == STAGE_DUEL
-								&& i == 1) {
+								&& i == 1
+								&& unlockedCharacters[CHARACTER_JONATHAN] == 0) {
 							name = "Jonathan";
 						}
 
