@@ -1192,7 +1192,20 @@ void lightsTickTrap(void)
 		if (!turnedOffLights) {
 			turnedOffLights = true;
 			turnedOnLights = false;
-			chrSetStageFlag(NULL, 0x00001000); // STAGEFLAG_LIGHTS_OFF
+
+			if (g_Vars.stagenum == STAGE_DEFECTION) {
+				chrSetStageFlag(NULL, 0x00001000); // STAGEFLAG_LIGHTS_OFF
+			}
+			else if (g_Vars.stagenum == STAGE_EXTRACTION) {
+				chrSetStageFlag(NULL, 0x00400000); // STAGEFLAG_TOP_LIGHTS_OFF
+			}
+			else if (g_Vars.stagenum == STAGE_G5BUILDING) {
+				chrSetStageFlag(NULL, 0x00000080); // STAGEFLAG_LIGHTS_OFF
+			}
+			else if (g_Vars.stagenum == STAGE_MBR) {
+				chrSetStageFlag(NULL, 0x00000100); // STAGEFLAG_LIGHTS_OFF
+			}
+			
 			for (i = 0; i < g_Vars.roomcount; i++) {
 				roomSetLightsOn(i, false);
 			}
@@ -1202,7 +1215,20 @@ void lightsTickTrap(void)
 		if (!turnedOnLights) {
 			turnedOnLights = true;
 			turnedOffLights = false;
-			chrUnsetStageFlag(NULL, 0x00001000); // STAGEFLAG_LIGHTS_OFF
+
+			if (g_Vars.stagenum == STAGE_DEFECTION) {
+				chrUnsetStageFlag(NULL, 0x00001000); // STAGEFLAG_LIGHTS_OFF
+			}
+			else if (g_Vars.stagenum == STAGE_EXTRACTION) {
+				chrUnsetStageFlag(NULL, 0x00400000); // STAGEFLAG_TOP_LIGHTS_OFF
+			}
+			else if (g_Vars.stagenum == STAGE_G5BUILDING) {
+				chrUnsetStageFlag(NULL, 0x00000080); // STAGEFLAG_LIGHTS_OFF
+			}
+			else if (g_Vars.stagenum == STAGE_MBR) {
+				chrUnsetStageFlag(NULL, 0x00000100); // STAGEFLAG_LIGHTS_OFF
+			}
+
 			for (i = 0; i < g_Vars.roomcount; i++) {
 				roomSetLightsOn(i, true);
 			}
