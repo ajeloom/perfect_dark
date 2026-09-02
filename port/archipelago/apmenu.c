@@ -2341,31 +2341,39 @@ PD_CONSTRUCTOR static void APConfigLoginInit(void)
 	APConfigRegisterString("LastLogin.Password", savedPassword, 256);
 }
 
+PD_CONSTRUCTOR static void APConfigOtherOptionsInit(void)
+{
+	APConfigRegisterUInt("OtherOptions.ShowLocationName", &showLocationName, 0, 1);
+}
+
 PD_CONSTRUCTOR static void APConfigRandomOptionsInit(void)
 {
-	APConfigRegisterUInt("RandomOptions.ShowLocationName", &showLocationName, 0, 1);
     APConfigRegisterUInt("RandomOptions.RandomMusic", &randomMusic, 0, 1);
-	APConfigRegisterUInt("RandomOptions.CustomOutfits", &customOutfits, 0, 1);
 	APConfigRegisterUInt("RandomOptions.RandomEnemyWeapons", &randomEnemyWeapons, 0, 1);
 	APConfigRegisterUInt("RandomOptions.RandomBuddyWeapons", &randomBuddyWeapons, 0, 1);
 	APConfigRegisterUInt("RandomOptions.RandomChallengeStage", &randomChallengeStage, 0, 1);
-	APConfigRegisterUInt("RandomOptions.JoannaHead", &randomJoHead, 4, 85);
-	APConfigRegisterUInt("RandomOptions.VelvetHead", &randomVDHead, 4, 85);
-	APConfigRegisterUInt("RandomOptions.MrBlondeHead", &randomMrBlondeHead, 4, 85);
-	APConfigRegisterUInt("RandomOptions.ElvisHead", &randomElvisHead, 4, 85);
-	APConfigRegisterUInt("RandomOptions.MaianHead", &randomMaianHead, 4, 85);
-	APConfigRegisterUInt("RandomOptions.CombatCostume", &randomCombatBody, 0, 150);
-	APConfigRegisterUInt("RandomOptions.TrenchCostume", &randomTrenchBody, 0, 150);
-	APConfigRegisterUInt("RandomOptions.RippedFrockCostume", &randomFrockRippedBody, 0, 150);
-	APConfigRegisterUInt("RandomOptions.FrockCostume", &randomFrockBody, 0, 150);
-	APConfigRegisterUInt("RandomOptions.LeatherCostume", &randomLeatherBody, 0, 150);
-	APConfigRegisterUInt("RandomOptions.DeepSeaCostume", &randomDeepSeaBody, 0, 150);
-	APConfigRegisterUInt("RandomOptions.WetSuitCostume", &randomWetSuitBody, 0, 150);
-	APConfigRegisterUInt("RandomOptions.SnowCostume", &randomSnowBody, 0, 150);
-	APConfigRegisterUInt("RandomOptions.LabCostume", &randomLabBody, 0, 150);
-	APConfigRegisterUInt("RandomOptions.StewardessCostume", &randomStewardessBody, 0, 150);
-	APConfigRegisterUInt("RandomOptions.NegotiatorCostume", &randomNegotiatorBody, 0, 150);
-	APConfigRegisterUInt("RandomOptions.MrBlondeCostume", &randomMrBlondeBody, 0, 150);
-	APConfigRegisterUInt("RandomOptions.ElvisCostume", &randomElvisBody, 0, 150);
-	APConfigRegisterUInt("RandomOptions.MaianCostume", &randomMaianBody, 0, 150);
+}
+
+PD_CONSTRUCTOR static void APConfigCharacterInit(void)
+{
+	APConfigRegisterUInt("Character.CustomOutfits", &customOutfits, 0, 1);
+	APConfigRegisterUInt("Character.JoannaHead", &randomJoHead, 4, 85);
+	APConfigRegisterUInt("Character.VelvetHead", &randomVDHead, 4, 85);
+	APConfigRegisterUInt("Character.MrBlondeHead", &randomMrBlondeHead, 4, 85);
+	APConfigRegisterUInt("Character.ElvisHead", &randomElvisHead, 4, 85);
+	APConfigRegisterUInt("Character.MaianHead", &randomMaianHead, 4, 85);
+	APConfigRegisterUInt("Character.CombatCostume", &randomCombatBody, 0, 150);
+	APConfigRegisterUInt("Character.TrenchCostume", &randomTrenchBody, 0, 150);
+	APConfigRegisterUInt("Character.RippedFrockCostume", &randomFrockRippedBody, 0, 150);
+	APConfigRegisterUInt("Character.FrockCostume", &randomFrockBody, 0, 150);
+	APConfigRegisterUInt("Character.LeatherCostume", &randomLeatherBody, 0, 150);
+	APConfigRegisterUInt("Character.DeepSeaCostume", &randomDeepSeaBody, 0, 150);
+	APConfigRegisterUInt("Character.WetSuitCostume", &randomWetSuitBody, 0, 150);
+	APConfigRegisterUInt("Character.SnowCostume", &randomSnowBody, 0, 150);
+	APConfigRegisterUInt("Character.LabCostume", &randomLabBody, 0, 150);
+	APConfigRegisterUInt("Character.StewardessCostume", &randomStewardessBody, 0, 150);
+	APConfigRegisterUInt("Character.NegotiatorCostume", &randomNegotiatorBody, 0, 150);
+	APConfigRegisterUInt("Character.MrBlondeCostume", &randomMrBlondeBody, 0, 150);
+	APConfigRegisterUInt("Character.ElvisCostume", &randomElvisBody, 0, 150);
+	APConfigRegisterUInt("Character.MaianCostume", &randomMaianBody, 0, 150);
 }
