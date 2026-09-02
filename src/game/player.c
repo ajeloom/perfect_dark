@@ -79,14 +79,14 @@
 
 extern u32 unlockedWeapons[94];
 
-extern bool randomCharacters;
+extern bool customOutfits;
 extern bool randomBuddyWeapons;
 
 extern u32 randomJoHead;
 extern u32 randomVDHead;
+extern u32 randomMrBlondeHead;
 extern u32 randomElvisHead;
 extern u32 randomMaianHead;
-extern u32 randomMrBlondeHead;
 
 extern u32 randomCombatBody;
 extern u32 randomTrenchBody;
@@ -100,6 +100,7 @@ extern u32 randomLabBody;
 extern u32 randomStewardessBody;
 extern u32 randomNegotiatorBody;
 extern u32 randomMrBlondeBody;
+extern u32 randomElvisBody;
 extern u32 randomMaianBody;
 
 extern int progressiveWeapon;
@@ -1304,7 +1305,7 @@ void playerChooseBodyAndHead(s32 *bodynum, s32 *headnum, s32 *arg2)
 		}
 	}
 
-	if (randomCharacters == true) {
+	if (customOutfits == true) {
 		switch (outfit) {
 		default:
 		case OUTFIT_DEFAULT:
@@ -1312,7 +1313,7 @@ void playerChooseBodyAndHead(s32 *bodynum, s32 *headnum, s32 *arg2)
 			*headnum = solo ? randomJoHead : randomVDHead;
 			break;
 		case OUTFIT_ELVIS:
-			*bodynum = randomMaianBody;
+			*bodynum = randomElvisBody;
 			*headnum = solo ? randomElvisHead : randomElvisHead;
 			break;
 		case OUTFIT_TRENT:

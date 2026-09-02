@@ -3,6 +3,8 @@
 #include "bss.h"
 #include "data.h"
 #include "game/menu.h"
+#include "game/mplayer/mplayer.h"
+#include "game/mplayer/setup.h"
 #include "game/player.h"
 #include "lib/rng.h"
 #include "archipelago.h"
@@ -20,18 +22,24 @@ extern u32 completedChallenges[30];
 
 bool showLocationName;
 bool randomMusic;
-bool randomCharacters;
+bool customOutfits;
 bool randomEnemyWeapons;
 bool randomBuddyWeapons;
 bool randomChallengeStage;
 
 int lastReceivedItemIndex;
 
+u32 *currentHead;
+u32 *currentBody;
+
+u8 headnum = 0;
+u8 bodynum = 0;
+
 u32 randomJoHead;
 u32 randomVDHead;
+u32 randomMrBlondeHead;
 u32 randomElvisHead;
 u32 randomMaianHead;
-u32 randomMrBlondeHead;
 
 u32 randomCombatBody;
 u32 randomTrenchBody;
@@ -45,6 +53,7 @@ u32 randomLabBody;
 u32 randomStewardessBody;
 u32 randomNegotiatorBody;
 u32 randomMrBlondeBody;
+u32 randomElvisBody;
 u32 randomMaianBody;
 
 extern int completionGoal;
@@ -1447,15 +1456,15 @@ MenuItemHandlerResult menuhandlerRandomMusic(s32 operation, struct menuitem *ite
 	return 0;
 }
 
-MenuItemHandlerResult menuhandlerRandomCharacters(s32 operation, struct menuitem *item, union handlerdata *data)
+MenuItemHandlerResult menuhandlerCustomOutfits(s32 operation, struct menuitem *item, union handlerdata *data)
 {
 	s32 val;
 
 	switch (operation) {
 	case MENUOP_GET:
-		return randomCharacters;
+		return customOutfits;
 	case MENUOP_SET:
-		randomCharacters = data->checkbox.value;
+		customOutfits = data->checkbox.value;
 	}
 
 	return 0;
@@ -1515,6 +1524,9 @@ u32 getRandomHead() {
 
 	// Get a number between 0x04 and 0x55
 	u32 randomHead = (rngRandom() % 82) + 0x04;
+	while (randomHead == HEAD_GREY) {
+		randomHead = (rngRandom() % 82) + 0x04;
+	}
 
 	return randomHead;
 }
@@ -1528,9 +1540,9 @@ MenuItemHandlerResult menuhandlerRandomize(s32 operation, struct menuitem *item,
 		// Randomize the heads of playable characters
 		randomJoHead = getRandomHead();
 		randomVDHead = getRandomHead();
+		randomMrBlondeHead = getRandomHead();
 		randomElvisHead = getRandomHead();
 		randomMaianHead = getRandomHead();
-		randomMrBlondeHead = getRandomHead();
 
 		// Randomize the bodies of playable characters
 		randomCombatBody = getRandomBody();
@@ -1545,9 +1557,10 @@ MenuItemHandlerResult menuhandlerRandomize(s32 operation, struct menuitem *item,
 		randomStewardessBody = getRandomBody();
 		randomNegotiatorBody = getRandomBody();
 		randomMrBlondeBody = getRandomBody();
+		randomElvisBody = getRandomBody();
 		randomMaianBody = getRandomBody();
 
-		func0f0f820c(NULL, -7);
+		menuPopDialog();
 	}
 
 	return 0;
@@ -1594,11 +1607,10 @@ MenuItemHandlerResult randomizeCharactersMenuDialog(s32 operation, struct menuit
 {
 	switch (operation) {
 	case MENUOP_SET:
-		menuPopDialog();
 		menuPushDialog(&g_RandomizeCharactersMenuDialog);
 		break;
 	case MENUOP_CHECKDISABLED:
-		if (randomCharacters == false) {
+		if (customOutfits == false) {
 			return true;
 		}
 	}
@@ -1698,22 +1710,6 @@ struct menuitem g_RandomOptionsMenuItems[] = {
 		MENUITEMTYPE_CHECKBOX,
 		0,
 		MENUITEMFLAG_LITERAL_TEXT,
-		(uintptr_t)"Random Characters\n",
-		0,
-		menuhandlerRandomCharacters,
-	},
-	{
-		MENUITEMTYPE_SELECTABLE,
-		0,
-		MENUITEMFLAG_LITERAL_TEXT,
-		(uintptr_t)"Re-roll Characters\n",
-		0,
-		randomizeCharactersMenuDialog,
-	},
-	{
-		MENUITEMTYPE_CHECKBOX,
-		0,
-		MENUITEMFLAG_LITERAL_TEXT,
 		(uintptr_t)"Random Enemy Weapons\n",
 		0,
 		menuhandlerRandomEnemyWeapons,
@@ -1759,6 +1755,469 @@ struct menudialogdef g_RandomOptionsMenuDialog = {
 	g_RandomOptionsMenuItems,
 	NULL,
 	MENUDIALOGFLAG_LITERAL_TEXT,
+	NULL,
+};
+
+MenuItemHandlerResult menuhandlerRestoreCharacterDefaults(s32 operation, struct menuitem *item, union handlerdata *data)
+{
+	if (operation == MENUOP_SET) {
+		randomJoHead = HEAD_DARK_COMBAT;
+		randomVDHead = HEAD_VD;
+		randomMrBlondeHead = HEAD_MRBLONDE;
+		randomElvisHead = HEAD_ELVIS;
+		randomMaianHead = HEAD_MAIAN_S;
+
+		randomCombatBody = BODY_DARK_COMBAT;
+		randomTrenchBody = BODY_DARK_TRENCH;
+		randomFrockRippedBody = BODY_DARK_RIPPED;
+		randomFrockBody = BODY_DARK_FROCK;
+		randomLeatherBody = BODY_DARK_LEATHER;
+		randomDeepSeaBody = BODY_DARKWET;
+		randomWetSuitBody = BODY_DARKAQUALUNG;
+		randomSnowBody = BODY_DARKSNOW;
+		randomLabBody = BODY_DARKLAB;
+		randomStewardessBody = BODY_DARK_AF1;
+		randomNegotiatorBody = BODY_DARK_NEGOTIATOR;
+		randomMrBlondeBody = BODY_MRBLONDE;
+		randomElvisBody = BODY_THEKING;
+		randomMaianBody = BODY_ELVIS1;
+	}
+
+	return 0;
+}
+
+u8 getMpHeadnumBySoloHeadnum(u8 soloheadnum)
+{
+	for (s32 i = 0; i < ARRAYCOUNT(g_MpHeads); i++) {
+		if (soloheadnum == g_MpHeads[i].headnum) {
+			return i;
+		}
+	}
+
+	return 0;
+}
+
+u8 getMpBodynumBySoloBodynum(u8 solobodynum)
+{
+	for (s32 i = 0; i < ARRAYCOUNT(g_MpHeads); i++) {
+		if (solobodynum == g_MpBodies[i].bodynum) {
+			return i;
+		}
+	}
+
+	return 0;
+}
+
+MenuItemHandlerResult menuhandlerCharacterHead(s32 operation, struct menuitem *item, union handlerdata *data)
+{
+	if (operation == MENUOP_SET) {
+		headnum = data->carousel.value;
+		*currentHead = g_MpHeads[data->carousel.value].headnum;
+	}
+
+	return mpCharacterHeadMenuHandler(operation, item, data, headnum, 1);
+}
+
+MenuItemHandlerResult menuhandlerCharacterBody(s32 operation, struct menuitem *item, union handlerdata *data)
+{
+	switch (operation) {
+	case MENUOP_SET:
+		bodynum = data->carousel.value;
+		*currentBody = g_MpBodies[data->carousel.value].bodynum;
+		break;
+	case MENUOP_CHECKPREFOCUSED:
+		mpCharacterBodyMenuHandler(operation, item, data,
+				bodynum,
+				headnum, true);
+
+		return true;
+	}
+
+	return mpCharacterBodyMenuHandler(operation, item, data,
+			bodynum,
+			headnum, true);
+}
+
+MenuDialogHandlerResult menudialogblah(s32 operation, struct menudialogdef *dialogdef, union handlerdata *data)
+{
+	switch (operation) {
+	case MENUOP_OPEN:
+		break;
+	case MENUOP_CLOSE:
+		break;
+	case MENUOP_TICK:
+		if (g_Menus[g_MpPlayerNum].curdialog->definition == dialogdef
+				&& g_Menus[g_MpPlayerNum].curdialog->focuseditem != &dialogdef->items[1]
+				&& g_Menus[g_MpPlayerNum].curdialog->focuseditem != &dialogdef->items[2]) {
+			union handlerdata data;
+			menuhandlerMpCharacterBody(MENUOP_11, &dialogdef->items[2], &data);
+		}
+	}
+
+	return 0;
+}
+
+struct menuitem g_Player2HeadMenuItems[] = {
+	{
+		MENUITEMTYPE_LABEL,
+		0,
+		MENUITEMFLAG_LESSLEFTPADDING | MENUITEMFLAG_SELECTABLE_CENTRE | MENUITEMFLAG_SMALLFONT | MENUITEMFLAG_DARKERBG | MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Player 2 Head\n",
+		0,
+		NULL,
+	},
+	{
+		MENUITEMTYPE_CAROUSEL,
+		0,
+		0,
+		0,
+		0x00000044,
+		menuhandlerCharacterHead,
+	},
+	{ MENUITEMTYPE_END },
+};
+
+struct menudialogdef g_Player2MenuDialog = {
+	MENUDIALOGTYPE_DEFAULT,
+	L_MPMENU_143, // "Character"
+	g_Player2HeadMenuItems,
+	menudialogblah,
+	MENUDIALOGFLAG_0002,
+	NULL,
+};
+
+char *GetBodyName(struct menuitem *item)
+{
+	return mpGetBodyName(bodynum);
+}
+
+struct menuitem g_MissionCharacterMenuItems[] = {
+	{
+		MENUITEMTYPE_LABEL,
+		0,
+		MENUITEMFLAG_LESSLEFTPADDING | MENUITEMFLAG_SELECTABLE_CENTRE | MENUITEMFLAG_SMALLFONT | MENUITEMFLAG_DARKERBG,
+		(uintptr_t)&GetBodyName,
+		0,
+		NULL,
+	},
+	{
+		MENUITEMTYPE_CAROUSEL,
+		0,
+		0,
+		0,
+		0x00000022,
+		menuhandlerCharacterHead,
+	},
+	{
+		MENUITEMTYPE_CAROUSEL,
+		0,
+		0,
+		0,
+		0x0000001b,
+		menuhandlerCharacterBody,
+	},
+	{ MENUITEMTYPE_END },
+};
+
+struct menudialogdef g_MissionCharacterMenuDialog = {
+	MENUDIALOGTYPE_DEFAULT,
+	L_MPMENU_143, // "Character"
+	g_MissionCharacterMenuItems,
+	menudialogblah,
+	MENUDIALOGFLAG_0002,
+	NULL,
+};
+
+MenuItemHandlerResult menuhandlerSetHeadAndBody(s32 operation, struct menuitem *item, union handlerdata *data)
+{
+	switch (operation) {
+	case MENUOP_SET:
+		switch (item->param) {
+			case 0:
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+			case 6:
+			case 7:
+			case 8:
+			case 9:
+			case 10:
+				headnum = getMpHeadnumBySoloHeadnum(randomJoHead);
+				currentHead = &randomJoHead;
+				break;
+			case 11:
+				headnum = getMpHeadnumBySoloHeadnum(randomMrBlondeHead);
+				currentHead = &randomMrBlondeHead;
+				break;
+			case 12:
+				headnum = getMpHeadnumBySoloHeadnum(randomElvisHead);
+				currentHead = &randomElvisHead;
+				break;
+			case 13:
+				headnum = getMpHeadnumBySoloHeadnum(randomMaianHead);
+				currentHead = &randomMaianHead;
+				break;
+			case 14:
+				headnum = getMpHeadnumBySoloHeadnum(randomVDHead);
+				currentHead = &randomVDHead;
+				break;
+		}
+
+		switch (item->param) {
+			case 0:
+				bodynum = getMpBodynumBySoloBodynum(randomCombatBody);
+				currentBody = &randomCombatBody;
+				break;
+			case 1:
+				bodynum = getMpBodynumBySoloBodynum(randomTrenchBody);
+				currentBody = &randomTrenchBody;
+				break;
+			case 2:
+				bodynum = getMpBodynumBySoloBodynum(randomFrockBody);
+				currentBody = &randomFrockBody;
+				break;
+			case 3:
+				bodynum = getMpBodynumBySoloBodynum(randomFrockRippedBody);
+				currentBody = &randomFrockRippedBody;
+				break;
+			case 4:
+				bodynum = getMpBodynumBySoloBodynum(randomStewardessBody);
+				currentBody = &randomStewardessBody;
+				break;
+			case 5:
+				bodynum = getMpBodynumBySoloBodynum(randomLeatherBody);
+				currentBody = &randomLeatherBody;
+				break;
+			case 6:
+				bodynum = getMpBodynumBySoloBodynum(randomNegotiatorBody);
+				currentBody = &randomNegotiatorBody;
+				break;
+			case 7:
+				bodynum = getMpBodynumBySoloBodynum(randomDeepSeaBody);
+				currentBody = &randomDeepSeaBody;
+				break;
+			case 8:
+				bodynum = getMpBodynumBySoloBodynum(randomWetSuitBody);
+				currentBody = &randomWetSuitBody;
+				break;
+			case 9:
+				bodynum = getMpBodynumBySoloBodynum(randomSnowBody);
+				currentBody = &randomSnowBody;
+				break;
+			case 10:
+				bodynum = getMpBodynumBySoloBodynum(randomLabBody);
+				currentBody = &randomLabBody;
+				break;
+			case 11:
+				bodynum = getMpBodynumBySoloBodynum(randomMrBlondeBody);
+				currentBody = &randomMrBlondeBody;
+				break;
+			case 12:
+				bodynum = getMpBodynumBySoloBodynum(randomElvisBody);
+				currentBody = &randomElvisBody;
+				break;
+			case 13:
+				bodynum = getMpBodynumBySoloBodynum(randomMaianBody);
+				currentBody = &randomMaianBody;
+				break;
+		}
+
+		if (item->param == 14) {
+			menuPushDialog(&g_Player2MenuDialog);
+		}
+		else {
+			menuPushDialog(&g_MissionCharacterMenuDialog);
+		}
+		break;
+	case MENUOP_CHECKDISABLED:
+		if (customOutfits == false) {
+			return true;
+		}
+	}
+
+	return 0;
+}
+
+struct menuitem g_OutfitMenuItems[] = {
+	{
+		MENUITEMTYPE_CHECKBOX,
+		0,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Custom Outfits Enabled\n",
+		0,
+		menuhandlerCustomOutfits,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		0,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Re-roll Characters\n",
+		0,
+		randomizeCharactersMenuDialog,
+	},
+	{
+		MENUITEMTYPE_SEPARATOR,
+		0,
+		0,
+		0,
+		0,
+		NULL,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		0,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Combat Outfit\n",
+		0,
+		menuhandlerSetHeadAndBody,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		1,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Trench Outfit\n",
+		0,
+		menuhandlerSetHeadAndBody,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		2,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Frock Outfit\n",
+		0,
+		menuhandlerSetHeadAndBody,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		3,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Frock (Ripped) Outfit\n",
+		0,
+		menuhandlerSetHeadAndBody,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		4,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Stewardess Outfit\n",
+		0,
+		menuhandlerSetHeadAndBody,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		5,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Leather Outfit\n",
+		0,
+		menuhandlerSetHeadAndBody,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		6,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Negotiator Outfit\n",
+		0,
+		menuhandlerSetHeadAndBody,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		7,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Deep Sea Outfit\n",
+		0,
+		menuhandlerSetHeadAndBody,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		8,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Wet Suit Outfit\n",
+		0,
+		menuhandlerSetHeadAndBody,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		9,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Snow Outfit\n",
+		0,
+		menuhandlerSetHeadAndBody,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		10,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Lab Outfit\n",
+		0,
+		menuhandlerSetHeadAndBody,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		11,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Mr. Blonde Outfit\n",
+		0,
+		menuhandlerSetHeadAndBody,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		12,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Elvis Outfit\n",
+		0,
+		menuhandlerSetHeadAndBody,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		13,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Maian Outfit\n",
+		0,
+		menuhandlerSetHeadAndBody,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		14,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Player 2 Head\n",
+		0,
+		menuhandlerSetHeadAndBody,
+	},
+	{
+		MENUITEMTYPE_SEPARATOR,
+		0,
+		0,
+		0,
+		0,
+		NULL,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		0,
+		MENUITEMFLAG_LOCKABLEMINOR | MENUITEMFLAG_LOCKABLEMAJOR,
+		L_MPMENU_110, // "Restore Defaults"
+		0,
+		menuhandlerRestoreCharacterDefaults,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		0,
+		MENUITEMFLAG_SELECTABLE_CLOSESDIALOG,
+		L_OPTIONS_213, // "Back"
+		0,
+		NULL,
+	},
+	{ MENUITEMTYPE_END },
+};
+
+struct menudialogdef g_OutfitMenuDialog = {
+	MENUDIALOGTYPE_DEFAULT,
+	L_MPMENU_143, // "Character"
+	g_OutfitMenuItems,
+	NULL,
+	0,
 	NULL,
 };
 
@@ -1810,6 +2269,14 @@ struct menuitem g_ArchipelagoMenuItems[] = {
 		(uintptr_t)"Other Options\n",
 		0,
 		(void *)&g_OtherOptionsMenuDialog,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		0,
+		MENUITEMFLAG_SELECTABLE_OPENSDIALOG,
+		L_MPMENU_031, // "Character"
+		0,
+		(void *)&g_OutfitMenuDialog,
 	},
 	{
 		MENUITEMTYPE_SEPARATOR,
@@ -1878,15 +2345,15 @@ PD_CONSTRUCTOR static void APConfigRandomOptionsInit(void)
 {
 	APConfigRegisterUInt("RandomOptions.ShowLocationName", &showLocationName, 0, 1);
     APConfigRegisterUInt("RandomOptions.RandomMusic", &randomMusic, 0, 1);
-	APConfigRegisterUInt("RandomOptions.RandomCharacters", &randomCharacters, 0, 1);
+	APConfigRegisterUInt("RandomOptions.CustomOutfits", &customOutfits, 0, 1);
 	APConfigRegisterUInt("RandomOptions.RandomEnemyWeapons", &randomEnemyWeapons, 0, 1);
 	APConfigRegisterUInt("RandomOptions.RandomBuddyWeapons", &randomBuddyWeapons, 0, 1);
 	APConfigRegisterUInt("RandomOptions.RandomChallengeStage", &randomChallengeStage, 0, 1);
 	APConfigRegisterUInt("RandomOptions.JoannaHead", &randomJoHead, 4, 85);
 	APConfigRegisterUInt("RandomOptions.VelvetHead", &randomVDHead, 4, 85);
+	APConfigRegisterUInt("RandomOptions.MrBlondeHead", &randomMrBlondeHead, 4, 85);
 	APConfigRegisterUInt("RandomOptions.ElvisHead", &randomElvisHead, 4, 85);
 	APConfigRegisterUInt("RandomOptions.MaianHead", &randomMaianHead, 4, 85);
-	APConfigRegisterUInt("RandomOptions.MrBlondeHead", &randomMrBlondeHead, 4, 85);
 	APConfigRegisterUInt("RandomOptions.CombatCostume", &randomCombatBody, 0, 150);
 	APConfigRegisterUInt("RandomOptions.TrenchCostume", &randomTrenchBody, 0, 150);
 	APConfigRegisterUInt("RandomOptions.RippedFrockCostume", &randomFrockRippedBody, 0, 150);
@@ -1899,5 +2366,6 @@ PD_CONSTRUCTOR static void APConfigRandomOptionsInit(void)
 	APConfigRegisterUInt("RandomOptions.StewardessCostume", &randomStewardessBody, 0, 150);
 	APConfigRegisterUInt("RandomOptions.NegotiatorCostume", &randomNegotiatorBody, 0, 150);
 	APConfigRegisterUInt("RandomOptions.MrBlondeCostume", &randomMrBlondeBody, 0, 150);
+	APConfigRegisterUInt("RandomOptions.ElvisCostume", &randomElvisBody, 0, 150);
 	APConfigRegisterUInt("RandomOptions.MaianCostume", &randomMaianBody, 0, 150);
 }
