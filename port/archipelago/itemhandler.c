@@ -70,7 +70,6 @@ u32 completedSpecialAgentObjectives[NUM_SOLOSTAGES][4];
 u32 completedPerfectAgentObjectives[NUM_SOLOSTAGES][5];
 u32 completedChallenges[30];
 u32 completedTrainingMedals[33][3];
-u32 completedLocations[578];
 
 u32 unlockedMissions[NUM_SOLOSTAGES][3];
 u32 unlockedChallenges[30];

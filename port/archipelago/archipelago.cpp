@@ -86,7 +86,8 @@ int hasAlternateExits;
 extern u32 completedMissions[21][3];
 extern u32 completedChallenges[30];
 extern u32 completedTrainingMedals[33][3];
-extern u32 completedLocations[578];
+
+std::map<int, int> completedLocations;
 
 int failedToConnectTotal = 0;
 
@@ -1234,6 +1235,11 @@ bool Initialize() {
 
             if (data.at("options").contains("deathlink")) {
                 deathLink = data.at("options").at("deathlink");
+            }
+
+            // Reset the completed locations
+            for (const auto& location : locationNames) {
+                completedLocations[location.first] = 0;
             }
 
             // Set completed locations
