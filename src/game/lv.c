@@ -136,6 +136,8 @@ bool spawnedSkedar = false;
 extern s32 chrPadnums[100];
 extern bool randomEnemyWeapons;
 
+extern int numberOfAmmoCratesPickedUp;
+
 struct sndstate *g_MiscSfxAudioHandles[3];
 u32 var800aa5bc;
 s32 g_MiscSfxActiveTypes[3];
@@ -345,6 +347,8 @@ void lvReset(s32 stagenum)
 	turnedOffLights = false;
 
 	spawnedSkedar = false;
+
+	numberOfAmmoCratesPickedUp = 0;
 
 	musicReset();
 	modelmgrSetLvResetting(true);

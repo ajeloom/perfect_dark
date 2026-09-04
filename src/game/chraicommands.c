@@ -2344,9 +2344,7 @@ bool aiGiveObjectToChr(void)
 				// Don't give these weapons if it is not unlocked 
 				// or it is Progressive One Gun or Progressive Types
 				if (hasStageAndWeapon
-						&& (unlockedWeapons[weapon->weaponnum] == 0
-						|| weaponProgressionType == WEAPONPROG_ONEGUN
-						|| weaponProgressionType == WEAPONPROG_TYPES)) {
+						&& unlockedWeapons[weapon->weaponnum] == 0) {
 					g_Vars.aioffset += 4;
 					return false;
 				}

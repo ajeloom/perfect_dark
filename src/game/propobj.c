@@ -77,9 +77,12 @@
 #include "textures.h"
 #include "types.h"
 #include "string.h"
+#include "itemhandler.h"
 
 extern int smallJoTrap;
 extern int perfectDarknessTrap;
+
+int numberOfAmmoCratesPickedUp = 0;
 
 void rng2SetSeed(u32 seed);
 
@@ -17310,6 +17313,17 @@ s32 propPickupByPlayer(struct prop *prop, bool showhudmsg)
 				return TICKOP_NONE;
 			}
 
+			// Send ammo pick up check
+			if (!g_Vars.normmplayerisrunning) {
+				if (g_Vars.stagenum == STAGE_VILLA) {
+					numberOfAmmoCratesPickedUp++;
+					collectPickupItem(g_MissionConfig.stageindex, 8000 + numberOfAmmoCratesPickedUp);
+				}
+				else {
+					collectPickupItem(g_MissionConfig.stageindex, obj->pad);
+				}
+			}
+
 			s32 quantity = ammocrateGetPickupAmmoQty(crate);
 			ammoHandlePickup(crate->ammotype, quantity, !g_Vars.in_cutscene, showhudmsg);
 			result = TICKOP_FREE;
@@ -17394,11 +17408,195 @@ s32 propPickupByPlayer(struct prop *prop, bool showhudmsg)
 				}
 			}
 
+			// Send weapon pick up check
+			if (!g_Vars.normmplayerisrunning) {
+				switch (g_Vars.stagenum) {
+					case STAGE_DEFECTION:
+						if (obj->pad == 33
+								|| obj->pad == 466
+								|| obj->pad == 468
+								|| obj->pad == 469
+								// || obj->pad == 474
+								|| obj->pad == 605
+								|| obj->pad == 606) {
+							collectPickupItem(g_MissionConfig.stageindex, obj->pad);
+						}
+						break;
+					case STAGE_INVESTIGATION:
+						if (obj->pad == 633
+								|| obj->pad == 634
+								|| obj->pad == 635
+								|| obj->pad == 636
+								|| obj->pad == 637) {
+							collectPickupItem(g_MissionConfig.stageindex, obj->pad);
+						}
+						break;
+					case STAGE_EXTRACTION:
+						if (obj->pad == 5
+								|| obj->pad == 452
+								|| obj->pad == 466
+								|| obj->pad == 467
+								|| obj->pad == 516
+								|| obj->pad == 519) {
+							collectPickupItem(g_MissionConfig.stageindex, obj->pad);
+						}
+						break;
+					case STAGE_VILLA:
+						if (obj->pad == -1
+								&& weapon->weaponnum == WEAPON_DEVASTATOR) {
+							collectPickupItem(g_MissionConfig.stageindex, 8000);
+						}
+						else if (obj->pad == 85
+								|| obj->pad == 410) {
+							collectPickupItem(g_MissionConfig.stageindex, obj->pad);
+						}
+						break;
+					case STAGE_CHICAGO:
+						if (obj->pad == -1
+								&& weapon->weaponnum == WEAPON_EYESPY) {
+							collectPickupItem(g_MissionConfig.stageindex, 10000);
+						}
+						else if (obj->pad == 287) {
+							collectPickupItem(g_MissionConfig.stageindex, obj->pad);
+						}
+						break;
+					case STAGE_G5BUILDING:
+						if ((obj->pad == 0 || obj->pad == 1)
+								&& weapon->weaponnum == WEAPON_CROSSBOW) {
+							collectPickupItem(g_MissionConfig.stageindex, 12000);
+						}
+						else if (obj->pad == 149) {
+							collectPickupItem(g_MissionConfig.stageindex, obj->pad);
+						}
+						break;
+					case STAGE_INFILTRATION:
+						if (obj->pad == 52
+								|| obj->pad == 53) {
+							collectPickupItem(g_MissionConfig.stageindex, obj->pad);
+						}
+						break;
+					case STAGE_RESCUE:
+						if (obj->pad == 905
+								|| obj->pad == 987) {
+							collectPickupItem(g_MissionConfig.stageindex, obj->pad);
+						}
+						break;
+					case STAGE_ESCAPE:
+						if (obj->pad == 36
+								|| obj->pad == 1383) {
+							collectPickupItem(g_MissionConfig.stageindex, obj->pad);
+						}
+						break;
+					case STAGE_AIRBASE:
+						if (obj->pad == 18
+								|| obj->pad == 181) {
+							collectPickupItem(g_MissionConfig.stageindex, obj->pad);
+						}
+						break;
+					case STAGE_AIRFORCEONE:
+						if (obj->pad == 203
+								|| obj->pad == 204) {
+							collectPickupItem(g_MissionConfig.stageindex, obj->pad);
+						}
+						break;
+					case STAGE_CRASHSITE:
+						if (obj->pad == 262) {
+							collectPickupItem(g_MissionConfig.stageindex, obj->pad + 1);
+						}
+						break;
+					case STAGE_PELAGIC:
+						if (obj->pad == 52) {
+							collectPickupItem(g_MissionConfig.stageindex, obj->pad);
+						}
+						break;
+					case STAGE_DEEPSEA:
+						if (obj->pad == 8
+								|| obj->pad == 63) {
+							collectPickupItem(g_MissionConfig.stageindex, obj->pad);
+						}
+						break;
+					case STAGE_DEFENSE:
+						if (obj->pad == -1
+								&& weapon->weaponnum == WEAPON_DEVASTATOR) {
+							collectPickupItem(g_MissionConfig.stageindex, 30000);
+						}
+						break;
+					case STAGE_ATTACKSHIP:
+						if (obj->pad == 45
+								|| obj->pad == 466) {
+							collectPickupItem(g_MissionConfig.stageindex, obj->pad);
+						}
+						break;
+					case STAGE_SKEDARRUINS:
+						if (obj->pad == 50) {
+							collectPickupItem(g_MissionConfig.stageindex, obj->pad);
+						}
+						break;
+					case STAGE_MBR:
+						if (obj->pad == 15
+								|| obj->pad == 466
+								|| obj->pad == 468
+								|| obj->pad == 469
+								// || obj->pad == 474
+								|| obj->pad == 605
+								|| obj->pad == 606) {
+							collectPickupItem(g_MissionConfig.stageindex, obj->pad);
+						}
+						break;
+					case STAGE_MAIANSOS:
+						if (obj->pad == 11
+								|| obj->pad == 919) {
+							collectPickupItem(g_MissionConfig.stageindex, obj->pad);
+						}
+						break;
+				}
+			}
+
 			if (g_Vars.in_cutscene == false) {
 				weaponPlayPickupSound(weapon->weaponnum);
 			}
 
-			if (obj->hidden & OBJHFLAG_HASTEXTOVERRIDE) {
+			if (((weaponProgressionType == WEAPONPROG_ONEGUN
+					&& weapon->weaponnum != progressiveWeaponNumbers[progressiveWeapon])
+					|| (weaponProgressionType == WEAPONPROG_TYPES
+					&& weapon->weaponnum != progressivePistolNumbers[progressivePistol]
+					&& weapon->weaponnum != progressiveSMGNumbers[progressiveSMG]
+					&& weapon->weaponnum != progressiveRifleNumbers[progressiveRifle]
+					&& weapon->weaponnum != progressiveExplosiveNumbers[progressiveExplosive]
+					&& weapon->weaponnum != progressiveOtherWeaponNumbers[progressiveOtherWeapon]))
+					&& weapon->weaponnum <= WEAPON_PSYCHOSISGUN
+					&& !g_Vars.normmplayerisrunning) {
+
+				if ((g_Vars.stagenum == STAGE_INVESTIGATION
+						&& weapon->weaponnum == WEAPON_K7AVENGER)
+						|| (g_Vars.stagenum == STAGE_CHICAGO
+						&& weapon->weaponnum == WEAPON_REMOTEMINE)
+						|| (g_Vars.stagenum == STAGE_AIRFORCEONE
+						&& weapon->weaponnum == WEAPON_TIMEDMINE)
+						|| (g_Vars.stagenum == STAGE_DEFENSE
+						&& (weapon->weaponnum == WEAPON_RCP120
+						|| weapon->weaponnum == WEAPON_DEVASTATOR))) {
+					// Allow these weapons in your inventory
+					count = invGiveWeaponsByProp(prop);
+					given = true;
+				}
+				else if (weapon->weaponnum == WEAPON_LAPTOPGUN
+						&& (progressiveWeaponNumbers[progressiveWeapon] == WEAPON_TIMEDMINE
+						|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_PROXIMITYMINE
+						|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_GRENADE
+						|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_REMOTEMINE
+						|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_NBOMB)) {
+					// Give Laptop Gun if on anything that is not Mines, Grenade, and N-Bomb
+					count = invGiveWeaponsByProp(prop);
+					given = true;
+				}
+				else {
+					// Don't give weapon in Prog. One Gun and Prog. Types
+					count = 0;
+					given = true;
+				}
+			}
+			else if (obj->hidden & OBJHFLAG_HASTEXTOVERRIDE) {
 				if (weapon->weaponnum <= WEAPON_PSYCHOSISGUN) {
 					count = invGiveWeaponsByProp(prop);
 					given = true;
@@ -17500,6 +17698,11 @@ s32 propPickupByPlayer(struct prop *prop, bool showhudmsg)
 		{
 			if (unlockedWeapons[WEAPON_MPSHIELD] == 0) {
 				return TICKOP_NONE;
+			}
+
+			// Send shield pick up check
+			if (!g_Vars.normmplayerisrunning) {
+				collectPickupItem(g_MissionConfig.stageindex, obj->pad);
 			}
 
 			playerSetShieldFrac(((struct shieldobj *) prop->obj)->amount);
@@ -17831,91 +18034,6 @@ s32 objTestForPickup(struct prop *prop)
 		if (pickup) {
 			if (prop->obj->type == OBJTYPE_WEAPON) {
 				struct weaponobj *weapon = (struct weaponobj *) prop->obj;
-				if (weaponProgressionType == WEAPONPROG_ONEGUN && !g_Vars.normmplayerisrunning) {
-					if (weapon->weaponnum <= WEAPON_PSYCHOSISGUN 
-							&& g_Vars.stagenum != STAGE_CITRAINING) {
-
-						// Can't pickup K7 Avenger in any mission that's not Investigation
-						if (g_Vars.stagenum != STAGE_INVESTIGATION
-								&& weapon->weaponnum == WEAPON_K7AVENGER) {
-							return TICKOP_NONE;
-						}
-
-						// Can't pickup Remote Mine in any mission that's not Chicago
-						if (g_Vars.stagenum != STAGE_CHICAGO
-								&& weapon->weaponnum == WEAPON_REMOTEMINE) {
-							return TICKOP_NONE;
-						}
-
-						// Can't pickup RC-P120 or Devastator in any mission that's not Defense
-						if (g_Vars.stagenum != STAGE_DEFENSE
-								&& (weapon->weaponnum == WEAPON_RCP120
-								|| weapon->weaponnum == WEAPON_DEVASTATOR)) {
-							return TICKOP_NONE;
-						}
-
-						// Can't pickup weapons that are not the current progressive weapon
-						if (weapon->weaponnum != WEAPON_K7AVENGER
-								&& weapon->weaponnum != WEAPON_REMOTEMINE
-								&& weapon->weaponnum != WEAPON_RCP120
-								&& weapon->weaponnum != WEAPON_DEVASTATOR
-								&& weapon->weaponnum != WEAPON_LAPTOPGUN
-								&& weapon->weaponnum != progressiveWeaponNumbers[progressiveWeapon]) {
-							return TICKOP_NONE;
-						}
-
-						// Can't pick up Laptop Gun if on anything that is not Mines, Grenade, and N-Bomb
-						if (weapon->weaponnum == WEAPON_LAPTOPGUN
-								&& progressiveWeaponNumbers[progressiveWeapon] != WEAPON_TIMEDMINE
-								&& progressiveWeaponNumbers[progressiveWeapon] != WEAPON_PROXIMITYMINE
-								&& progressiveWeaponNumbers[progressiveWeapon] != WEAPON_GRENADE
-								&& progressiveWeaponNumbers[progressiveWeapon] != WEAPON_REMOTEMINE
-								&& progressiveWeaponNumbers[progressiveWeapon] != WEAPON_NBOMB) {
-							return TICKOP_NONE;
-						}
-					}
-				}
-				else if (weaponProgressionType == WEAPONPROG_TYPES && !g_Vars.normmplayerisrunning) {
-					if (weapon->weaponnum <= WEAPON_PSYCHOSISGUN 
-							&& g_Vars.stagenum != STAGE_CITRAINING) {
-
-						// Can't pick up K7 Avenger on other missions if not in inventory
-						if (g_Vars.stagenum != STAGE_INVESTIGATION
-								&& weapon->weaponnum == WEAPON_K7AVENGER
-								&& !invHasSingleWeaponIncAllGuns(weapon->weaponnum)) {
-							return TICKOP_NONE;
-						}
-
-						// Can't pick up Remote Mine on other missions if not in inventory
-						if (g_Vars.stagenum != STAGE_CHICAGO
-								&& weapon->weaponnum == WEAPON_REMOTEMINE
-								&& !invHasSingleWeaponIncAllGuns(weapon->weaponnum)) {
-							return TICKOP_NONE;
-						}
-
-						// Can't pick up RC-P120 on other missions if not in inventory
-						if (g_Vars.stagenum != STAGE_DEFENSE
-								&& (weapon->weaponnum == WEAPON_RCP120
-									|| weapon->weaponnum == WEAPON_DEVASTATOR)
-								&& !invHasSingleWeaponIncAllGuns(weapon->weaponnum)) {
-							return TICKOP_NONE;
-						}
-
-						// Can't pick up weapons that are not the current progressive weapon type
-						if (weapon->weaponnum != WEAPON_K7AVENGER
-								&& weapon->weaponnum != WEAPON_REMOTEMINE
-								&& weapon->weaponnum != WEAPON_RCP120
-								&& weapon->weaponnum != WEAPON_DEVASTATOR
-								&& weapon->weaponnum != progressivePistolNumbers[progressivePistol]
-								&& weapon->weaponnum != progressiveSMGNumbers[progressiveSMG]
-								&& weapon->weaponnum != progressiveRifleNumbers[progressiveRifle]
-								&& weapon->weaponnum != progressiveExplosiveNumbers[progressiveExplosive]
-								&& weapon->weaponnum != progressiveOtherWeaponNumbers[progressiveOtherWeapon]) {
-							return TICKOP_NONE;
-						}
-					}
-				}
-
 				if (unlockedWeapons[weapon->weaponnum] == 0) {
 					return TICKOP_NONE;
 				}

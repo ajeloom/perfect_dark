@@ -61,6 +61,7 @@
 #define AP_COLLECT_ALL_STARS_LOCATION 498
 #define AP_MPFEATURE_OFFSET 499
 #define AP_ALTERNATE_EXIT_OFFSET 579
+#define AP_PICKUPSANITY_OFFSET 2000
 
 extern int lastReceivedItemIndex;
 
@@ -107,6 +108,7 @@ extern int hasWeaponCheats;
 extern int hasNPCs;
 extern int hasMPUnlocks;
 extern int hasAlternateExits;
+extern int hasPickupsanity;
 
 extern bool showLocationName;
 
@@ -380,6 +382,7 @@ void resetAP(int restartGame)
     skedarRequirements = 0;
 
     hasNPCs = 0;
+    hasPickupsanity = 0;
 
     if (restartGame) {
         titleSetNextStage(STAGE_CITRAINING);
@@ -494,6 +497,27 @@ void collectAlternateExitItem(u8 missionIndex, u8 difficulty, u8 exitNum)
 
     uint64_t location = (missionIndex * 6) + (difficulty * 2) + AP_ALTERNATE_EXIT_OFFSET + exitNum;
 	if (hasAlternateExits == 1) {
+		InternalCollectAPItem(location);
+	}
+}
+
+void collectPickupItem(u8 missionIndex, u32 padnum)
+{
+    uint64_t location = 0;
+
+    printf("padnum: %d\n", padnum);
+
+    if ((missionIndex == SOLOSTAGEINDEX_VILLA && padnum >= 8000)
+            || (missionIndex == SOLOSTAGEINDEX_CHICAGO && padnum == 10000)
+            || (missionIndex == SOLOSTAGEINDEX_G5BUILDING && padnum == 12000)
+            || (missionIndex == SOLOSTAGEINDEX_DEFENSE && padnum == 30000)) {
+        location = padnum;
+    }
+    else {
+        location = (2000 * missionIndex) + padnum + AP_PICKUPSANITY_OFFSET;
+    }
+
+	if (hasPickupsanity == 1 && location != 0) {
 		InternalCollectAPItem(location);
 	}
 }
