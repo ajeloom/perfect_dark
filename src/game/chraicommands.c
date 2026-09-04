@@ -4307,7 +4307,7 @@ bool aiTryEquipWeapon(void)
 				prop = chrGiveWeapon(g_Vars.chrdata, model, cmd[4], flags);
 				break;
 			}
-		} else if (randomEnemyWeapons) {
+		} else if (randomEnemyWeapons && g_Vars.stagenum != STAGE_CITRAINING) {
 			// Randomize the gun an enemy pulls out
 			u32 randomWeapon = (rngRandom() % 33) + 2;
 
