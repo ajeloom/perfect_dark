@@ -888,7 +888,8 @@ bool challengeIsFeatureUnlocked(s32 featurenum)
 		return true;
 	}
 
-	return (g_MpFeaturesUnlocked[featurenum] & 1) != 0;
+	// return (g_MpFeaturesUnlocked[featurenum] & 1) != 0;
+	return true;
 }
 
 bool challengeIsFeatureUnlockedByPlayer(u32 numplayers, s32 featurenum)
