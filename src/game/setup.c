@@ -44,6 +44,8 @@ s32 chrPadnums[100];
 
 extern bool randomEnemyWeapons;
 
+extern int hasPickupsanity;
+
 s32 g_SetupCurMpLocation;
 
 struct tvscreen var80061a80 = {
@@ -746,6 +748,35 @@ void setupPlaceWeapon(struct weaponobj *weapon, s32 cmdindex)
 					case WEAPON_TIMEDMINE:
 					case WEAPON_PROXIMITYMINE:
 					case WEAPON_REMOTEMINE:
+						// Don't randomize certain enemy's weapons for pickupsanity
+						if (hasPickupsanity
+								&& ((g_Vars.stagenum == STAGE_DEFECTION
+									&& chr->chrnum == 0x0021)
+								|| (g_Vars.stagenum == STAGE_VILLA
+									&& chr->chrnum == 0x55)
+								|| (g_Vars.stagenum == STAGE_G5BUILDING
+									&& chr->chrnum == 0x00)
+								|| (g_Vars.stagenum == STAGE_INFILTRATION
+									&& chr->chrnum == 0x0035)
+								|| (g_Vars.stagenum == STAGE_ESCAPE
+									&& chr->chrnum == 0x0023)
+								|| (g_Vars.stagenum == STAGE_ESCAPE
+									&& chr->chrnum == 0x0024)
+								|| (g_Vars.stagenum == STAGE_AIRBASE
+									&& chr->chrnum == 0x0012)
+								|| (g_Vars.stagenum == STAGE_PELAGIC
+									&& chr->chrnum == 0x0034)
+								|| (g_Vars.stagenum == STAGE_DEEPSEA
+									&& chr->chrnum == 0x3f)
+								|| (g_Vars.stagenum == STAGE_ATTACKSHIP
+									&& chr->chrnum == 0x002d)
+								|| (g_Vars.stagenum == STAGE_MBR
+									&& chr->chrnum == 0x000f)
+								|| (g_Vars.stagenum == STAGE_MAIANSOS
+									&& chr->chrnum == 0x000b))) {
+							break;
+						}
+
 						weapon->weaponnum = randomWeapon;
 						weapon->base.modelnum = playermgrGetModelOfWeapon(randomWeapon);
 						weapon->base.extrascale = 256;
