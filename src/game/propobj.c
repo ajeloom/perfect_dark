@@ -82,6 +82,7 @@
 extern int smallJoTrap;
 extern int perfectDarknessTrap;
 
+extern int hasPickupsanity;
 int numberOfAmmoCratesPickedUp = 0;
 
 void rng2SetSeed(u32 seed);
@@ -17923,7 +17924,9 @@ s32 objTestForPickup(struct prop *prop)
 	} else if (obj->type == OBJTYPE_AMMOCRATE) {
 		struct ammocrateobj *crate = (struct ammocrateobj *) prop->obj;
 
-		if (bgunGetReservedAmmoCount(crate->ammotype) >= bgunGetCapacityByAmmotype(crate->ammotype)) {
+		// Only ignore picking up ammo crate if Pickupsanity is disabled
+		if (bgunGetReservedAmmoCount(crate->ammotype) >= bgunGetCapacityByAmmotype(crate->ammotype)
+				&& !hasPickupsanity) {
 			if ((crate->ammotype != AMMOTYPE_GRENADE || invHasSingleWeaponExcAllGuns(WEAPON_GRENADE))
 					&& (crate->ammotype != AMMOTYPE_CLOAK || invHasSingleWeaponExcAllGuns(WEAPON_CLOAKINGDEVICE))
 					&& (crate->ammotype != AMMOTYPE_BOOST || invHasSingleWeaponExcAllGuns(WEAPON_COMBATBOOST))
@@ -17974,7 +17977,8 @@ s32 objTestForPickup(struct prop *prop)
 		struct shieldobj *shield = (struct shieldobj *) prop->obj;
 		bool ignore = false;
 
-		if (shield->amount <= playerGetShieldFrac()) {
+		// Only ignore picking up shield when Pickupsanity is disabled
+		if (shield->amount <= playerGetShieldFrac() && !hasPickupsanity) {
 			ignore = true;
 		} else if (g_Vars.normmplayerisrunning
 				&& g_MpSetup.scenario == MPSCENARIO_HOLDTHEBRIEFCASE
