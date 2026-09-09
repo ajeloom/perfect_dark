@@ -1948,6 +1948,16 @@ bool aiIfChrInRoom(void)
 
 	if ((cmd[3] == 0 && room >= 0 && chr && chr->prop && chr->prop->rooms[0] == room)
 			|| (cmd[3] == 1 && chr && chr->prop && chr->prop->rooms[0] == g_Vars.chrdata->roomtosearch)) {
+		// Set the exit you take for G5 Building
+		if (stageGetIndex(g_Vars.stagenum) == STAGEINDEX_G5BUILDING) {
+			if (pad_id == 0x0060) {
+				exitNum = 0;
+			}
+			else if (pad_id == 0x0061) {
+				exitNum = 1;
+			}
+		}
+
 		g_Vars.aioffset = chraiGoToLabel(g_Vars.ailist, g_Vars.aioffset, cmd[6]);
 		return false;
 	}

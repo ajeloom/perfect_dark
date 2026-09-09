@@ -488,15 +488,18 @@ void collectMPFeatureItem(u32 mpFeature)
 
 void collectAlternateExitItem(u8 missionIndex, u8 difficulty, u8 exitNum)
 {
-    if (missionIndex == SOLOSTAGEINDEX_ESCAPE) {
+    if (missionIndex == SOLOSTAGEINDEX_G5BUILDING) {
         missionIndex = 0;
     }
-    else if (missionIndex == SOLOSTAGEINDEX_AIRBASE) {
+    else if (missionIndex == SOLOSTAGEINDEX_ESCAPE) {
         missionIndex = 1;
+    }
+    else if (missionIndex == SOLOSTAGEINDEX_AIRBASE) {
+        missionIndex = 2;
     }
 
     uint64_t location = (missionIndex * 6) + (difficulty * 2) + AP_ALTERNATE_EXIT_OFFSET + exitNum;
-	if (hasAlternateExits == 1) {
+	if (hasAlternateExits >= 1) {
 		InternalCollectAPItem(location);
 	}
 }

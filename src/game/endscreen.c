@@ -1469,7 +1469,8 @@ void endscreenPrepare(void)
 				collectMissionItem(g_MissionConfig.stageindex, g_MissionConfig.difficulty);
 			}
 
-			if (g_MissionConfig.stageindex == SOLOSTAGEINDEX_ESCAPE
+			if (g_MissionConfig.stageindex == SOLOSTAGEINDEX_G5BUILDING
+					|| g_MissionConfig.stageindex == SOLOSTAGEINDEX_ESCAPE
 					|| g_MissionConfig.stageindex == SOLOSTAGEINDEX_AIRBASE) {
 				collectAlternateExitItem(g_MissionConfig.stageindex, g_MissionConfig.difficulty, exitNum);
 			}
