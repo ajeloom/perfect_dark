@@ -1575,11 +1575,16 @@ void InternalCollectAPItem(uint64_t location)
     if (!ap) {
         return;
     }
-    
-    std::list<int64_t> check;
-    check.push_back(location);
-    ap->LocationScouts(check);
-    ap->LocationChecks(check);
+
+    std::set<int64_t> checkedLocations = ap->get_checked_locations();
+    std::set<int64_t> missingLocations = ap->get_missing_locations();
+    if (checkedLocations.contains(location) 
+            || missingLocations.contains(location)) {
+        std::list<int64_t> check;
+        check.push_back(location);
+        ap->LocationScouts(check);
+        ap->LocationChecks(check);
+    }
 }
 
 void QueueItem(APClient::NetworkItem item) {
