@@ -17271,6 +17271,13 @@ s32 propPickupByPlayer(struct prop *prop, bool showhudmsg)
 			hudmsgCreateWithFlags(text, HUDMSGTYPE_DEFAULT, HUDMSGFLAG_ONLYIFALIVE | HUDMSGFLAG_ALLOWDUPES);
 		}
 
+		// Give key item pick up check
+		if (!g_Vars.normmplayerisrunning
+				&& g_Vars.stagenum == STAGE_ATTACKSHIP
+				&& obj->pad == 51) {
+			collectPickupItem(g_MissionConfig.stageindex, obj->pad);
+		}
+
 		result = TICKOP_GIVETOPLAYER;
 		break;
 	case OBJTYPE_AMMOCRATE:
@@ -17501,7 +17508,10 @@ s32 propPickupByPlayer(struct prop *prop, bool showhudmsg)
 						}
 						break;
 					case STAGE_CRASHSITE:
-						if (obj->pad == 262) {
+						if (obj->pad == 1) {
+							collectPickupItem(g_MissionConfig.stageindex, obj->pad);
+						}
+						else if (obj->pad == 262) {
 							collectPickupItem(g_MissionConfig.stageindex, obj->pad + 1);
 						}
 						break;
@@ -18071,6 +18081,12 @@ s32 objTestForPickup(struct prop *prop)
 						else if (g_MissionConfig.stageindex == SOLOSTAGEINDEX_AIRFORCEONE) {
 							// Air Force One Left Room Key Card
 							weaponnum = WEAPON_HAMMER;
+						}
+						break;
+					case 8:
+						if (g_MissionConfig.stageindex == SOLOSTAGEINDEX_ATTACKSHIP) {
+							// De Vries' Necklace
+							weaponnum = WEAPON_NECKLACE;
 						}
 						break;
 					case 16:

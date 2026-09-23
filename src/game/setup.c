@@ -768,6 +768,8 @@ void setupPlaceWeapon(struct weaponobj *weapon, s32 cmdindex)
 									&& chr->chrnum == 0x0024)
 								|| (g_Vars.stagenum == STAGE_AIRBASE
 									&& chr->chrnum == 0x0012)
+								|| (g_Vars.stagenum == STAGE_CRASHSITE
+									&& chr->chrnum == 1)
 								|| (g_Vars.stagenum == STAGE_PELAGIC
 									&& chr->chrnum == 0x0034)
 								|| (g_Vars.stagenum == STAGE_DEEPSEA
