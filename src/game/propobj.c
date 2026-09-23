@@ -17574,6 +17574,8 @@ s32 propPickupByPlayer(struct prop *prop, bool showhudmsg)
 						&& weapon->weaponnum == WEAPON_REMOTEMINE)
 						|| (g_Vars.stagenum == STAGE_AIRFORCEONE
 						&& weapon->weaponnum == WEAPON_TIMEDMINE)
+						|| (g_Vars.stagenum == STAGE_DEEPSEA
+						&& weapon->weaponnum == WEAPON_FARSIGHT)
 						|| (g_Vars.stagenum == STAGE_DEFENSE
 						&& (weapon->weaponnum == WEAPON_RCP120
 						|| weapon->weaponnum == WEAPON_DEVASTATOR))) {

@@ -786,7 +786,8 @@ void setupPlaceWeapon(struct weaponobj *weapon, s32 cmdindex)
 						weapon->base.extrascale = 256;
 						break;
 					case WEAPON_FARSIGHT:
-						if (g_Vars.stagenum != STAGE_DEEPSEA) {
+						if (g_Vars.stagenum != STAGE_DEEPSEA
+								|| lvGetDifficulty() < DIFF_PA) {
 							weapon->weaponnum = randomWeapon;
 							weapon->base.modelnum = playermgrGetModelOfWeapon(randomWeapon);
 							weapon->base.extrascale = 256;
