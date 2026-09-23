@@ -34,10 +34,14 @@
 #include "lib/str.h"
 #include "data.h"
 #include "types.h"
+#include "archipelago.h"
 
 extern struct cheat g_Cheats[];
 extern const s32 cheatCount;
 static char g_TimedCheatText[24];
+
+extern int hasAlternateExits;
+static char g_AltExitText[32];
 
 s16 warpPad = -1;
 
@@ -956,6 +960,83 @@ MenuItemHandlerResult menuhandlerShowTimeToBeat(s32 operation, struct menuitem *
 	return 0;
 }
 
+MenuItemHandlerResult menuhandlerShowExitCheck(s32 operation, struct menuitem *item, union handlerdata *data)
+{
+	if ((g_MissionConfig.stageindex == SOLOSTAGEINDEX_G5BUILDING
+			|| g_MissionConfig.stageindex == SOLOSTAGEINDEX_ESCAPE
+			|| g_MissionConfig.stageindex == SOLOSTAGEINDEX_AIRBASE)
+			&& hasAlternateExits >= 1) {
+		// Check if location exists
+		if (hasAlternateExits == 1) {
+			char exitName[20];
+			u8 missionIndex = 0;
+
+			if (g_MissionConfig.stageindex == SOLOSTAGEINDEX_G5BUILDING) {
+				missionIndex = 0;
+			}
+			else if (g_MissionConfig.stageindex == SOLOSTAGEINDEX_ESCAPE) {
+				missionIndex = 1;
+			}
+			else if (g_MissionConfig.stageindex == SOLOSTAGEINDEX_AIRBASE) {
+				missionIndex = 2;
+			}
+
+			int AP_ALTERNATE_EXIT_OFFSET = 579;
+			int location = (missionIndex * 6) + (g_MissionConfig.difficulty * 2) + AP_ALTERNATE_EXIT_OFFSET;
+			int exists = CheckIfLocationExists(location);
+			if (!exists) {
+				exists = CheckIfLocationExists(++location);
+				if (!exists) {
+					return 0;
+				}
+			}
+			
+			switch (location) {
+				case 579:
+				case 581:
+				case 583:
+					snprintf(exitName, sizeof(exitName), "Bottom Exit");
+					break;
+				case 580:
+				case 582:
+				case 584:
+					snprintf(exitName, sizeof(exitName), "Upper Exit");
+					break;
+				case 585:
+				case 587:
+				case 589:
+					snprintf(exitName, sizeof(exitName), "UFO Escape");
+					break;
+				case 586:
+				case 588:
+				case 590:
+					snprintf(exitName, sizeof(exitName), "Alternate Escape");
+					break;
+				case 591:
+				case 593:
+				case 595:
+					snprintf(exitName, sizeof(exitName), "Shuttle Exit");
+					break;
+				case 592:
+				case 594:
+				case 596:
+					snprintf(exitName, sizeof(exitName), "Ladder Exit");
+					break;
+			}
+
+			snprintf(g_AltExitText, sizeof(g_AltExitText), "Check Exit: %s\n", exitName);
+		}
+		if (hasAlternateExits == 2) {
+			snprintf(g_AltExitText, sizeof(g_AltExitText), "Check Exit: Both\n");
+		}
+	}
+	else {
+		snprintf(g_AltExitText, sizeof(g_AltExitText), "");
+	}
+	
+	return 0;
+}
+
 struct menuitem g_AcceptMissionMenuItems[] = {
 	{
 		MENUITEMTYPE_OBJECTIVES,
@@ -972,6 +1053,14 @@ struct menuitem g_AcceptMissionMenuItems[] = {
 		(uintptr_t)g_TimedCheatText,
 		0,
 		menuhandlerShowTimeToBeat,
+	},
+	{
+		MENUITEMTYPE_LABEL,
+		0,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)g_AltExitText,
+		0,
+		menuhandlerShowExitCheck,
 	},
 	{
 		MENUITEMTYPE_SELECTABLE,
