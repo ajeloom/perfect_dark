@@ -85,6 +85,7 @@ extern int hasWeaponCheats;
 extern int hasNPCs;
 extern int hasMPUnlocks;
 extern int hasAlternateExits;
+extern int hasPickupsanity;
 extern int deathLink;
 
 static char savedAddress[256];
@@ -1209,9 +1210,18 @@ const char *GetOption(struct menuitem *item)
 			option = hasMPUnlocks;
 			break;
 		case 20:
-			option = hasAlternateExits;
-			break;
+			switch (hasAlternateExits) {
+				case 0:
+					return "Disabled ";
+				case 1:
+					return "One ";
+				case 2:
+					return "All " ;
+			}
 		case 21:
+			option = hasPickupsanity;
+			break;
+		case 22:
 			option = deathLink;
 			break;
 	}
@@ -1236,7 +1246,7 @@ struct menuitem g_GameOptionsMenuItems[] = {
 		MENUITEMTYPE_SELECTABLE,
 		1,
 		MENUITEMFLAG_LITERAL_TEXT,
-		(uintptr_t)"Skedar Requirements:               \n",
+		(uintptr_t)"Skedar Requirements:                 \n",
 		(uintptr_t)&GetOption,
 		NULL,
 	},
@@ -1395,6 +1405,14 @@ struct menuitem g_GameOptionsMenuItems[] = {
 	{
 		MENUITEMTYPE_SELECTABLE,
 		21,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Pickupsanity:\n",
+		(uintptr_t)&GetOption,
+		NULL,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		22,
 		MENUITEMFLAG_LITERAL_TEXT,
 		(uintptr_t)"Death Link:\n",
 		(uintptr_t)&GetOption,
