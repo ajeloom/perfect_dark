@@ -699,7 +699,9 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
             return;
         }
 
-        if (itemID == AP_ITEM_BUDDY && g_Vars.stagenum != STAGE_CITRAINING) {
+        if (itemID == AP_ITEM_BUDDY 
+                && g_Vars.stagenum != STAGE_CITRAINING
+                && !g_Vars.normmplayerisrunning) {
             spawnBuddy();
             return;
         }
@@ -1225,12 +1227,6 @@ void spawnBuddy(void)
 
     setCurrentPlayerNum(0);
 
-    int ailistID = GAILIST_INIT_DEFAULT_BUDDY;
-
-    if (g_Vars.mplayerisrunning) {
-        ailistID = GAILIST_ALERTED;
-    }
-
     // If no buddy cheats are active, spawn Velvet
     if ((g_CheatsActiveBank0 & (
                     1 << CHEAT_PUGILIST
@@ -1242,21 +1238,21 @@ void spawnBuddy(void)
                     &g_Vars.currentplayer->prop->pos,
                     g_Vars.currentplayer->prop->rooms,
                     BADDEG2RAD(g_Vars.currentplayer->vv_theta / 2),
-                    ailistFindById(ailistID),
+                    ailistFindById(GAILIST_INIT_DEFAULT_BUDDY),
                     SPAWNFLAG_ALLOWONSCREEN);
         } else if (g_Vars.stagenum == STAGEINDEX_MBR) {
             prop = chrSpawnAtCoord(BODY_MRBLONDE, HEAD_MRBLONDE,
                     &g_Vars.currentplayer->prop->pos,
                     g_Vars.currentplayer->prop->rooms,
                     BADDEG2RAD(g_Vars.currentplayer->vv_theta),
-                    ailistFindById(ailistID),
+                    ailistFindById(GAILIST_INIT_DEFAULT_BUDDY),
                     SPAWNFLAG_ALLOWONSCREEN);
         } else {
             prop = chrSpawnAtCoord(BODY_DARK_COMBAT, HEAD_VD,
                     &g_Vars.currentplayer->prop->pos,
                     g_Vars.currentplayer->prop->rooms,
                     BADDEG2RAD(g_Vars.currentplayer->vv_theta / 2),
-                    ailistFindById(ailistID),
+                    ailistFindById(GAILIST_INIT_DEFAULT_BUDDY),
                     SPAWNFLAG_ALLOWONSCREEN);
         }
 
