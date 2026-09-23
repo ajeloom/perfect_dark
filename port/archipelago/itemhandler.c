@@ -592,10 +592,10 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
             setCurrentPlayerNum(i);
 
             if (showLocationName) {
-                sprintf(buffer, "Got %s from %s (%s)\n", itemname, sender, location);
+                sprintf(buffer, "%s found your %s (%s)\n", sender, itemname, location);
             }
             else {
-                sprintf(buffer, "Got %s from %s\n", itemname, sender);
+                sprintf(buffer, "%s found your %s\n", sender, itemname);
             }
             
             hudmsgCreate(buffer, HUDMSGTYPE_DEFAULT);
