@@ -12055,10 +12055,19 @@ void bgunTickGameplay(bool triggeron)
 			bgunGiveMaxAmmo(false);
 		}
 
-		// Give infinite ammo for one gun weapon progression
+		// Give infinite ammo for one gun weapon progression on certain weapons
 		if (weaponProgressionType == WEAPONPROG_ONEGUN 
 				&& g_Vars.stagenum != STAGE_CITRAINING
-				&& !g_Vars.normmplayerisrunning) {
+				&& !g_Vars.normmplayerisrunning
+				&& (progressiveWeaponNumbers[progressiveWeapon] == WEAPON_COMBATKNIFE
+				|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_TIMEDMINE
+				|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_PROXIMITYMINE
+				|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_GRENADE
+				|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_SLAYER
+				|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_REMOTEMINE
+				|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_NBOMB
+				|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_ROCKETLAUNCHER
+				|| progressiveWeaponNumbers[progressiveWeapon] == WEAPON_DEVASTATOR)) {
 			bgunGiveAmmoForProgressiveWeapons();
 		}
 	}
@@ -12354,7 +12363,7 @@ void bgunGiveAmmoForProgressiveWeapons(void)
 					bgunSetAmmoQuantity(i, g_AmmoTypes[i].capacity);
 				}
 				else {
-					bgunSetAmmoQuantity(i, g_AmmoTypes[i].capacity / 2);
+					bgunSetAmmoQuantity(i, g_AmmoTypes[i].capacity / 3);
 				}
 			}
 		}
@@ -12384,7 +12393,7 @@ void bgunGiveAmmoForProgressiveWeapons(void)
 					bgunSetAmmoQuantity(i, g_AmmoTypes[i].capacity);
 				}
 				else {
-					bgunSetAmmoQuantity(i, g_AmmoTypes[i].capacity * 0.75);
+					bgunSetAmmoQuantity(i, g_AmmoTypes[i].capacity / 3);
 				}
 			}
 
@@ -12436,8 +12445,19 @@ void bgunGiveAmmoForProgressiveWeapons(void)
 		s32 priammotype = bgunGetAmmoTypeForWeapon(progressiveWeaponNumbers[progressiveWeapon], FUNC_PRIMARY);
 		s32 secammotype = bgunGetAmmoTypeForWeapon(progressiveWeaponNumbers[progressiveWeapon], FUNC_SECONDARY);
 
-		bgunSetAmmoQuantity(priammotype, g_AmmoTypes[priammotype].capacity / 2);
-		bgunSetAmmoQuantity(secammotype, g_AmmoTypes[secammotype].capacity / 2);
+
+		if (priammotype == AMMOTYPE_CROSSBOW
+				|| priammotype == AMMOTYPE_SHOTGUN
+				|| priammotype == AMMOTYPE_REAPER
+				|| g_Vars.stagenum == STAGE_PELAGIC
+				|| g_Vars.stagenum == STAGE_ATTACKSHIP) {
+			bgunSetAmmoQuantity(priammotype, g_AmmoTypes[priammotype].capacity);
+			bgunSetAmmoQuantity(secammotype, g_AmmoTypes[secammotype].capacity);
+		}
+		else {
+			bgunSetAmmoQuantity(priammotype, g_AmmoTypes[priammotype].capacity * 0.75);
+			bgunSetAmmoQuantity(secammotype, g_AmmoTypes[secammotype].capacity * 0.75);
+		}
 	}
 }
 
