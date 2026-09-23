@@ -1229,9 +1229,22 @@ void invRemoveLockedWeapons(void)
 	s32 i;
 
 	if (weaponProgressionType == WEAPONPROG_DISABLED
-			|| weaponProgressionType == WEAPONPROG_VANILLA_ALLGUNS
-			|| weaponProgressionType == WEAPONPROG_ALLGUNS) {
+			|| weaponProgressionType == WEAPONPROG_VANILLA_ALLGUNS) {
 		for (i = WEAPON_FALCON2; i <= WEAPON_SUICIDEPILL; i++) {
+			if (unlockedWeapons[i] == 0) {
+				invRemoveItemByNum(i);
+			}
+		}
+	}
+	else if (weaponProgressionType == WEAPONPROG_ALLGUNS) {
+		for (i = 1; i < ARRAYCOUNT(progressiveWeaponNumbers); i++) {
+			if (unlockedWeapons[progressiveWeaponNumbers[i]] == 0
+					|| i > progressiveWeapon) {
+				invRemoveItemByNum(progressiveWeaponNumbers[i]);
+			}
+		}
+
+		for (i = WEAPON_NIGHTVISION; i <= WEAPON_SUICIDEPILL; i++) {
 			if (unlockedWeapons[i] == 0) {
 				invRemoveItemByNum(i);
 			}
