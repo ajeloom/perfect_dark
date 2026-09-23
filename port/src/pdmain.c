@@ -585,11 +585,16 @@ void mainTick(void)
 		memaPrint();
 		profileSetMarker(PROFILE_MAINTICK_END);
 
-		if (failedToConnectTotal < 3) {
-			PollServer();
+		if (g_Vars.stagenum == STAGE_CITRAINING) {
+			if (failedToConnectTotal < 3) {
+				PollServer();
+			}
+			else {
+				DisconnectAP(true);
+			}
 		}
 		else {
-			DisconnectAP(true);
+			PollServer();
 		}
 
 		if (apTextTimer < apTextSetTime) {
