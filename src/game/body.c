@@ -424,14 +424,12 @@ void bodyAllocateChr(s32 stagenum, struct packedchr *packed, s32 cmdindex)
 		case PAD_ELD_00DC: // Villa
 			if (g_Vars.stagenum == STAGE_VILLA
 					&& unlockedCharacters[CHARACTER_CARRINGTON] == 0) {
-				// printf("Villa: deleting Carrington\n");
 				return;
 			}
 			break;
 		case PAD_IMP_0142: // CI Defense
 			if (g_Vars.stagenum == STAGE_DEFENSE
 					&& unlockedCharacters[CHARACTER_CARRINGTON] == 0) {
-				// printf("CI Defense: deleting Carrington\n");
 				return;
 			}
 			break;

@@ -528,8 +528,6 @@ void collectPickupItem(u8 missionIndex, u32 padnum)
 {
     uint64_t location = 0;
 
-    printf("padnum: %d\n", padnum);
-
     if ((missionIndex == SOLOSTAGEINDEX_VILLA && padnum >= 8000)
             || (missionIndex == SOLOSTAGEINDEX_CHICAGO && padnum == 10000)
             || (missionIndex == SOLOSTAGEINDEX_G5BUILDING && padnum == 12000)
