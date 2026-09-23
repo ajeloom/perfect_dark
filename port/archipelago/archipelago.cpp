@@ -31,6 +31,9 @@ char* clientVersion = "0.5.0";
 std::string URI;
 std::string slotName;
 std::string password;
+char status[32] = "Not connected\n";
+
+char buffer[200];
 
 bool error = false;
 bool connected = false;
@@ -1058,10 +1061,10 @@ std::map<int, std::string> locationNames = {
     {38919, "Maian SOS: Pick up Psychosis Gun on the desk near the start of the mission"},
 };
 
-void AP_Init()
+void APInitConsole()
 {
     AllocConsole();
-	SetConsoleTitleA("Perfect Dark - Archipelago Console");
+    SetConsoleTitleA("Perfect Dark - Archipelago Console");
 
     FILE *fp;
     freopen("CONOUT$", "w", stdout);
@@ -1077,7 +1080,7 @@ void AP_Init()
     CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)InputCommand, NULL, 0, NULL);
 }
 
-void AP_Close() {
+void APCloseConsole() {
     FreeConsole();
 }
 
@@ -1128,27 +1131,13 @@ VOID InputCommand()
 			printf("Missing parameter : Make sure to type '/connect {SERVER_IP}:{SERVER_PORT} {SLOT_NAME} [password:{PASSWORD}]\n");
 		}
         else if (line.find("/reconnect") == 0) {
-            URI = GetSavedAddress();
-            slotName = GetSavedSlotName();
-            password = GetSavedPassword();
-
-            Initialize();
+            ConnectAP();
 		}
         else if (line.find("/version") == 0) {
             printf("Version: %s\n", clientVersion);
 		}
         else if (line.find("/disconnect") == 0) {
-            if (ap) {
-                ap->reset();
-                delete ap;
-                ap = nullptr;
-
-                status = "Not connected\n";
-                resetAP(true);
-                system("cls");
-                printf("You are now disconnected\n");
-                PrintCommands();
-            }
+            DisconnectAP(false);
         }
     }
 }
@@ -1157,16 +1146,11 @@ bool Initialize() {
     // Generate a uuid
     std::string uuid = ap_get_uuid(UUID_FILE);
 
-    std::string uri = URI;
-    if (URI.find("localhost") == 0 && URI.find("://") == std::string::npos) {
-        uri = "ws://" + uri;
-    }
-
     if (ap != nullptr) {
         ap->reset();
     }
 
-    ap = new APClient(uuid, "Perfect Dark", uri);
+    ap = new APClient(uuid, "Perfect Dark", URI);
 
     ap->set_receive_own_locations(true);
 
@@ -1193,28 +1177,39 @@ bool Initialize() {
     ap->set_socket_connected_handler([&connected]() {
         // printf("socket connected\n");
         connected = true;
-        status = "Connected\n";
+        sprintf(status, "Connected\n");
         failedToConnectTotal = 0;
     });
+
+    sprintf(buffer, "Connecting to %s\n", GetServerAddress());
+    setAPConnectionText(buffer);
 
     // Called when connect or a ping failed - no action required, reconnect is automatic
     ap->set_socket_error_handler([&error](const std::string& msg) {
         printf("socket error: %s\n", msg.c_str());
         error = true;
-        status = "Not connected\n";
+        sprintf(status, "Not connected\n");
+        sprintf(buffer, "Socket Error. Reconnecting...\n");
+        setAPConnectionText(buffer);
         failedToConnectTotal++;
     });
 	
     // Called when the socket gets disconnected - no action required, reconnect is automatic
     ap->set_socket_disconnected_handler([]() {
         printf("socket disconnected\n");
-        status = "Disconnected\n";
+        sprintf(status, "Not connected\n");
+        failedToConnectTotal++;
+        sprintf(buffer, "Disconnected from server. Reconnecting...\n");
+        setAPConnectionText(buffer);
     });
 
     // Called as reply to ConnectSlot when successful. argument is slot data.
 	ap->set_slot_connected_handler([](const json& data) {
         ap->StatusUpdate(APClient::ClientStatus::PLAYING);
         printf("Connected and ready to go as %s\n", ap->get_player_alias(ap->get_player_number()).c_str());
+
+        sprintf(buffer, "Joined %s as %s\n", GetServerAddress(), GetSlotName());
+        setAPConnectionText(buffer);
 
         SaveLoginInfo();
 
@@ -1406,12 +1401,14 @@ bool Initialize() {
             printf(" %s", error.c_str());
         }
         printf("\n");
-        status = "Not connected\n";
+        sprintf(status, "Not connected\n");
+        sprintf(buffer, "Slot refused\n");
+        setAPConnectionText(buffer);
 	});
     
     ap->set_slot_disconnected_handler([]() {
 		printf("Slot disconnected\n");
-        status = "Disconnected\n";
+        sprintf(status, "Not connected\n");
 	});
 
     // Called when the server sent room info. send ConnectSlot from this callback
@@ -1509,6 +1506,9 @@ bool Initialize() {
                         
                         printf("Received Death Link\n");
                         pendingDeathLink = true;
+
+                        sprintf(buffer, "Received Death Link\n");
+                        setAPConnectionText(buffer);
 					}
 				}
 				else {
@@ -1560,7 +1560,31 @@ void Message(std::string message) {
 }
 
 int IsConnected() {
+    if (!ap) {
+        return false;
+    }
+
 	return ap && ap->get_state() == APClient::State::SLOT_CONNECTED;
+}
+
+int IsDisconnected() {
+    if (!ap) {
+        return true;
+    }
+
+	return ap && ap->get_state() == APClient::State::DISCONNECTED;
+}
+
+int IsConnecting() {
+    if (!ap) {
+        return false;
+    }
+
+    if (ap->get_state() < APClient::State::SOCKET_CONNECTED) {
+        return true;
+    }
+
+    return false;
 }
 
 void PollServer() {
@@ -1625,24 +1649,39 @@ char SendDeathLink()
     return 1;
 }
 
-const char *GetServerAddress()
+void SetServerAddress(char *address)
 {
-    return URI.c_str();
+    URI = address;
 }
 
-const char *GetSlotName()
+void SetSlotName(char *name)
 {
-    return slotName.c_str();
+    slotName = name;
 }
 
-const char *GetPassword()
+void SetPassword(char *newPassword)
 {
-    return password.c_str();
+    password = newPassword;
 }
 
-const char *GetStatus()
+char *GetServerAddress()
 {
-    return status.c_str();
+    return URI.data();
+}
+
+char *GetSlotName()
+{
+    return slotName.data();
+}
+
+char *GetPassword()
+{
+    return password.data();
+}
+
+char *GetStatus()
+{
+    return status;
 }
 
 void PrintCommands()
@@ -1669,18 +1708,60 @@ void PrintCommands()
     }
 }
 
-void DisconnectAP()
+void ConnectAP()
+{
+    if (URI[0] != '\0' && slotName[0] != '\0') {
+        Initialize();
+    }
+    else {
+        // Connect using last connected room
+        if (GetSavedAddress()[0] != '\0' 
+                && GetSavedSlotName()[0] != '\0') {
+            URI = GetSavedAddress();
+            slotName = GetSavedSlotName();
+            password = GetSavedPassword();
+            Initialize();
+        }
+    }
+}
+
+void DisconnectAP(bool joining)
 {
     if (ap) {
-        ap->reset();
         delete ap;
         ap = nullptr;
 
-        status = "Not connected\n";
+        sprintf(status, "Not connected\n");
         resetAP(false);
-        printf("--------------------------------------------------------------------------------------------------\n");
-        printf("Failed to join room.\n");
-
         failedToConnectTotal = 0;
+
+        if (joining) {
+            printf("--------------------------------------------------------------------------------------------------\n");
+            printf("Failed to join room.\n");
+            sprintf(buffer, "Failed to connect to %s\n", GetServerAddress());
+            setAPConnectionText(buffer);
+        }
+        else {
+            printf("--------------------------------------------------------------------------------------------------\n");
+            printf("Disconnected from room.\n");
+
+            sprintf(buffer, "Disconnected from server\n");
+            setAPConnectionText(buffer);
+        }
+    }
+}
+
+int CheckIfLocationExists(int location)
+{
+    if (ap) {
+        std::set<int64_t> checkedLocations = ap->get_checked_locations();
+        std::set<int64_t> missingLocations = ap->get_missing_locations();
+
+        if (checkedLocations.contains(location) 
+                || missingLocations.contains(location)) {
+            return true;
+        }
+
+        return false;
     }
 }

@@ -1424,7 +1424,7 @@ char inputGetLastTextChar(void)
 
 static inline s32 filterChar(const char ch)
 {
-	return isalnum(ch) || ch == ' ' || ch == '?' || ch == '!' || ch == '.';
+	return isalnum(ch) || ch == ' ' || ch == '?' || ch == '!' || ch == '.' || ch == ':' || ch == '-' || ch == '/';
 }
 
 s32 inputTextHandler(char *out, const u32 outSize, s32 *curCol, s32 oskCharsOnly)

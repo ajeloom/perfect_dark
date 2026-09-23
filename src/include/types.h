@@ -3295,7 +3295,7 @@ struct menuitemdata_dropdown {
 };
 
 struct menuitemdata_keyboard {
-	char string[MPSETUP_MAXNAME+1];
+	char string[25+1];
 	s8 col;
 	s8 row;
 	u8 capslock : 1;      // Pressed A on caps button

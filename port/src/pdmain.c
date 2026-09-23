@@ -77,6 +77,9 @@
 
 extern int failedToConnectTotal;
 
+extern u16 apTextTimer;
+extern u16 apTextSetTime;
+
 extern u8 *g_MempHeap;
 extern u32 g_MempHeapSize;
 
@@ -586,7 +589,11 @@ void mainTick(void)
 			PollServer();
 		}
 		else {
-			DisconnectAP();
+			DisconnectAP(true);
+		}
+
+		if (apTextTimer < apTextSetTime) {
+			apTextTimer++;
 		}
 	}
 }

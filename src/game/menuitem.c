@@ -29,6 +29,8 @@
 #define MENU_KEYBOARD_ROWS 5
 #endif
 
+extern bool showAPKeyboard;
+
 u8 g_MpSelectedPlayersForStats[MAX_PLAYERS];
 
 #if VERSION >= VERSION_NTSC_1_0
@@ -47,6 +49,14 @@ u8 g_KeyboardKeys[5][10] = {
 	{ 'A','B','C','D','E','F','G','H','I','J' },
 	{ 'K','L','M','N','O','P','Q','R','S','T' },
 	{ 'U','V','W','X','Y','Z',' ','?','!','.' },
+	{ '1','2','1','2','1','2','3','1','2','3' },
+};
+
+u8 g_APKeyboardKeys[5][10] = {
+	{ '0','1','2','3','4','5','6','7','8','9' },
+	{ 'A','B','C','D','E','F','G','H','I','J' },
+	{ 'K','L','M','N','O','P','Q','R','S','T' },
+	{ 'U','V','W','X','Y','Z',' ','/',':','.' },
 	{ '1','2','1','2','1','2','3','1','2','3' },
 };
 
@@ -1346,7 +1356,12 @@ Gfx *menuitemKeyboardRender(Gfx *gdl, struct menurendercontext *context)
 #endif
 			} else {
 				// Alpha-numeric cell
-				label[0] = g_KeyboardKeys[row][col];
+				if (showAPKeyboard) {
+					label[0] = g_APKeyboardKeys[row][col];
+				}
+				else {
+					label[0] = g_KeyboardKeys[row][col];
+				}
 
 				if (!data->capseffective && label[0] >= 'A' && label[0] <= 'Z') {
 					// Make lowercase
@@ -1514,6 +1529,10 @@ bool menuitemKeyboardTick(struct menuitem *item, struct menuinputs *inputs, u32 
 			delete = true;
 		}
 
+		if (inputs->back) {
+			showAPKeyboard = false;
+		}
+
 		if (inputs->start) {
 			if (item->handler && !menuitemKeyboardIsStringEmptyOrSpaces(kb->string)) {
 				menuPlaySound(MENUSOUND_SELECT);
@@ -1596,6 +1615,8 @@ bool menuitemKeyboardTick(struct menuitem *item, struct menuinputs *inputs, u32 
 					if (kb->col == 5 || !menuitemKeyboardIsStringEmptyOrSpaces(kb->string)) {
 						menuPopDialog();
 
+						showAPKeyboard = false;
+
 						if (ok) {
 							item->handler(MENUOP_SET, item, &handlerdata);
 							menuPlaySound(MENUSOUND_SELECT);
@@ -1632,7 +1653,14 @@ bool menuitemKeyboardTick(struct menuitem *item, struct menuinputs *inputs, u32 
 
 					while (!appended) {
 						if (kb->string[i] == '\0') {
-							u8 key = g_KeyboardKeys[kb->row][kb->col];
+							u8 key;
+							if (showAPKeyboard) {
+								key = g_APKeyboardKeys[kb->row][kb->col];
+							}
+							else {
+								key = g_KeyboardKeys[kb->row][kb->col];
+							}
+
 							appended = true;
 
 							if (kb->capseffective == 0 && key >= 'A' && key <= 'Z') {

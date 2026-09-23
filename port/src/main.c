@@ -91,7 +91,7 @@ static void cleanup(void)
 {
 	sysLogPrintf(LOG_NOTE, "shutdown");
 	APConfigSave("$S/ap.ini");
-	AP_Close();
+	APCloseConsole();
 	inputSaveBinds();
 	configSave(CONFIG_PATH);
 	videoShutdown();
@@ -160,7 +160,7 @@ int main(int argc, const char **argv)
 		sysLogPrintf(LOG_NOTE, "player profile set to %d", g_FileAutoSelect);
 	}
 
-	AP_Init();
+	APInitConsole();
 	resetAP(false);
 
 	mainProc();

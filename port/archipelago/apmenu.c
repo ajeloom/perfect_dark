@@ -92,6 +92,17 @@ static char savedAddress[256];
 static char savedSlotName[256];
 static char savedPassword[256];
 
+extern char APText[200];
+extern u16 apTextTimer;
+extern u16 apTextSetTime;
+
+char *currentLoginSetting = NULL;
+int apMenuIndex = 0;
+
+static struct menudialogdef *currentDialog = NULL;
+
+bool showAPKeyboard = false;
+
 static MenuItemHandlerResult menuhandlerMissionChecklist(s32 operation, struct menuitem *item, union handlerdata *data)
 {
 	switch (operation) {
@@ -1025,30 +1036,182 @@ struct menudialogdef g_ChallengeChecklistMenuDialog = {
 	NULL,
 };
 
+char *loginSettingName(struct menuitem *item)
+{
+	switch (apMenuIndex) {
+		case 0:
+			sprintf(g_StringPointer, "Address\n");
+			break;
+		case 1:
+			sprintf(g_StringPointer, "Slot Name\n");
+			break;
+		case 2:
+			sprintf(g_StringPointer, "Password\n");
+			break;
+	}
+
+	return g_StringPointer;
+}
+
+MenuItemHandlerResult menuhandlerKeyboard(s32 operation, struct menuitem *item, union handlerdata *data)
+{
+	char *name = data->keyboard.string;
+
+	switch (operation) {
+	case MENUOP_GETTEXT:
+		if (currentLoginSetting != NULL) {
+			strcpy(name, currentLoginSetting);
+		}
+		break;
+	case MENUOP_SETTEXT:
+		if (currentLoginSetting != NULL) {
+			strcpy(currentLoginSetting, name);
+
+			switch (apMenuIndex) {
+				case 0:
+					SetServerAddress(name);
+					break;
+				case 1:
+					SetSlotName(name);
+					break;
+				case 2:
+					SetPassword(name);
+					break;
+			}
+		}
+		break;
+	}
+
+	return 0;
+}
+
+struct menuitem g_LoginSettingMenuItems[] = {
+	{
+		MENUITEMTYPE_KEYBOARD,
+		25,
+		0,
+		0,
+		1,
+		menuhandlerKeyboard,
+	},
+	{ MENUITEMTYPE_END },
+};
+
+struct menudialogdef g_LoginSettingMenuDialog = {
+	MENUDIALOGTYPE_DEFAULT,
+	(uintptr_t)&loginSettingName,
+	g_LoginSettingMenuItems,
+	NULL,
+	0,
+	NULL,
+};
+
+MenuItemHandlerResult menuhandlerSetLoginSetting(s32 operation, struct menuitem *item, union handlerdata *data)
+{
+	if (operation == MENUOP_SET) {
+		switch (item->param) {
+			case 0:
+				currentLoginSetting = GetServerAddress();
+				break;
+			case 1:
+				currentLoginSetting = GetSlotName();
+				break;
+			case 2:
+				currentLoginSetting = GetPassword();
+				break;
+		}
+
+		apMenuIndex = item->param;
+		showAPKeyboard = true;
+
+		menuPushDialog(&g_LoginSettingMenuDialog);
+	}
+
+	return 0;
+}
+
+MenuItemHandlerResult menuhandlerConnect(s32 operation, struct menuitem *item, union handlerdata *data)
+{
+	switch (operation) {
+	case MENUOP_SET:
+		if (!IsConnected()) {
+			ConnectAP();
+		}
+		else {
+			DisconnectAP(false);
+		}
+		break;
+	}
+
+	return 0;
+}
+
+MenuDialogHandlerResult menudialogUpdateConnect(s32 operation, struct menudialogdef *dialogdef, union handlerdata *data)
+{
+	struct menuitem *serverAddressItem = &dialogdef->items[0];
+	struct menuitem *slotNameItem = &dialogdef->items[1];
+	struct menuitem *passwordItem = &dialogdef->items[2];
+	struct menuitem *connectItem = &dialogdef->items[6];
+
+	switch (operation) {
+	case MENUOP_TICK:
+		if (IsConnecting()) {
+			connectItem->type = MENUITEMTYPE_LABEL;
+
+			connectItem->param2 = (uintptr_t)"Connecting...\n";
+
+			serverAddressItem->type = MENUITEMTYPE_LABEL;
+			slotNameItem->type = MENUITEMTYPE_LABEL;
+			passwordItem->type = MENUITEMTYPE_LABEL;
+		}
+		else {
+			connectItem->type = MENUITEMTYPE_SELECTABLE;
+
+			if (IsConnected()) {
+				connectItem->param2 = (uintptr_t)"Disconnect\n";
+
+				serverAddressItem->type = MENUITEMTYPE_LABEL;
+				slotNameItem->type = MENUITEMTYPE_LABEL;
+				passwordItem->type = MENUITEMTYPE_LABEL;
+			}
+			else {
+				connectItem->param2 = (uintptr_t)"Connect\n";
+
+				serverAddressItem->type = MENUITEMTYPE_SELECTABLE;
+				slotNameItem->type = MENUITEMTYPE_SELECTABLE;
+				passwordItem->type = MENUITEMTYPE_SELECTABLE;
+			}
+		}
+	}
+
+	return 0;
+}
+
+
 struct menuitem g_ConnectionInfoMenuItems[] = {
 	{
-		MENUITEMTYPE_LABEL,
+		MENUITEMTYPE_SELECTABLE,
 		0,
 		MENUITEMFLAG_LITERAL_TEXT,
 		(uintptr_t)"Server Address:               \n",
 		(uintptr_t)GetServerAddress,
-		NULL,
+		menuhandlerSetLoginSetting,
 	},
 	{
-		MENUITEMTYPE_LABEL,
+		MENUITEMTYPE_SELECTABLE,
 		1,
 		MENUITEMFLAG_LITERAL_TEXT,
-		(uintptr_t)"Slot name: \n",
+		(uintptr_t)"Slot Name: \n",
 		(uintptr_t)GetSlotName,
-		NULL,
+		menuhandlerSetLoginSetting,
 	},
 	{
-		MENUITEMTYPE_LABEL,
+		MENUITEMTYPE_SELECTABLE,
 		2,
 		MENUITEMFLAG_LITERAL_TEXT,
 		(uintptr_t)"Password: \n",
 		(uintptr_t)GetPassword,
-		NULL,
+		menuhandlerSetLoginSetting,
 	},
 	{
 		MENUITEMTYPE_SEPARATOR,
@@ -1077,6 +1240,14 @@ struct menuitem g_ConnectionInfoMenuItems[] = {
 	{
 		MENUITEMTYPE_SELECTABLE,
 		0,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Connect\n",
+		0,
+		menuhandlerConnect,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		0,
 		MENUITEMFLAG_SELECTABLE_CLOSESDIALOG,
 		L_OPTIONS_213, // "Back"
 		0,
@@ -1089,7 +1260,7 @@ struct menudialogdef g_ConnectionInfoMenuDialog = {
 	MENUDIALOGTYPE_DEFAULT,
 	(uintptr_t)"Connection Info",
 	g_ConnectionInfoMenuItems,
-	NULL,
+	menudialogUpdateConnect,
 	MENUDIALOGFLAG_LITERAL_TEXT,
 	NULL,
 };
@@ -2377,6 +2548,19 @@ struct menudialogdef g_ArchipelagoMenuDialog = {
 	MENUDIALOGFLAG_LITERAL_TEXT,
 	NULL,
 };
+
+void setAPConnectionText(char *text)
+{
+	apTextTimer = 0;
+	if (strcmp(text, "Trying to connect\n") == 0) {
+		apTextSetTime = 65535;
+	}
+	else {
+		apTextSetTime = 600;
+	}
+
+	snprintf(APText, sizeof(APText), "%s", text);
+}
 
 void SaveLoginInfo()
 {

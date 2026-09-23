@@ -53,5 +53,7 @@ s8 findTrapSlot(u8 trap);
 void addTrapToSlot(u8 trap);
 void updateTrapSlots(void);
 void spawnSkedar(s32 pad_id);
+Gfx *renderAPStatus(Gfx *gdl);
+Gfx *renderAPConnection(Gfx *gdl);
 
 #endif

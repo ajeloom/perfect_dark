@@ -100,6 +100,7 @@
 #ifndef PLATFORM_N64
 #include "video.h"
 #endif
+#include "archipelago.h"
 
 extern int hasNPCs;
 extern u32 unlockedCharacters[6];
@@ -137,6 +138,11 @@ extern s32 chrPadnums[100];
 extern bool randomEnemyWeapons;
 
 extern int numberOfAmmoCratesPickedUp;
+
+char APText[200];
+
+u16 apTextTimer = 0;
+u16 apTextSetTime = 0;
 
 struct sndstate *g_MiscSfxAudioHandles[3];
 u32 var800aa5bc;
@@ -1896,6 +1902,12 @@ Gfx *lvRender(Gfx *gdl)
 		}
 	}
 
+	gdl = renderAPStatus(gdl);
+
+	if (apTextTimer < apTextSetTime) {
+		gdl = renderAPConnection(gdl);
+	}
+
 #if VERSION < VERSION_NTSC_1_0
 	if ((uintptr_t)gdl < (uintptr_t)g_GfxBuffers[g_GfxActiveBufferIndex]
 			|| (uintptr_t)gdl > (uintptr_t)g_GfxBuffers[g_GfxActiveBufferIndex + 1]) {
@@ -2966,4 +2978,62 @@ void spawnSkedar(s32 pad_id)
             chrGiveWeapon(chr, MODEL_CHRMAULER, WEAPON_MAULER, 0);
         }
     }
+}
+
+Gfx *renderAPStatus(Gfx *gdl)
+{
+	s32 x = 2;
+	s32 y = 2;
+
+	u8 a = 200;
+	u32 color;
+	if (strcmp(GetStatus(), "Not connected\n") == 0) {
+		color = 0xff000000 | a;
+	}
+	else if (strcmp(GetStatus(), "Connected\n") == 0) {
+		color = 0x00ff0000 | a;
+	}
+
+	char buffer[64];
+
+	if (g_CharsNumeric && g_FontNumeric) {
+		sprintf(buffer, "%s", GetStatus());
+
+		gSPSetExtraGeometryModeEXT(gdl++, g_HudAlignModeL);
+
+		gdl = text0f153628(gdl);
+		gdl = textRender(gdl, &x, &y, buffer, g_CharsHandelGothicXs, g_FontHandelGothicXs, color, 0x000000a0, viGetWidth(), viGetHeight(), 0, 0);
+		gdl = text0f153780(gdl);
+
+		gSPClearExtraGeometryModeEXT(gdl++, g_HudAlignModeL);
+	}
+
+	return gdl;
+}
+
+Gfx *renderAPConnection(Gfx *gdl)
+{
+	char buffer[200];
+	s32 x = 2;
+	s32 y = viGetHeight() - 9;
+	u8 a = 200;
+
+	u32 color = 0x00ff0000 | a;
+	if (APText == "Disconnected\n") {
+		color = 0xff000000 | a;
+	}
+
+	if (g_CharsNumeric && g_FontNumeric) {
+		sprintf(buffer, "%s", APText);
+	
+		gSPSetExtraGeometryModeEXT(gdl++, g_HudAlignModeL);
+
+		gdl = text0f153628(gdl);
+		gdl = textRender(gdl, &x, &y, buffer, g_CharsHandelGothicXs, g_FontHandelGothicXs, color, 0x000000a0, viGetWidth(), viGetHeight(), 0, 0);
+		gdl = text0f153780(gdl);
+
+		gSPClearExtraGeometryModeEXT(gdl++, g_HudAlignModeL);
+	}
+
+	return gdl;
 }
