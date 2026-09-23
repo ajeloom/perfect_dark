@@ -31,7 +31,11 @@ char* clientVersion = "0.5.0";
 std::string URI;
 std::string slotName;
 std::string password;
-std::string status = "Not connected\n";
+
+bool error = false;
+bool connected = false;
+bool roomInfo = false;
+bool roomUpdate = false;
 
 int nextCheckToGet = 0;
 extern int lastReceivedItemIndex;
@@ -1183,11 +1187,6 @@ bool Initialize() {
     }
 
     ap_sync_queued = false;
-
-    bool error = false;
-    bool connected = false;
-    bool roomInfo = false;
-    bool roomUpdate = false;
 
     // Set event callbacks
     // Called when the socket gets connected
