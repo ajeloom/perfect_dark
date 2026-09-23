@@ -665,7 +665,8 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
         if (itemID == AP_ITEM_SHIELD_REFILL) {
             shieldRefills++;
 
-            if (g_Vars.stagenum != STAGE_CITRAINING) {
+            if (g_Vars.stagenum != STAGE_CITRAINING
+                    && playerGetShieldFrac() < 1) {
                 shieldRefills--;
 
                 if (!g_Vars.in_cutscene) {
