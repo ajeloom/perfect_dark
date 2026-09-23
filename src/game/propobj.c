@@ -17901,6 +17901,11 @@ s32 objTestForPickup(struct prop *prop)
 				}
 			}
 
+			// Allow weapons to be picked up even at max ammo in Pickupsanity
+			if (hasPickupsanity) {
+				maybe = false;
+			}
+
 			if (maybe) {
 				if (weapon->dualweapon || weapon->dualweaponnum >= 0) {
 					if (weapon->dualweapon) {
