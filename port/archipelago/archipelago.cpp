@@ -26,7 +26,7 @@ APClient* ap;
 
 #define VERSION_TUPLE {0, 6, 7}
 
-char* clientVersion = "0.5.0";
+extern bool showConsole;
 
 std::string URI;
 std::string slotName;
@@ -1063,25 +1063,32 @@ std::map<int, std::string> locationNames = {
 
 void APInitConsole()
 {
-    AllocConsole();
-    SetConsoleTitleA("Perfect Dark - Archipelago Console");
+    if (showConsole) {
+        AllocConsole();
+        SetConsoleTitleA("Perfect Dark - Archipelago Console");
 
-    FILE *fp;
-    freopen("CONOUT$", "w", stdout);
-    freopen("CONOUT$", "w", stderr);
-    freopen("CONIN$", "r", stdin);
+        FILE *fp;
+        freopen("CONOUT$", "w", stdout);
+        freopen("CONOUT$", "w", stderr);
+        freopen("CONIN$", "r", stdin);
 
-    system("cls");
+        system("cls");
 
-    printf("Version: %s\n", clientVersion);
-    printf("If you are using an incompatible version of the APWorld, then it will not work correctly.\n");
-    PrintCommands();
+        printf("Version: %s\n", clientVersion);
+        printf("If you are using an incompatible version of the APWorld, then it will not work correctly.\n");
+        PrintCommands();
 
-    CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)InputCommand, NULL, 0, NULL);
+        CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)InputCommand, NULL, 0, NULL);
+    }
 }
 
 void APCloseConsole() {
-    FreeConsole();
+    if (!showConsole) {
+        FreeConsole();
+        fclose(stdout);
+        fclose(stderr);
+        fclose(stdin);
+    }
 }
 
 VOID InputCommand()

@@ -21,6 +21,7 @@ extern u32 completedPerfectAgentObjectives[NUM_SOLOSTAGES][5];
 extern u32 completedChallenges[30];
 
 bool showLocationName;
+bool showConsole;
 bool randomMusic;
 bool customOutfits;
 bool randomEnemyWeapons;
@@ -1631,6 +1632,26 @@ MenuItemHandlerResult menuhandlerShowLocationName(s32 operation, struct menuitem
 	return 0;
 }
 
+MenuItemHandlerResult menuhandlerShowConsole(s32 operation, struct menuitem *item, union handlerdata *data)
+{
+	s32 val;
+
+	switch (operation) {
+	case MENUOP_GET:
+		return showConsole;
+	case MENUOP_SET:
+		showConsole = data->checkbox.value;
+		if (showConsole) {
+			APInitConsole();
+		}
+		else {
+			APCloseConsole();
+		}
+	}
+
+	return 0;
+}
+
 MenuItemHandlerResult menuhandlerRandomMusic(s32 operation, struct menuitem *item, union handlerdata *data)
 {
 	s32 val;
@@ -1857,6 +1878,14 @@ struct menuitem g_OtherOptionsMenuItems[] = {
 		(uintptr_t)"Show Location Name\n",
 		0,
 		menuhandlerShowLocationName,
+	},
+	{
+		MENUITEMTYPE_CHECKBOX,
+		0,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Show Console\n",
+		0,
+		menuhandlerShowConsole,
 	},
 	{
 		MENUITEMTYPE_SEPARATOR,
@@ -2600,6 +2629,7 @@ PD_CONSTRUCTOR static void APConfigLoginInit(void)
 PD_CONSTRUCTOR static void APConfigOtherOptionsInit(void)
 {
 	APConfigRegisterUInt("OtherOptions.ShowLocationName", &showLocationName, 0, 1);
+	APConfigRegisterUInt("OtherOptions.ShowConsole", &showConsole, 0, 1);
 }
 
 PD_CONSTRUCTOR static void APConfigRandomOptionsInit(void)
