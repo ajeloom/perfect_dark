@@ -2814,11 +2814,11 @@ Gfx *renderTrapHud(Gfx *gdl, u8 trapName, s32 trapTime)
 	}
 
 	if (trapName == TRAP_SKEDAR) {
-		s32 x = 5;
-		s32 y = 5 + (10 * findTrapSlot(trapName));
+		s32 x = 2;
+		s32 y = 12 + (10 * findTrapSlot(trapName));
 
 		if (videoGetDisplayFPS()) {
-			y += 23;
+			y += 10;
 		}
 
 		const u8 a = 200;
@@ -2843,11 +2843,11 @@ Gfx *renderTrapHud(Gfx *gdl, u8 trapName, s32 trapTime)
 	s32 mins = trapTime / TICKS(3600);
 	s32 secs60 = trapTime - mins * TICKS(3600);
 
-	s32 x = 5;
-	s32 y = 5 + (10 * findTrapSlot(trapName));
+	s32 x = 2;
+	s32 y = 12 + (10 * findTrapSlot(trapName));
 
 	if (videoGetDisplayFPS()) {
-		y += 23;
+		y += 10;
 	}
 
 	const u8 a = 200;
