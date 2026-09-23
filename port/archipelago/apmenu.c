@@ -1799,6 +1799,60 @@ MenuItemHandlerResult menuhandlerRestoreCharacterDefaults(s32 operation, struct 
 		randomMrBlondeBody = BODY_MRBLONDE;
 		randomElvisBody = BODY_THEKING;
 		randomMaianBody = BODY_ELVIS1;
+
+		menuPopDialog();
+	}
+
+	return 0;
+}
+
+struct menuitem g_RestoreDefaultOutfitsMenuItems[] = {
+	{
+		MENUITEMTYPE_LABEL,
+		0,
+		MENUITEMFLAG_LITERAL_TEXT | MENUITEMFLAG_00000002 | MENUITEMFLAG_LESSLEFTPADDING,
+		(uintptr_t)"Do you want to restore the default outfits?\n",
+		0,
+		NULL,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		0,
+		0,
+		L_OPTIONS_190, // "Yes"
+		0,
+		menuhandlerRestoreCharacterDefaults,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		0,
+		MENUITEMFLAG_SELECTABLE_CLOSESDIALOG,
+		L_OPTIONS_191, // "No"
+		0,
+		NULL,
+	},
+	{ MENUITEMTYPE_END },
+};
+
+struct menudialogdef g_RestoreDefaultOutfitsMenuDialog = {
+	MENUDIALOGTYPE_DANGER,
+	L_OPTIONS_188, // "Warning"
+	g_RestoreDefaultOutfitsMenuItems,
+	NULL,
+	0,
+	NULL,
+};
+
+MenuItemHandlerResult restoreDefaultOutfitsMenuDialog(s32 operation, struct menuitem *item, union handlerdata *data)
+{
+	switch (operation) {
+	case MENUOP_SET:
+		menuPushDialog(&g_RestoreDefaultOutfitsMenuDialog);
+		break;
+	case MENUOP_CHECKDISABLED:
+		if (customOutfits == false) {
+			return true;
+		}
 	}
 
 	return 0;
@@ -2217,7 +2271,7 @@ struct menuitem g_OutfitMenuItems[] = {
 		MENUITEMFLAG_LOCKABLEMINOR | MENUITEMFLAG_LOCKABLEMAJOR,
 		L_MPMENU_110, // "Restore Defaults"
 		0,
-		menuhandlerRestoreCharacterDefaults,
+		restoreDefaultOutfitsMenuDialog,
 	},
 	{
 		MENUITEMTYPE_SELECTABLE,
