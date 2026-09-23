@@ -754,6 +754,10 @@ void setupPlaceWeapon(struct weaponobj *weapon, s32 cmdindex)
 									&& chr->chrnum == 0x0021)
 								|| (g_Vars.stagenum == STAGE_VILLA
 									&& chr->chrnum == 0x55)
+								|| (g_Vars.stagenum == STAGE_CHICAGO
+									&& chr->chrnum == 0x13)
+								|| (g_Vars.stagenum == STAGE_CHICAGO
+									&& chr->chrnum == 0x14)
 								|| (g_Vars.stagenum == STAGE_G5BUILDING
 									&& chr->chrnum == 0x00)
 								|| (g_Vars.stagenum == STAGE_INFILTRATION
