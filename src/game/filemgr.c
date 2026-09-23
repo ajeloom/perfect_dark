@@ -20,6 +20,7 @@
 #include "data.h"
 #include "types.h"
 #include "mpsetups.h"
+#include "archipelago.h"
 
 // bss
 struct fileguid g_FilemgrFileToCopy;
@@ -2737,6 +2738,11 @@ MenuItemHandlerResult filemgrChooseAgentListMenuHandler(s32 operation, struct me
 				// load the setup file when loading the agent
 				mpsetupCopyAllFromPak();
 				mpsetupLoadCurrentFile();
+
+				// Try to auto connect
+				if (!IsConnected()) {
+					ConnectAP();
+				}
 			}
 		}
 		break;
