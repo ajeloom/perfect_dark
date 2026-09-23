@@ -150,6 +150,8 @@ int buddyCount = 0;
 
 extern bool randomBuddyWeapons;
 
+bool hasVictory = false;
+
 int progressiveWeaponNumbers[43] = {
     WEAPON_UNARMED,
     WEAPON_COMBATKNIFE,
@@ -653,7 +655,7 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
             if (g_Vars.stagenum != STAGE_CITRAINING) {
                 ammoRefills--;
 
-                if (!g_Vars.in_cutscene) {
+                if (!g_Vars.in_cutscene && !hasVictory) {
                     sndStart(var80095200, SFX_PICKUP_AMMO, NULL, -1, -1, -1, -1, -1);
                 }
 
@@ -669,7 +671,7 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
                     && playerGetShieldFrac() < 1) {
                 shieldRefills--;
 
-                if (!g_Vars.in_cutscene) {
+                if (!g_Vars.in_cutscene && !hasVictory) {
                     sndStart(var80095200, SFX_PICKUP_SHIELD, NULL, -1, -1, -1, -1, -1);
                 }
 
@@ -702,7 +704,8 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
 
         if (itemID == AP_ITEM_BUDDY 
                 && g_Vars.stagenum != STAGE_CITRAINING
-                && !g_Vars.normmplayerisrunning) {
+                && !g_Vars.normmplayerisrunning
+                && !hasVictory) {
             spawnBuddy();
             return;
         }
@@ -876,6 +879,7 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
     // Victory
     if (itemID == AP_ITEM_VICTORY) {
         ReachedGoal();
+        hasVictory = true;
         return;
     }
 
