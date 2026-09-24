@@ -1684,3 +1684,10 @@ struct menudialogdef g_CheatsMenuDialog = {
 	0,
 	NULL,
 };
+
+u16 cheatGetTimeToBeat(s32 cheat_id)
+{
+	struct cheat *cheat = &g_Cheats[cheat_id];
+
+	return cheat->time;
+}

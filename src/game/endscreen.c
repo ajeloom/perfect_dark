@@ -1592,7 +1592,7 @@ void endscreenPrepare(void)
 						g_Menus[g_MpPlayerNum].endscreen.cheatinfo |= 0x0200;
 					}
 
-					if (nowunlocked) {
+					if (secs <= cheatGetTimeToBeat(g_Menus[g_MpPlayerNum].endscreen.cheatinfo & 0xff)) {
 						collectTimedCheatItem(g_MissionConfig.stageindex);
 					}
 				}
