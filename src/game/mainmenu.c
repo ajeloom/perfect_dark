@@ -42,7 +42,7 @@ extern const s32 cheatCount;
 static char g_TimedCheatText[24];
 
 extern int hasAlternateExits;
-static char g_AltExitText[32];
+static char g_AltExitText[40];
 
 s16 warpPad = -1;
 
@@ -969,23 +969,24 @@ MenuItemHandlerResult menuhandlerShowExitCheck(s32 operation, struct menuitem *i
 			|| g_MissionConfig.stageindex == SOLOSTAGEINDEX_ESCAPE
 			|| g_MissionConfig.stageindex == SOLOSTAGEINDEX_AIRBASE)
 			&& hasAlternateExits >= 1) {
+		char exitName[20];
+		u8 missionIndex = 0;
+		
+		if (g_MissionConfig.stageindex == SOLOSTAGEINDEX_G5BUILDING) {
+			missionIndex = 0;
+		}
+		else if (g_MissionConfig.stageindex == SOLOSTAGEINDEX_ESCAPE) {
+			missionIndex = 1;
+		}
+		else if (g_MissionConfig.stageindex == SOLOSTAGEINDEX_AIRBASE) {
+			missionIndex = 2;
+		}
+
+		int AP_ALTERNATE_EXIT_OFFSET = 579;
+		int location = (missionIndex * 6) + (g_MissionConfig.difficulty * 2) + AP_ALTERNATE_EXIT_OFFSET;
+
 		// Check if location exists
 		if (hasAlternateExits == 1) {
-			char exitName[20];
-			u8 missionIndex = 0;
-
-			if (g_MissionConfig.stageindex == SOLOSTAGEINDEX_G5BUILDING) {
-				missionIndex = 0;
-			}
-			else if (g_MissionConfig.stageindex == SOLOSTAGEINDEX_ESCAPE) {
-				missionIndex = 1;
-			}
-			else if (g_MissionConfig.stageindex == SOLOSTAGEINDEX_AIRBASE) {
-				missionIndex = 2;
-			}
-
-			int AP_ALTERNATE_EXIT_OFFSET = 579;
-			int location = (missionIndex * 6) + (g_MissionConfig.difficulty * 2) + AP_ALTERNATE_EXIT_OFFSET;
 			int exists = CheckIfLocationExists(location);
 			if (!exists) {
 				exists = CheckIfLocationExists(++location);
@@ -1028,9 +1029,64 @@ MenuItemHandlerResult menuhandlerShowExitCheck(s32 operation, struct menuitem *i
 			}
 
 			snprintf(g_AltExitText, sizeof(g_AltExitText), "Check Exit: %s\n", exitName);
+
+			if (IsLocationCompleted(location)) {
+				snprintf(g_AltExitText, sizeof(g_AltExitText), "");
+			}
 		}
-		if (hasAlternateExits == 2) {
-			snprintf(g_AltExitText, sizeof(g_AltExitText), "Check Exit: Both\n");
+		else if (hasAlternateExits == 2) {
+			if (!IsLocationCompleted(location)
+					&& !IsLocationCompleted(location + 1)) {
+				// Both exits are not completed
+				snprintf(g_AltExitText, sizeof(g_AltExitText), "Check Exit: Both\n");
+			}
+			else if (IsLocationCompleted(location)
+					&& IsLocationCompleted(location + 1)) {
+				// All exits are completed
+				snprintf(g_AltExitText, sizeof(g_AltExitText), "");
+			}
+			else {
+				// One of the locations is completed
+				int completed = IsLocationCompleted(location);
+				if (completed) {
+					++location;
+				}
+				
+				switch (location) {
+					case 579:
+					case 581:
+					case 583:
+						snprintf(exitName, sizeof(exitName), "Bottom Exit");
+						break;
+					case 580:
+					case 582:
+					case 584:
+						snprintf(exitName, sizeof(exitName), "Upper Exit");
+						break;
+					case 585:
+					case 587:
+					case 589:
+						snprintf(exitName, sizeof(exitName), "UFO Escape");
+						break;
+					case 586:
+					case 588:
+					case 590:
+						snprintf(exitName, sizeof(exitName), "Alternate Escape");
+						break;
+					case 591:
+					case 593:
+					case 595:
+						snprintf(exitName, sizeof(exitName), "Shuttle Exit");
+						break;
+					case 592:
+					case 594:
+					case 596:
+						snprintf(exitName, sizeof(exitName), "Ladder Exit");
+						break;
+				}
+
+				snprintf(g_AltExitText, sizeof(g_AltExitText), "Exit Check Remaining: %s\n", exitName);
+			}
 		}
 	}
 	else {
