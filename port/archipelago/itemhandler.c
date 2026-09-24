@@ -11,6 +11,7 @@
 #include "game/inv.h"
 #include "game/lv.h"
 #include "game/menu.h"
+#include "game/objectives.h"
 #include "game/pdmode.h"
 #include "game/player.h"
 #include "game/playermgr.h"
@@ -1104,6 +1105,16 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
                 if (g_Vars.stagenum == STAGE_ESCAPE
                         && g_MissionConfig.difficulty <= DIFF_SA) {
                     invGiveSingleWeapon(weaponnum);
+
+                    // Unlock the door in hangar on Agent
+                    if (g_MissionConfig.difficulty == DIFF_A) {
+                        struct defaultobj *obj = objFindByTagId(0x0a);
+                        if (obj && obj->prop && obj->prop->type == PROPTYPE_DOOR) {
+                            struct doorobj *door = (struct doorobj *) obj;
+                            u8 bits = 0x02;
+                            door->keyflags = door->keyflags & ~bits;
+                        }
+                    }
                 }
                 break;
             case WEAPON_HORIZONSCANNER:

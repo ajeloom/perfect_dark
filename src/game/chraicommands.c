@@ -2555,7 +2555,8 @@ bool aiUnlockDoor(void)
 	// Lock the player from reaching Elvis if Alien Medpack is locked
 	if (g_Vars.stagenum == STAGE_ESCAPE
 			&& g_MissionConfig.difficulty == DIFF_A
-			&& unlockedWeapons[WEAPON_AUTOSURGEON] == 0) {
+			&& unlockedWeapons[WEAPON_AUTOSURGEON] == 0
+			&& cmd[2] == 0x0a) {
 		g_Vars.aioffset += 4;
 		return false;
 	}
