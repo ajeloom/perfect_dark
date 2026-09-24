@@ -36,6 +36,7 @@
 #include "types.h"
 #include "archipelago.h"
 
+extern int hasTimedCheats;
 extern struct cheat g_Cheats[];
 extern const s32 cheatCount;
 static char g_TimedCheatText[24];
@@ -937,22 +938,24 @@ MenuItemHandlerResult menuhandlerShowTimeToBeat(s32 operation, struct menuitem *
 {
 	s32 cheat_id;
 
-	for (cheat_id = 0; cheat_id < cheatCount; cheat_id++) {
-		struct cheat *cheat = &g_Cheats[cheat_id];
+	if (hasTimedCheats == 1) {
+		for (cheat_id = 0; cheat_id < cheatCount; cheat_id++) {
+			struct cheat *cheat = &g_Cheats[cheat_id];
 
-		if ((cheat->flags & CHEATFLAG_FIRINGRANGE)
-				|| (cheat->flags & CHEATFLAG_COMPLETION)) {
-			continue;
-		} 
+			if ((cheat->flags & CHEATFLAG_FIRINGRANGE)
+					|| (cheat->flags & CHEATFLAG_COMPLETION)) {
+				continue;
+			} 
 
-		if (cheat->stage_index == g_MissionConfig.stageindex
-				&& cheat->difficulty == g_MissionConfig.difficulty
-				&& completedMissions[g_MissionConfig.stageindex][g_MissionConfig.difficulty] == 0) {
-			s32 mins = cheat->time / 60;
-			s32 secs = cheat->time % 60;
+			if (cheat->stage_index == g_MissionConfig.stageindex
+					&& cheat->difficulty == g_MissionConfig.difficulty
+					&& !IsLocationCompleted(473 + g_MissionConfig.stageindex)) {
+				s32 mins = cheat->time / 60;
+				s32 secs = cheat->time % 60;
 
-			snprintf(g_TimedCheatText, sizeof(g_TimedCheatText), "Time to beat: %d:%02d\n", mins, secs);
-			return 0;
+				snprintf(g_TimedCheatText, sizeof(g_TimedCheatText), "Time to beat: %d:%02d\n", mins, secs);
+				return 0;
+			}
 		}
 	}
 

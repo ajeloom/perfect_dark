@@ -1622,6 +1622,7 @@ void InternalCollectAPItem(uint64_t location)
         check.push_back(location);
         ap->LocationScouts(check);
         ap->LocationChecks(check);
+        completedLocations[location] = 1;
     }
 }
 
@@ -1770,7 +1771,18 @@ int CheckIfLocationExists(int location)
                 || missingLocations.contains(location)) {
             return true;
         }
-
-        return false;
     }
+
+    return false;
+}
+
+int IsLocationCompleted(int location)
+{
+    if (ap) {
+        if (completedLocations[location] == 1) {
+            return true;
+        }
+    }
+
+    return false;
 }

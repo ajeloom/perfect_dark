@@ -30,6 +30,7 @@ void PrintCommands();
 void ConnectAP();
 void DisconnectAP(bool joining);
 int CheckIfLocationExists(int location);
+int IsLocationCompleted(int location);
 
 #ifdef __cplusplus
 }
