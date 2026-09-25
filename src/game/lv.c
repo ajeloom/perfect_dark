@@ -2768,7 +2768,12 @@ u32 func0f16ce04(u32 arg0)
 void checkTrap(int *trap, s32 *trapTimeElapsed, u8 trapName)
 {
 	if (*trapTimeElapsed > 0) {
-		*trapTimeElapsed -= g_Vars.lvupdate60;
+		if (slowMotionTrap) {
+			*trapTimeElapsed -= g_Vars.lvupdate60 * 2;
+		}
+		else {
+			*trapTimeElapsed -= g_Vars.lvupdate60;
+		}
 	}
 	else {
 		if (*trap != 0) {

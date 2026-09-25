@@ -621,7 +621,7 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
         }
 
         if (itemID == AP_ITEM_SLOW_MOTION_TRAP) {
-            giveTrap(&slowMotionTrap, &slowMotionTrapTime, TICKS(900), TRAP_SLOMO);
+            giveTrap(&slowMotionTrap, &slowMotionTrapTime, TICKS(1800), TRAP_SLOMO);
             return;
         }
 
