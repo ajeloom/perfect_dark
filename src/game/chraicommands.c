@@ -2106,7 +2106,9 @@ bool aiIfChrHasWeaponEquipped(void)
 		}
 
 		// Let the player sacrifice any weapon
-		if (g_Vars.stagenum == STAGE_SKEDARRUINS) {
+		if (g_Vars.stagenum == STAGE_SKEDARRUINS
+				&& cmd[3] == WEAPON_MAULER
+				&& bgunGetWeaponNum(HAND_RIGHT) != cmd[3]) {
 			passes = true;
 		}
 
