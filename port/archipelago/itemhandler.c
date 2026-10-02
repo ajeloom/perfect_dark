@@ -631,7 +631,7 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
         }
 
         if (itemID == AP_ITEM_PERFECT_DARKNESS_TRAP) {
-            giveTrap(&perfectDarknessTrap, &perfectDarknessTrapTime, TICKS(1800), TRAP_PERFECTDARKNESS);
+            giveTrap(&perfectDarknessTrap, &perfectDarknessTrapTime, TICKS(900), TRAP_PERFECTDARKNESS);
             return;
         }
 
