@@ -17440,7 +17440,7 @@ s32 propPickupByPlayer(struct prop *prop, bool showhudmsg)
 						}
 						break;
 					case STAGE_EXTRACTION:
-						if (obj->pad == 5
+						if ((obj->pad == 5 && weapon->weaponnum == WEAPON_DY357MAGNUM)
 								|| obj->pad == 452
 								|| obj->pad == 466
 								|| obj->pad == 467
@@ -17496,7 +17496,7 @@ s32 propPickupByPlayer(struct prop *prop, bool showhudmsg)
 						}
 						break;
 					case STAGE_AIRBASE:
-						if (obj->pad == 18
+						if ((obj->pad == 18 && weapon->weaponnum == WEAPON_DY357MAGNUM)
 								|| obj->pad == 181) {
 							collectPickupItem(g_MissionConfig.stageindex, obj->pad);
 						}
@@ -17516,12 +17516,12 @@ s32 propPickupByPlayer(struct prop *prop, bool showhudmsg)
 						}
 						break;
 					case STAGE_PELAGIC:
-						if (obj->pad == 52) {
+						if (obj->pad == 52 && weapon->weaponnum == WEAPON_FALCON2_SILENCER) {
 							collectPickupItem(g_MissionConfig.stageindex, obj->pad);
 						}
 						break;
 					case STAGE_DEEPSEA:
-						if (obj->pad == 8
+						if ((obj->pad == 8 && weapon->weaponnum == WEAPON_PROXIMITYMINE)
 								|| obj->pad == 63) {
 							collectPickupItem(g_MissionConfig.stageindex, obj->pad);
 						}
