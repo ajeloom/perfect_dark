@@ -57,6 +57,8 @@
 #include "data.h"
 #include "types.h"
 
+extern bool randomEnemyWeapons;
+
 s32 g_RecentQuipsPlayed[5];
 u32 var8009cd84;
 u32 var8009cd88;
@@ -7669,10 +7671,22 @@ bool chrConsiderGrenadeThrow(struct chrdata *chr, u32 attackflags, u32 entityid)
 					flags = OBJFLAG_WEAPON_LEFTHANDED;
 				}
 
-				if (stageGetIndex(g_Vars.stagenum) == STAGEINDEX_MBR) {
-					prop = chrGiveWeapon(chr, MODEL_CHRGRENADE, WEAPON_NBOMB, flags);
-				} else {
-					prop = chrGiveWeapon(chr, MODEL_CHRGRENADE, WEAPON_GRENADE, flags);
+				if (!randomEnemyWeapons) {
+					if (stageGetIndex(g_Vars.stagenum) == STAGEINDEX_MBR) {
+						prop = chrGiveWeapon(chr, MODEL_CHRGRENADE, WEAPON_NBOMB, flags);
+					} else {
+						prop = chrGiveWeapon(chr, MODEL_CHRGRENADE, WEAPON_GRENADE, flags);
+					}
+				}
+				else {
+					// Allow enemies to randomly throw Grenade or N-Bomb on any mission
+					u32 random = rngRandom() % 2;
+					if (random) {
+						prop = chrGiveWeapon(chr, MODEL_CHRNBOMB, WEAPON_NBOMB, flags);
+					}
+					else {
+						prop = chrGiveWeapon(chr, MODEL_CHRGRENADE, WEAPON_GRENADE, flags);
+					}
 				}
 
 				if (prop) {
