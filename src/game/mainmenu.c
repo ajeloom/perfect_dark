@@ -2411,6 +2411,7 @@ MenuItemHandlerResult menuhandlerChangeAgent(s32 operation, struct menuitem *ite
 {
 	if (operation == MENUOP_SET) {
 		func0f0f820c(NULL, -7);
+		DisconnectAP(false);
 	}
 
 	return 0;
