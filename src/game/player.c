@@ -76,6 +76,7 @@
 #include "platform.h"
 #endif
 #include "archipelago.h"
+#include "apmenu.h"
 
 extern u32 unlockedWeapons[94];
 
@@ -4465,6 +4466,7 @@ void playerTick(bool arg0)
 				&& !cheatIsActive(CHEAT_INVINCIBLE)) {
 			// Player received a death link
 			playerDieByShooter(g_Vars.currentplayernum, true);
+			setAPConnectionText(GetDeathLink());
 		}
 		else if (g_Vars.currentplayer->isdead 
 				&& pendingDeathLink == false

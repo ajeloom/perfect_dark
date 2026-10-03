@@ -103,6 +103,7 @@ int failedToConnectTotal = 0;
 
 int deathLink;
 bool pendingDeathLink;
+char deathLinkMessage[200];
 
 std::string itemNames[] = {
     "NONE",
@@ -1511,13 +1512,11 @@ bool Initialize() {
 					if (data["source"].get<std::string>() != slotName) {
 						std::string source = data["source"].is_string() ? data["source"].get<std::string>().c_str() : "???";
 						std::string cause = data["cause"].is_string() ? data["cause"].get<std::string>().c_str() : "???";
-						std::cout << "Killed by " << source << " - " << cause << "\n";
+						std::cout << source << " died. Cause: " << cause << ".\n";
                         
-                        printf("Received Death Link\n");
                         pendingDeathLink = true;
 
-                        sprintf(buffer, "Received Death Link\n");
-                        setAPConnectionText(buffer);
+                        sprintf(deathLinkMessage, "%s died. Cause: %s.\n", source.c_str(), cause.c_str());
 					}
 				}
 				else {
@@ -1651,12 +1650,17 @@ char SendDeathLink()
 
     json data{
         {"time", deathTime},
-        {"cause", "Agent Status: Deceased"},
+        {"cause", "Killed in action"},
         {"source", ap->get_slot()}
     };
 
     ap->Bounce(data, {}, {}, {"DeathLink"});
     return 1;
+}
+
+char *GetDeathLink()
+{
+    return deathLinkMessage;
 }
 
 void SetServerAddress(char *address)

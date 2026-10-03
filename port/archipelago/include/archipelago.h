@@ -19,6 +19,7 @@ void PollServer();
 void ReachedGoal();
 void InternalCollectAPItem(uint64_t location);
 char SendDeathLink();
+char *GetDeathLink();
 void SetServerAddress(char *address);
 void SetSlotName(char *name);
 void SetPassword(char *newPassword);
