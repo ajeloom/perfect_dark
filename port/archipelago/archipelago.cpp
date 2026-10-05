@@ -29,6 +29,8 @@ APClient* ap;
 char* clientVersion = "0.6.0";
 
 extern bool showConsole;
+bool consoleIsRunning = false;
+HANDLE inputThread = NULL;
 
 std::string URI;
 std::string slotName;
@@ -1070,10 +1072,13 @@ void APInitConsole()
         AllocConsole();
         SetConsoleTitleA("Perfect Dark - Archipelago Console");
 
-        FILE *fp;
         freopen("CONOUT$", "w", stdout);
         freopen("CONOUT$", "w", stderr);
         freopen("CONIN$", "r", stdin);
+
+        std::cin.clear();
+        std::cout.clear();
+        std::cerr.clear();
 
         system("cls");
 
@@ -1081,22 +1086,29 @@ void APInitConsole()
         printf("If you are using an incompatible version of the APWorld, then it will not work correctly.\n");
         PrintCommands();
 
-        CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)InputCommand, NULL, 0, NULL);
+        consoleIsRunning = true;
+
+        inputThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)InputCommand, NULL, 0, NULL);
     }
 }
 
 void APCloseConsole() {
-    if (!showConsole) {
-        FreeConsole();
-        fclose(stdout);
-        fclose(stderr);
-        fclose(stdin);
+    if (inputThread) {
+        CloseHandle(inputThread);
+        inputThread = NULL;
     }
+    
+    FreeConsole();
+    fclose(stdout);
+    fclose(stderr);
+    fclose(stdin);
+
+    consoleIsRunning = false;
 }
 
 VOID InputCommand()
 {
-    while (true) {
+    while (consoleIsRunning) {
         std::string line;
 		std::getline(std::cin, line);
         

@@ -91,11 +91,11 @@ static void cleanup(void)
 {
 	sysLogPrintf(LOG_NOTE, "shutdown");
 	APConfigSave("$S/ap.ini");
-	APCloseConsole();
 	inputSaveBinds();
 	configSave(CONFIG_PATH);
 	videoShutdown();
 	crashShutdown();
+	APCloseConsole();
 	// TODO: actually shut down all subsystems
 }
 
