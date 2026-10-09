@@ -4475,6 +4475,7 @@ void playerTick(bool arg0)
 			// Player sent a death link
 			sentDeathLink = true;
 			printf("Sending death link\n");
+			setAPConnectionText("Sending death link\n");
 			SendDeathLink();
 		}
 	}
