@@ -144,6 +144,14 @@ char APText[200];
 u16 apTextTimer = 0;
 u16 apTextSetTime = 0;
 
+extern u8 seedElvisHead;
+extern u8 seedCarringtonHead;
+extern u8 seedMrBlondeHead;
+extern u8 seedTrentHead;
+extern u8 seedCassandraHead;
+extern u8 seedJonathanHead;
+extern u8 seedPresidentHead;
+
 struct sndstate *g_MiscSfxAudioHandles[3];
 u32 var800aa5bc;
 s32 g_MiscSfxActiveTypes[3];
@@ -355,6 +363,14 @@ void lvReset(s32 stagenum)
 	spawnedSkedar = false;
 
 	numberOfAmmoCratesPickedUp = 0;
+
+	seedElvisHead = APGetAssignedHead(HEAD_ELVIS);
+	seedCarringtonHead = APGetAssignedHead(HEAD_CARRINGTON);
+	seedMrBlondeHead = APGetAssignedHead(HEAD_MRBLONDE);
+	seedTrentHead = APGetAssignedHead(HEAD_TRENT);
+	seedCassandraHead = APGetAssignedHead(HEAD_CASSANDRA);
+	seedJonathanHead = APGetAssignedHead(HEAD_JONATHAN);
+	seedPresidentHead = APGetAssignedHead(HEAD_PRESIDENT);
 
 	musicReset();
 	modelmgrSetLvResetting(true);

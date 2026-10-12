@@ -1800,3 +1800,14 @@ int IsLocationCompleted(int location)
 
     return false;
 }
+
+int GetSeed()
+{
+    if (ap) {
+        const char* seed = ap->get_seed().c_str();
+        int value = atoi(seed);
+        return value;
+    }
+
+    return 0;
+}

@@ -18,5 +18,9 @@ s32 bodyChooseHead(s32 bodynum);
 void bodyAllocateChr(s32 stagenum, struct packedchr *packed, s32 cmdindex);
 struct prop *bodyAllocateEyespy(struct pad *pad, RoomNum room);
 void bodyCalculateHeadOffset(struct modeldef *headmodeldef, s32 headnum, s32 bodynum);
+u32 APGetRandomHead(void);
+u32 APGetRandomBody(void);
+u8 APGetAssignedHead(u8 headnum);
+u8 APGetAssignedBody(u8 bodynum);
 
 #endif

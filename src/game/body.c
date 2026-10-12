@@ -23,14 +23,26 @@
 #include "lib/collision.h"
 #include "data.h"
 #include "types.h"
+#include "archipelago.h"
 
 extern u32 unlockedCharacters[6];
+
+extern bool randomEnemyHeads;
+extern bool randomEnemyBodies;
 
 extern int dkModeTrap;
 extern int smallJoTrap;
 extern int smallCharactersTrap;
 
 extern s32 chrPadnums[100];
+
+u8 seedElvisHead = HEAD_ELVIS;
+u8 seedCarringtonHead = HEAD_CARRINGTON;
+u8 seedMrBlondeHead = HEAD_MRBLONDE;
+u8 seedTrentHead = HEAD_TRENT;
+u8 seedCassandraHead = HEAD_CASSANDRA;
+u8 seedJonathanHead = HEAD_JONATHAN;
+u8 seedPresidentHead = HEAD_PRESIDENT;
 
 s32 g_NumActiveHeadsPerGender;
 u32 var8009cd24;
@@ -396,6 +408,17 @@ void bodyAllocateChr(s32 stagenum, struct packedchr *packed, s32 cmdindex)
 		bodynum = body0f02d3f8();
 	} else {
 		bodynum = packed->bodynum;
+
+		if (randomEnemyBodies 
+				&& bodynum != BODY_SKEDAR
+				&& bodynum != BODY_DRCAROLL
+				&& bodynum != BODY_EYESPY
+				&& bodynum != BODY_TESTCHR
+				&& bodynum != BODY_CHICROB
+				&& bodynum != BODY_MINISKEDAR
+				&& bodynum != BODY_SKEDARKING) {
+			bodynum = APGetAssignedBody(bodynum);
+		}
 	}
 
 	if (!g_HeadsAndBodies[bodynum].unk00_01) {
@@ -403,6 +426,32 @@ void bodyAllocateChr(s32 stagenum, struct packedchr *packed, s32 cmdindex)
 			headnum = packed->headnum;
 		} else if (headnum == -55555) {
 			headnum = bodyChooseHead(bodynum);
+		}
+
+		if (randomEnemyHeads) {
+			if (headnum == HEAD_ELVIS
+					|| headnum == HEAD_CARRINGTON
+					|| headnum == HEAD_MRBLONDE
+					|| headnum == HEAD_TRENT
+					|| headnum == HEAD_CASSANDRA
+					|| headnum == HEAD_JONATHAN
+					|| headnum == HEAD_ELVIS_GOGS
+					|| headnum == HEAD_PRESIDENT) {
+				headnum = APGetAssignedHead(headnum);
+			}
+			else if ((g_Vars.stagenum == STAGE_CITRAINING
+						|| g_Vars.stagenum == STAGE_DEFENSE)
+					&& (headnum == HEAD_SECRETARY
+						|| headnum == HEAD_CHRIST
+						|| headnum == HEAD_MARK2
+						|| headnum == HEAD_BRIAN
+						|| headnum == HEAD_RUSS
+						|| headnum == HEAD_BEAU1)) {
+				headnum = APGetAssignedHead(headnum);
+			}
+			else {
+				headnum = APGetRandomHead();
+			}
 		}
 	}
 
@@ -972,4 +1021,240 @@ void bodyCalculateHeadOffset(struct modeldef *headmodeldef, s32 headnum, s32 bod
 			}
 		}
 	}
+}
+
+u8 availableHeads[] = {
+	HEAD_DARK_COMBAT,
+	HEAD_ELVIS,
+	HEAD_ROSS,
+	HEAD_CARRINGTON,
+	HEAD_MRBLONDE,
+	HEAD_TRENT,
+	HEAD_DDSHOCK,
+	HEAD_GRAHAM,
+	HEAD_DARK_FROCK,
+	HEAD_SECRETARY,
+	HEAD_CASSANDRA,
+	HEAD_THEKING,
+	HEAD_FEM_GUARD,
+	HEAD_JON,
+	HEAD_MARK2,
+	HEAD_CHRIST,
+	HEAD_RUSS,
+	// HEAD_GREY,
+	HEAD_DARLING,
+	HEAD_ROBERT,
+	HEAD_BEAU1,
+	HEAD_FEM_GUARD2,
+	HEAD_BRIAN,
+	HEAD_JAMIE,
+	HEAD_DUNCAN2,
+	HEAD_BIOTECH,
+	HEAD_NEIL2,
+	HEAD_EDMCG,
+	HEAD_ANKA,
+	HEAD_LESLIE_S,
+	HEAD_MATT_C,
+	HEAD_PEER_S,
+	HEAD_EILEEN_T,
+	HEAD_ANDY_R,
+	HEAD_BEN_R,
+	HEAD_STEVE_K,
+	HEAD_JONATHAN,
+	HEAD_MAIAN_S,
+	HEAD_SHAUN,
+	// HEAD_BEAU2,
+	HEAD_EILEEN_H,
+	HEAD_SCOTT_H,
+	HEAD_SANCHEZ,
+	HEAD_DARKAQUA,
+	HEAD_DDSNIPER,
+	// HEAD_BEAU3,
+	// HEAD_BEAU4,
+	// HEAD_BEAU5,
+	// HEAD_BEAU6,
+	HEAD_GRIFFEY,
+	HEAD_MOTO,
+	HEAD_KEITH,
+	HEAD_WINNER,
+	HEAD_A51FACEPLATE,
+	HEAD_ELVIS_GOGS,
+	HEAD_STEVEM,
+	HEAD_DARK_SNOW,
+	HEAD_PRESIDENT,
+	HEAD_VD,
+	HEAD_KEN,
+	HEAD_JOEL,
+	HEAD_TIM,
+	HEAD_GRANT,
+	HEAD_PENNY,
+	HEAD_ROBIN,
+	HEAD_ALEX,
+	HEAD_JULIANNE,
+	HEAD_LAURA,
+	HEAD_DAVEC,
+	HEAD_COOK,
+	HEAD_PRYCE,
+	HEAD_SILKE,
+	HEAD_SMITH,
+	HEAD_GARETH,
+	HEAD_MURCHIE,
+	HEAD_WONG,
+	HEAD_CARTER,
+	HEAD_TINTIN,
+	HEAD_MUNTON,
+	HEAD_STAMPER,
+	HEAD_JONES,
+	HEAD_PHELPS,
+};
+
+u8 availableBodies[] = {
+	BODY_DJBOND,
+	BODY_CONNERY,
+	BODY_DALTON,
+	BODY_MOORE,
+	BODY_DARK_COMBAT,
+	BODY_ELVIS1,
+	BODY_AREA51GUARD,
+	BODY_OVERALL,
+	BODY_CARRINGTON,
+	BODY_MRBLONDE,
+	// BODY_SKEDAR,
+	BODY_TRENT,
+	BODY_DDSHOCK,
+	BODY_LABTECH,
+	BODY_STRIPES,
+	BODY_DARK_FROCK,
+	BODY_DARK_TRENCH,
+	BODY_OFFICEWORKER,
+	BODY_OFFICEWORKER2,
+	BODY_SECRETARY,
+	BODY_CASSANDRA,
+	BODY_THEKING,
+	BODY_FEM_GUARD,
+	BODY_DD_LABTECH,
+	BODY_DD_SECGUARD,
+	// BODY_DRCAROLL,
+	// BODY_EYESPY,
+	BODY_DARK_RIPPED,
+	BODY_DD_GUARD,
+	BODY_DD_SHOCK_INF,
+	// BODY_TESTCHR,
+	BODY_BIOTECH,
+	BODY_FBIGUY,
+	BODY_CIAGUY,
+	BODY_A51TROOPER,
+	BODY_A51AIRMAN,
+	// BODY_CHICROB,
+	BODY_STEWARD,
+	BODY_STEWARDESS,
+	BODY_PRESIDENT,
+	BODY_STEWARDESS_COAT,
+	// BODY_MINISKEDAR,
+	BODY_NSA_LACKEY,
+	BODY_PRES_SECURITY,
+	BODY_NEGOTIATOR,
+	BODY_G5_GUARD,
+	BODY_PELAGIC_GUARD,
+	BODY_G5_SWAT_GUARD,
+	BODY_ALASKAN_GUARD,
+	BODY_MAIAN_SOLDIER,
+	BODY_PRESIDENT_CLONE,
+	// BODY_PRESIDENT_CLONE2,
+	BODY_DARK_AF1,
+	BODY_DARKWET,
+	BODY_DARKAQUALUNG,
+	BODY_DARKSNOW,
+	BODY_DARKLAB,
+	BODY_FEMLABTECH,
+	BODY_DDSNIPER,
+	BODY_PILOTAF1,
+	BODY_CILABTECH,
+	BODY_CIFEMTECH,
+	BODY_CARREVENINGSUIT,
+	BODY_JONATHAN,
+	BODY_CISOLDIER,
+	// BODY_SKEDARKING,
+	BODY_ELVISWAISTCOAT,
+	BODY_DARK_LEATHER,
+	BODY_DARK_NEGOTIATOR,
+};
+
+u32 APGetRandomHead(void) 
+{
+	u32 randomHead = availableHeads[rngRandom() % ARRAYCOUNT(availableHeads)];
+	while (randomHead == seedElvisHead
+			|| randomHead == seedCarringtonHead
+			|| randomHead == seedMrBlondeHead
+			|| randomHead == seedTrentHead
+			|| randomHead == seedCassandraHead
+			|| randomHead == seedJonathanHead
+			|| randomHead == seedPresidentHead) {
+		randomHead = availableHeads[rngRandom() % ARRAYCOUNT(availableHeads)];
+	}
+	
+	return randomHead;
+}
+
+u32 APGetRandomBody(void) 
+{
+	u32 randomBody = availableBodies[rngRandom() % ARRAYCOUNT(availableBodies)];
+	return randomBody;
+}
+
+u8 APGetAssignedHead(u8 headnum)
+{
+	u8 head = HEAD_DARK_COMBAT;
+	u32 seed = (u32)GetSeed();
+	u8 index;
+
+	if (!IsConnected()) {
+		return headnum;
+	}
+	
+	switch (headnum) {
+		case HEAD_ELVIS_GOGS:
+			headnum = HEAD_ELVIS;
+		case HEAD_ELVIS:
+		case HEAD_CARRINGTON:
+		case HEAD_MRBLONDE:
+		case HEAD_TRENT:
+		case HEAD_CASSANDRA:
+		case HEAD_JONATHAN:
+		case HEAD_PRESIDENT:
+		default:
+			seed ^= seed >> 16;
+			seed *= headnum;
+			seed ^= seed >> 13;
+			seed *= 0xC2B2AE35;
+			seed ^= seed >> 16;
+			index = seed % ARRAYCOUNT(availableHeads);
+			break;
+	}
+
+	head = availableHeads[index];
+	
+	return head;
+}
+
+u8 APGetAssignedBody(u8 bodynum)
+{
+	u8 body = BODY_DJBOND;
+	u32 seed = (u32)GetSeed();	
+	u8 index;
+
+	if (!IsConnected()) {
+		return bodynum;
+	}
+
+	seed ^= seed >> 16;
+	seed *= bodynum;
+	seed ^= seed >> 13;
+	seed *= 0xC2B2AE35;
+	seed ^= seed >> 16;
+	index = seed % ARRAYCOUNT(availableBodies);
+
+	body = availableBodies[index];
+	
+	return body;
 }

@@ -33,6 +33,7 @@ void DisconnectAP(bool joining);
 void ClearConnectionInfo();
 int CheckIfLocationExists(int location);
 int IsLocationCompleted(int location);
+int GetSeed();
 
 #ifdef __cplusplus
 }

@@ -57,6 +57,8 @@
 #include "data.h"
 #include "types.h"
 
+extern bool randomEnemyHeads;
+extern bool randomEnemyBodies;
 extern bool randomEnemyWeapons;
 
 s32 g_RecentQuipsPlayed[5];
@@ -15153,8 +15155,26 @@ struct prop *chrSpawnAtCoord(s32 bodynum, s32 headnum, struct coord *pos, RoomNu
 	s32 stack;
 
 	if (chrsGetNumFree() > 1) {
+		if (randomEnemyBodies 
+				&& bodynum != BODY_SKEDAR
+				&& bodynum != BODY_DRCAROLL
+				&& bodynum != BODY_EYESPY
+				&& bodynum != BODY_TESTCHR
+				&& bodynum != BODY_CHICROB
+				&& bodynum != BODY_MINISKEDAR
+				&& bodynum != BODY_SKEDARKING) {
+			bodynum = APGetAssignedBody(bodynum);
+		}
+
 		if (headnum < 0) {
 			headnum = bodyChooseHead(bodynum);
+
+			if (randomEnemyHeads) {
+				headnum = APGetRandomHead();
+			}
+		}
+		else if (randomEnemyHeads) {
+			headnum = APGetAssignedHead(headnum);
 		}
 
 		pos2.x = pos->x;

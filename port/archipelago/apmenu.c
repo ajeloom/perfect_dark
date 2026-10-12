@@ -24,6 +24,8 @@ bool showLocationName;
 bool showConsole;
 bool randomMusic;
 bool customOutfits;
+bool randomEnemyHeads;
+bool randomEnemyBodies;
 bool randomEnemyWeapons;
 bool randomBuddyWeapons;
 bool randomChallengeStage;
@@ -1827,6 +1829,34 @@ MenuItemHandlerResult randomizeCharactersMenuDialog(s32 operation, struct menuit
 	return 0;
 }
 
+MenuItemHandlerResult menuhandlerRandomEnemyHeads(s32 operation, struct menuitem *item, union handlerdata *data)
+{
+	s32 val;
+
+	switch (operation) {
+	case MENUOP_GET:
+		return randomEnemyHeads;
+	case MENUOP_SET:
+		randomEnemyHeads = data->checkbox.value;
+	}
+
+	return 0;
+}
+
+MenuItemHandlerResult menuhandlerRandomEnemyBodies(s32 operation, struct menuitem *item, union handlerdata *data)
+{
+	s32 val;
+
+	switch (operation) {
+	case MENUOP_GET:
+		return randomEnemyBodies;
+	case MENUOP_SET:
+		randomEnemyBodies = data->checkbox.value;
+	}
+
+	return 0;
+}
+
 MenuItemHandlerResult menuhandlerRandomEnemyWeapons(s32 operation, struct menuitem *item, union handlerdata *data)
 {
 	s32 val;
@@ -1922,6 +1952,22 @@ struct menuitem g_RandomOptionsMenuItems[] = {
 		(uintptr_t)"Random Music\n",
 		0,
 		menuhandlerRandomMusic,
+	},
+	{
+		MENUITEMTYPE_CHECKBOX,
+		0,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Random Enemy Heads\n",
+		0,
+		menuhandlerRandomEnemyHeads,
+	},
+	{
+		MENUITEMTYPE_CHECKBOX,
+		0,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Random Enemy Bodies\n",
+		0,
+		menuhandlerRandomEnemyBodies,
 	},
 	{
 		MENUITEMTYPE_CHECKBOX,
@@ -2646,6 +2692,8 @@ PD_CONSTRUCTOR static void APConfigOtherOptionsInit(void)
 PD_CONSTRUCTOR static void APConfigRandomOptionsInit(void)
 {
     APConfigRegisterUInt("RandomOptions.RandomMusic", &randomMusic, 0, 1);
+	APConfigRegisterUInt("RandomOptions.RandomEnemyHeads", &randomEnemyHeads, 0, 1);
+	APConfigRegisterUInt("RandomOptions.RandomEnemyBodies", &randomEnemyBodies, 0, 1);
 	APConfigRegisterUInt("RandomOptions.RandomEnemyWeapons", &randomEnemyWeapons, 0, 1);
 	APConfigRegisterUInt("RandomOptions.RandomBuddyWeapons", &randomBuddyWeapons, 0, 1);
 	APConfigRegisterUInt("RandomOptions.RandomChallengeStage", &randomChallengeStage, 0, 1);
