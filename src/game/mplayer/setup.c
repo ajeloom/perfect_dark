@@ -30,6 +30,7 @@
 
 extern u32 unlockedWeapons[94];
 
+extern int challengesInItemPool;
 extern u32 unlockedChallenges[30];
 extern u32 completedChallenges[30];
 
@@ -4835,7 +4836,8 @@ MenuItemHandlerResult mpChallengesListMenuHandler(s32 operation, struct menuitem
 		data->list.value = 30;
 		break;
 	case MENUOP_SET:
-		if (unlockedChallenges[data->list.value] == 0) {
+		if (unlockedChallenges[data->list.value] == 0
+				&& challengesInItemPool) {
 			break;
 		}
 
@@ -4878,7 +4880,8 @@ MenuItemHandlerResult mpChallengesListMenuHandler(s32 operation, struct menuitem
 		y = renderdata->y + 1;
 
 		gdl = text0f153628(gdl);
-		if (unlockedChallenges[data->type19.unk04] == 1) {
+		if (unlockedChallenges[data->type19.unk04] == 1
+				|| !challengesInItemPool) {
 			gdl = textRenderProjected(gdl, &x, &y, challengeGetNameBySlot(data->type19.unk04), g_CharsHandelGothicSm, g_FontHandelGothicSm, renderdata->colour, viGetWidth(), viGetHeight(), 0, 0);
 		}
 		else {

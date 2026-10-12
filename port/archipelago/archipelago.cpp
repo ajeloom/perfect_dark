@@ -77,6 +77,7 @@ int hasChallenges;
 extern int challengeStars;
 int requiredChallengeStars;
 int challengeLogic;
+int challengesInItemPool;
 int shorterChallenges = 0;
 
 int hasWeaponTraining;
@@ -1323,6 +1324,10 @@ bool Initialize() {
 
             if (data.at("options").contains("challenge_logic")) {
                 challengeLogic = data.at("options").at("challenge_logic");
+            }
+
+            if (data.at("options").contains("challenges_in_item_pool")) {
+                challengesInItemPool = data.at("options").at("challenges_in_item_pool");
             }
 
             if (data.at("options").contains("shorter_challenges")) {
