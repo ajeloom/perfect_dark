@@ -750,35 +750,44 @@ void setupPlaceWeapon(struct weaponobj *weapon, s32 cmdindex)
 					case WEAPON_REMOTEMINE:
 						// Don't randomize certain enemy's weapons for pickupsanity
 						if (hasPickupsanity
-								&& ((g_Vars.stagenum == STAGE_DEFECTION
+								&& ((g_Vars.stagenum == STAGE_DEFECTION // Double Falcon 2 (silencer)
 									&& chr->chrnum == 0x0021)
-								|| (g_Vars.stagenum == STAGE_VILLA
+								|| (g_Vars.stagenum == STAGE_EXTRACTION // DY357 Magnum
+									&& weapon->weaponnum == WEAPON_DY357MAGNUM
+									&& chr->chrnum == 0x0005)
+								|| (g_Vars.stagenum == STAGE_VILLA // Sniper Rifle
 									&& chr->chrnum == 0x55)
-								|| (g_Vars.stagenum == STAGE_CHICAGO
+								|| (g_Vars.stagenum == STAGE_CHICAGO // CMP150 near Pond Punk
 									&& chr->chrnum == 0x13)
-								|| (g_Vars.stagenum == STAGE_CHICAGO
+								|| (g_Vars.stagenum == STAGE_CHICAGO // CMP150 near Pond Punk
 									&& chr->chrnum == 0x14)
-								|| (g_Vars.stagenum == STAGE_G5BUILDING
+								|| (g_Vars.stagenum == STAGE_G5BUILDING // Crossbow
 									&& chr->chrnum == 0x00)
-								|| (g_Vars.stagenum == STAGE_INFILTRATION
+								|| (g_Vars.stagenum == STAGE_INFILTRATION // Rocket Launcher
+									&& chr->chrnum == 0x0034) 
+								|| (g_Vars.stagenum == STAGE_INFILTRATION // Double MagSec 4
 									&& chr->chrnum == 0x0035)
-								|| (g_Vars.stagenum == STAGE_ESCAPE
+								|| (g_Vars.stagenum == STAGE_ESCAPE // Double Falcon 2 (scope)
 									&& chr->chrnum == 0x0023)
-								|| (g_Vars.stagenum == STAGE_ESCAPE
+								|| (g_Vars.stagenum == STAGE_ESCAPE // Double Falcon 2 (scope)
 									&& chr->chrnum == 0x0024)
-								|| (g_Vars.stagenum == STAGE_AIRBASE
+								|| (g_Vars.stagenum == STAGE_AIRBASE // Double DY357 Magnum
 									&& chr->chrnum == 0x0012)
-								|| (g_Vars.stagenum == STAGE_CRASHSITE
+								|| (g_Vars.stagenum == STAGE_CRASHSITE // DY357-LX
 									&& chr->chrnum == 1)
-								|| (g_Vars.stagenum == STAGE_PELAGIC
+								|| (g_Vars.stagenum == STAGE_PELAGIC // Double Falcon 2 (silencer)
+									&& weapon->weaponnum == WEAPON_FALCON2_SILENCER
 									&& chr->chrnum == 0x0034)
-								|| (g_Vars.stagenum == STAGE_DEEPSEA
-									&& chr->chrnum == 0x3f)
-								|| (g_Vars.stagenum == STAGE_ATTACKSHIP
+								|| (g_Vars.stagenum == STAGE_DEEPSEA // Proximity Mine
+									&& weapon->weaponnum == WEAPON_PROXIMITYMINE
+									&& chr->chrnum == 0x0008)
+								|| (g_Vars.stagenum == STAGE_DEEPSEA // Shotgun near Shield
+									&& chr->chrnum == 0x3f) 
+								|| (g_Vars.stagenum == STAGE_ATTACKSHIP // Double Mauler
 									&& chr->chrnum == 0x002d)
-								|| (g_Vars.stagenum == STAGE_MBR
+								|| (g_Vars.stagenum == STAGE_MBR // Double CMP150
 									&& chr->chrnum == 0x000f)
-								|| (g_Vars.stagenum == STAGE_MAIANSOS
+								|| (g_Vars.stagenum == STAGE_MAIANSOS // Double DY357-LX
 									&& chr->chrnum == 0x000b))) {
 							break;
 						}
