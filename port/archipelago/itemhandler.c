@@ -77,7 +77,8 @@
 #define AP_ALTERNATE_EXIT_OFFSET 579
 #define AP_PICKUPSANITY_OFFSET 2000
 
-extern int lastReceivedItemIndex;
+extern int selectedFileSlot;
+extern struct slotdata savedSlots[4];
 
 u32 completedMissions[NUM_SOLOSTAGES][3];
 u32 completedAgentObjectives[NUM_SOLOSTAGES][3];
@@ -583,7 +584,7 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
 {
     char buffer[300] = "";
 
-    if (itemIndex > lastReceivedItemIndex) {
+    if (itemIndex > savedSlots[selectedFileSlot].lastReceivedItemIndex) {
         itemname = CheckString(itemname);
         sender = CheckString(sender);
         location = CheckString(location);
@@ -602,7 +603,7 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
             hudmsgCreate(buffer, HUDMSGTYPE_DEFAULT);
         }
 
-        lastReceivedItemIndex = itemIndex;
+        savedSlots[selectedFileSlot].lastReceivedItemIndex = itemIndex;
 
         // Only set traps given while playing
         if (itemID == AP_ITEM_DK_TRAP) {

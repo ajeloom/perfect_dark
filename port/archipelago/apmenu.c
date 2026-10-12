@@ -1,5 +1,4 @@
 #include "apmenu.h"
-#include <PR/ultratypes.h>
 #include "bss.h"
 #include "data.h"
 #include "game/menu.h"
@@ -9,6 +8,7 @@
 #include "lib/rng.h"
 #include "archipelago.h"
 #include "apconfig.h"
+#include "utils.h"
 
 extern u32 unlockedMissions[NUM_SOLOSTAGES][3];
 extern u32 unlockedChallenges[30];
@@ -89,9 +89,8 @@ extern int hasAlternateExits;
 extern int hasPickupsanity;
 extern int deathLink;
 
-static char savedAddress[256];
-static char savedSlotName[256];
-static char savedPassword[256];
+extern int selectedFileSlot;
+extern struct slotdata savedSlots[4];
 
 extern char APText[200];
 extern u16 apTextTimer;
@@ -2594,36 +2593,48 @@ void setAPConnectionText(char *text)
 void SaveLoginInfo()
 {
 	// printf("Saved login\n");
-	snprintf(savedAddress, sizeof(savedAddress), "%s", GetServerAddress());
-	snprintf(savedSlotName, sizeof(savedSlotName), "%s", GetSlotName());
-	snprintf(savedPassword, sizeof(savedPassword), "%s", GetPassword());
+	snprintf(savedSlots[selectedFileSlot].savedAddress, sizeof(savedSlots[selectedFileSlot].savedAddress), "%s", GetServerAddress());
+	snprintf(savedSlots[selectedFileSlot].savedSlotName, sizeof(savedSlots[selectedFileSlot].savedSlotName), "%s", GetSlotName());
+	snprintf(savedSlots[selectedFileSlot].savedPassword, sizeof(savedSlots[selectedFileSlot].savedPassword), "%s", GetPassword());
 }
 
 char *GetSavedAddress()
 {
-	return savedAddress;
+	return savedSlots[selectedFileSlot].savedAddress;
 }
 
 char *GetSavedSlotName()
 {
-	return savedSlotName;
+	return savedSlots[selectedFileSlot].savedSlotName;
 }
 
 char *GetSavedPassword()
 {
-	return savedPassword;
+	return savedSlots[selectedFileSlot].savedPassword;
 }
 
-PD_CONSTRUCTOR static void APConfigItemIndexInit(void)
+int GetItemIndex()
 {
-	APConfigRegisterInt("Item.LastReceivedItemIndex", &lastReceivedItemIndex, -1, 1000);
+	return savedSlots[selectedFileSlot].lastReceivedItemIndex;
+}
+
+void SetItemIndex(s32 index)
+{
+	savedSlots[selectedFileSlot].lastReceivedItemIndex = index;
 }
 
 PD_CONSTRUCTOR static void APConfigLoginInit(void)
 {
-	APConfigRegisterString("LastLogin.Address", savedAddress, 256);
-	APConfigRegisterString("LastLogin.SlotName", savedSlotName, 256);
-	APConfigRegisterString("LastLogin.Password", savedPassword, 256);
+	char filename[16];
+	for (s32 i = 0; i < 4; i++) {
+		sprintf(filename, "File%d.Info", i + 1);
+		APConfigRegisterString(strFmt("%s.FileName", filename), savedSlots[i].filename, 16);
+		APConfigRegisterInt(strFmt("%s.FileID", filename), &savedSlots[i].fileid, -1, 5000);
+		APConfigRegisterString(strFmt("%s.Address", filename), savedSlots[i].savedAddress, 256);
+		APConfigRegisterString(strFmt("%s.SlotName", filename), savedSlots[i].savedSlotName, 256);
+		APConfigRegisterString(strFmt("%s.Password", filename), savedSlots[i].savedPassword, 256);
+		APConfigRegisterInt(strFmt("%s.LastReceivedItemIndex", filename), &savedSlots[i].lastReceivedItemIndex, -1, 1000);
+	}
 }
 
 PD_CONSTRUCTOR static void APConfigOtherOptionsInit(void)

@@ -6181,6 +6181,15 @@ struct mpsetupfile {
 	struct setupblock setups[MPSETUP_MAXSETUPS];
 };
 
+struct slotdata {
+	char filename[16];
+	s32 fileid;
+	char savedAddress[256];
+	char savedSlotName[256];
+	char savedPassword[256];
+	int lastReceivedItemIndex;
+};
+
 #endif
 
 #endif

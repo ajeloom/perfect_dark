@@ -18,9 +18,13 @@
 #include "lib/fault.h"
 #include "lib/joy.h"
 #include "lib/snd.h"
+#include "lib/str.h"
 #include "lib/mema.h"
 #include "data.h"
 #include "types.h"
+
+extern struct slotdata savedSlots[4];
+bool checkedFiles = false;
 
 s32 g_FilelistKnownPlugCounts[5];
 
@@ -159,6 +163,31 @@ void filelistsTick(void)
 				osSyncPrintf("Rebuilding pakWad %d:\n", i);
 				filelistUpdate(g_FileLists[i]);
 				g_FileLists[i]->updatedthisframe = true;
+
+				// Delete any files that don't exist in the APConfig
+				if (!checkedFiles && i == 0) {
+					checkedFiles = true;
+					for (u8 j = 0; j < 4; j++) {
+						if (savedSlots[j].fileid == 0 
+								|| strcmp(savedSlots[j].filename, "") == 0) {
+							deleteFileFromAPConfig(j);
+							continue;
+						}
+
+						for (u8 k = 0; k < 4; k++) {
+							struct filelistfile *file = &g_FileLists[0]->files[k];
+							if (file) {
+								if (savedSlots[j].fileid == file->fileid
+										&& strcmp(savedSlots[j].filename, file->name) == 0) {
+									break;
+								}
+								else if (k == 3) {
+									deleteFileFromAPConfig(j);
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 	}
@@ -384,4 +413,14 @@ struct textureconfig *pheadGetTexture(s32 playernum, s32 fileid, u16 deviceseria
 	g_Menus[playernum].fm.headtextures->selectedtexture.textureptr = g_Menus[playernum].fm.headtextures->unk000[indextouse];
 
 	return &g_Menus[playernum].fm.headtextures->selectedtexture;
+}
+
+void deleteFileFromAPConfig(u8 slot)
+{
+	savedSlots[slot].filename[0] = '\0';
+	savedSlots[slot].fileid = -1;
+	savedSlots[slot].savedAddress[0] = '\0';
+	savedSlots[slot].savedSlotName[0] = '\0';
+	savedSlots[slot].savedPassword[0] = '\0';
+	savedSlots[slot].lastReceivedItemIndex = -1;
 }

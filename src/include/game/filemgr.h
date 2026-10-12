@@ -86,4 +86,7 @@ extern const char var7f1b3218[];
 extern const char var7f1b321c[];
 extern const char var7f1b3220[];
 
+s8 getFileSlot(s32 fileid);
+void addFileToAPConfig(void);
+
 #endif

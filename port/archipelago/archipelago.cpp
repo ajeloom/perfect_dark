@@ -1464,8 +1464,8 @@ bool Initialize() {
         }
 
         // Reset last item received count
-        if (lastReceivedItemIndex > items.size() - 1) {
-            lastReceivedItemIndex = -1;
+        if (GetItemIndex() > items.size() - 1) {
+            SetItemIndex(-1);
         }
 
         for (const auto& item : items) {
@@ -1719,19 +1719,10 @@ void PrintCommands()
         printf(" - '!help' - Prints the help message related to Archipelago.\n");
     }
 	printf(" - '/connect {SERVER_IP}:{SERVER_PORT} {SLOT_NAME} [password:{PASSWORD}]' - to connect to the room\n");
-    printf(" - '/reconnect - to connect to the last connected room\n");
+    printf(" - '/reconnect - to connect to the file's saved connection info\n");
     printf(" - '/version' - to show the version of the client\n");
     printf(" - '/disconnect' - to exit the room\n");
 	printf("--------------------------------------------------------------------------------------------------\n");
-    if (GetSavedAddress()[0] != '\0' 
-            && GetSavedSlotName()[0] != '\0') {
-        printf("Last connected room:\n");
-        printf(" - Address: %s\n", GetSavedAddress());
-        printf(" - Slot name: %s\n", GetSavedSlotName());
-        printf(" - Password: %s\n", GetSavedPassword());
-        printf("Use /reconnect to rejoin this room.\n");
-        printf("--------------------------------------------------------------------------------------------------\n");
-    }
 }
 
 void ConnectAP()
@@ -1775,6 +1766,13 @@ void DisconnectAP(bool joining)
             setAPConnectionText(buffer);
         }
     }
+}
+
+void ClearConnectionInfo()
+{
+    URI.clear();
+    slotName.clear();
+    password.clear();
 }
 
 int CheckIfLocationExists(int location)

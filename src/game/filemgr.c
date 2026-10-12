@@ -21,6 +21,27 @@
 #include "types.h"
 #include "mpsetups.h"
 #include "archipelago.h"
+#include "apmenu.h"
+
+#define SLOTDATA_DEFAULT { \
+	.filename = "", \
+	.fileid = -1, \
+	.savedAddress = "", \
+	.savedSlotName = "", \
+	.savedPassword = "", \
+	.lastReceivedItemIndex = -1, \
+}
+
+int selectedFileSlot = -1;
+
+struct slotdata savedSlots[4] = {
+	SLOTDATA_DEFAULT,
+	SLOTDATA_DEFAULT,
+	SLOTDATA_DEFAULT,
+	SLOTDATA_DEFAULT
+};
+
+bool filesChecked = false;
 
 // bss
 struct fileguid g_FilemgrFileToCopy;
@@ -1007,6 +1028,9 @@ void filemgrDeleteCurrentFile(void)
 		}
 	}
 #endif
+
+	s8 slot = getFileSlot(g_FilemgrFileToDelete.fileid);
+	deleteFileFromAPConfig(slot);
 }
 
 struct menuitem g_FilemgrFileSavedMenuItems[] = {
@@ -2663,6 +2687,8 @@ MenuItemHandlerResult filemgrChooseAgentListMenuHandler(s32 operation, struct me
 			gdl = textRenderProjected(gdl, &x, &y, langGet(L_OPTIONS_403),
 					g_CharsHandelGothicMd, g_FontHandelGothicMd, renderdata->colour, viGetWidth(), viGetHeight(), 0, 0);
 		} else if (file) {
+			s8 slot = getFileSlot(file->fileid);
+
 			// Render file name
 			gdl = textRenderProjected(gdl, &x, &y, name,
 					g_CharsHandelGothicMd, g_FontHandelGothicMd, renderdata->colour, viGetWidth(), viGetHeight(), 0, 1);
@@ -2671,18 +2697,27 @@ MenuItemHandlerResult filemgrChooseAgentListMenuHandler(s32 operation, struct me
 			y = renderdata->y + (VERSION == VERSION_JPN_FINAL ? 16 : 18);
 			x = renderdata->x + 62;
 
-			if (stage > 0) {
-				sprintf(buffer, "%s %s",
-						langGet(g_SoloStages[stage - 1].name1),
-						langGet(g_SoloStages[stage - 1].name2));
-			} else {
-				// "New Recruit"
-				strcpy(buffer, langGet(L_OPTIONS_404));
-			}
+			// if (stage > 0) {
+			// 	sprintf(buffer, "%s %s",
+			// 			langGet(g_SoloStages[stage - 1].name1),
+			// 			langGet(g_SoloStages[stage - 1].name2));
+			// } else {
+			// 	// "New Recruit"
+			// 	strcpy(buffer, langGet(L_OPTIONS_404));
+			// }
 
-			strcat(buffer, "\n");
+			// strcat(buffer, "\n");
+
+			sprintf(buffer, "Address: ");
 			gdl = textRenderProjected(gdl, &x, &y, buffer,
 					g_CharsHandelGothicSm, g_FontHandelGothicSm, renderdata->colour, viGetWidth(), viGetHeight(), 0, 0);
+
+			// Render address in smaller font
+			y += (VERSION == VERSION_JPN_FINAL) ? 3 : 1;
+			x++;
+			sprintf(buffer, "%s\n", savedSlots[slot].savedAddress);
+			gdl = textRenderProjected(gdl, &x, &y, buffer,
+					g_CharsHandelGothicXs, g_FontHandelGothicXs, renderdata->colour, viGetWidth(), viGetHeight(), 0, 0);
 
 			// Prepare and render mission time
 			x = renderdata->x + 62;
@@ -2692,13 +2727,15 @@ MenuItemHandlerResult filemgrChooseAgentListMenuHandler(s32 operation, struct me
 			x -= 3;
 #endif
 
-			if (days > 0) {
-				// "Mission Time:"
-				sprintf(buffer, "%s %d:%02d:%02d", langGet(L_OPTIONS_405), days, hours, minutes);
-			} else {
-				// "Mission Time:"
-				sprintf(buffer, "%s %02d:%02d", langGet(L_OPTIONS_405), hours, minutes);
-			}
+			// if (days > 0) {
+			// 	// "Mission Time:"
+			// 	sprintf(buffer, "%s %d:%02d:%02d", langGet(L_OPTIONS_405), days, hours, minutes);
+			// } else {
+			// 	// "Mission Time:"
+			// 	sprintf(buffer, "%s %02d:%02d", langGet(L_OPTIONS_405), hours, minutes);
+			// }
+
+			sprintf(buffer, "Slot Name: %s", savedSlots[slot].savedSlotName);
 
 			// Useless - textwidth and textheight are not used
 #if VERSION >= VERSION_JPN_FINAL
@@ -2711,11 +2748,11 @@ MenuItemHandlerResult filemgrChooseAgentListMenuHandler(s32 operation, struct me
 					g_CharsHandelGothicSm, g_FontHandelGothicSm, renderdata->colour, viGetWidth(), viGetHeight(), 0, 0);
 
 			// Render seconds part of mission time (uses a smaller font)
-			y += (VERSION == VERSION_JPN_FINAL) ? 3 : 1;
-			x++;
-			sprintf(buffer, ".%02d", seconds);
-			gdl = textRenderProjected(gdl, &x, &y, buffer,
-					g_CharsHandelGothicXs, g_FontHandelGothicXs, renderdata->colour, viGetWidth(), viGetHeight(), 0, 0);
+			// y += (VERSION == VERSION_JPN_FINAL) ? 3 : 1;
+			// x++;
+			// sprintf(buffer, ".%02d", seconds);
+			// gdl = textRenderProjected(gdl, &x, &y, buffer,
+			// 		g_CharsHandelGothicXs, g_FontHandelGothicXs, renderdata->colour, viGetWidth(), viGetHeight(), 0, 0);
 		}
 		gdl = text0f153780(gdl);
 		return (uintptr_t) gdl;
@@ -2738,6 +2775,17 @@ MenuItemHandlerResult filemgrChooseAgentListMenuHandler(s32 operation, struct me
 				// load the setup file when loading the agent
 				mpsetupCopyAllFromPak();
 				mpsetupLoadCurrentFile();
+
+				s8 slot = getFileSlot(g_GameFileGuid.fileid);
+				if (slot == -1) {
+					addFileToAPConfig();
+				}
+
+				slot = getFileSlot(g_GameFileGuid.fileid);
+
+				strcpy(savedSlots[slot].filename, file->name);
+
+				selectedFileSlot = slot;
 
 				// Try to auto connect
 				if (!IsConnected()) {
@@ -3419,3 +3467,30 @@ struct menudialogdef g_FilemgrFileSelectMenuDialog = {
 	MENUDIALOGFLAG_IGNOREBACK,
 	&g_FilemgrOperationsMenuDialog,
 };
+
+s8 getFileSlot(s32 fileid)
+{
+	for (s32 i = 0; i < ARRAYCOUNT(savedSlots); i++) {
+		if (fileid == savedSlots[i].fileid) {
+			return i;
+		}
+	} 
+
+	return -1;
+}
+
+void addFileToAPConfig(void)
+{
+	bool found = getFileSlot(g_GameFileGuid.fileid);
+	if (found != -1) {
+		return;
+	}
+
+	// Find unused save slot
+	for (u8 i = 0; i < ARRAYCOUNT(savedSlots); i++) {
+		if (savedSlots[i].fileid == -1) {
+			savedSlots[i].fileid = g_GameFileGuid.fileid;
+			return;
+		}
+	}
+}

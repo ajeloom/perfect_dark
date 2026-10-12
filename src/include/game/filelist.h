@@ -11,5 +11,6 @@ s32 filelistFindOrCreate(u8 filetype);
 void filelistInvalidatePak(s32 device);
 void filelistsTick(void);
 void filelistUpdate(struct filelist *list);
+void deleteFileFromAPConfig(u8 slot);
 
 #endif

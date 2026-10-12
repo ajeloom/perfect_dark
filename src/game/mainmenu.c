@@ -36,6 +36,8 @@
 #include "types.h"
 #include "archipelago.h"
 
+extern bool checkedFiles;
+
 extern int hasTimedCheats;
 extern struct cheat g_Cheats[];
 extern const s32 cheatCount;
@@ -2412,6 +2414,8 @@ MenuItemHandlerResult menuhandlerChangeAgent(s32 operation, struct menuitem *ite
 	if (operation == MENUOP_SET) {
 		func0f0f820c(NULL, -7);
 		DisconnectAP(false);
+		ClearConnectionInfo();
+		checkedFiles = false;
 	}
 
 	return 0;
