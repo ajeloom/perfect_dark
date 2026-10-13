@@ -12345,34 +12345,9 @@ void bgunGiveAmmoForProgressiveWeapons(void)
 {
 	s32 i;
 
-	if (weaponProgressionType == WEAPONPROG_ALLGUNS) {
-		for (i = 0; i < ARRAYCOUNT(g_AmmoTypes); i++) {
-			bool give = true;
-
-			give = bgunAmmotypeAllowsUnlimitedAmmo(i);
-
-			if (give) {
-				if (i == AMMOTYPE_GRENADE
-						|| i == AMMOTYPE_ROCKET
-						|| i == AMMOTYPE_KNIFE
-						|| i == AMMOTYPE_REMOTE_MINE
-						|| i == AMMOTYPE_PROXY_MINE
-						|| i == AMMOTYPE_TIMED_MINE
-						|| i == AMMOTYPE_HOMINGROCKET
-						|| i == AMMOTYPE_NBOMB) {
-					bgunSetAmmoQuantity(i, g_AmmoTypes[i].capacity);
-				}
-				else {
-					bgunSetAmmoQuantity(i, g_AmmoTypes[i].capacity / 3);
-				}
-			}
-		}
-
-		bgunSetAmmoQuantity(AMMOTYPE_PSYCHOSIS, 4);
-	}
-	else if (weaponProgressionType == WEAPONPROG_VANILLA_ALLGUNS
+	if (weaponProgressionType == WEAPONPROG_VANILLA_ALLGUNS
+			|| weaponProgressionType == WEAPONPROG_ALLGUNS
 			|| weaponProgressionType == WEAPONPROG_TYPES) {
-		// Max Ammo
 		for (i = 0; i < ARRAYCOUNT(g_AmmoTypes); i++) {
 			bool give = true;
 
@@ -12388,16 +12363,26 @@ void bgunGiveAmmoForProgressiveWeapons(void)
 						|| i == AMMOTYPE_REMOTE_MINE
 						|| i == AMMOTYPE_PROXY_MINE
 						|| i == AMMOTYPE_TIMED_MINE
+						|| i == AMMOTYPE_REAPER
 						|| i == AMMOTYPE_HOMINGROCKET
 						|| i == AMMOTYPE_NBOMB) {
 					bgunSetAmmoQuantity(i, g_AmmoTypes[i].capacity);
+				}
+				else if (i == AMMOTYPE_RIFLE) {
+					bgunSetAmmoQuantity(i, 300);
+				}
+				else if (i == AMMOTYPE_SMG
+						|| i == AMMOTYPE_RIFLE
+						|| i == AMMOTYPE_SHOTGUN
+						|| i == AMMOTYPE_FARSIGHT
+						|| i == AMMOTYPE_MAGNUM
+						|| i == AMMOTYPE_SEDATIVE) {
+					bgunSetAmmoQuantity(i, g_AmmoTypes[i].capacity / 2);
 				}
 				else {
 					bgunSetAmmoQuantity(i, g_AmmoTypes[i].capacity / 3);
 				}
 			}
-
-			bgunSetAmmoQuantity(AMMOTYPE_PSYCHOSIS, 4);
 		}
 
 		bgunSetAmmoQuantity(AMMOTYPE_PSYCHOSIS, 4);
@@ -12445,10 +12430,10 @@ void bgunGiveAmmoForProgressiveWeapons(void)
 		s32 priammotype = bgunGetAmmoTypeForWeapon(progressiveWeaponNumbers[progressiveWeapon], FUNC_PRIMARY);
 		s32 secammotype = bgunGetAmmoTypeForWeapon(progressiveWeaponNumbers[progressiveWeapon], FUNC_SECONDARY);
 
-
 		if (priammotype == AMMOTYPE_CROSSBOW
 				|| priammotype == AMMOTYPE_SHOTGUN
 				|| priammotype == AMMOTYPE_REAPER
+				|| priammotype == AMMOTYPE_SEDATIVE
 				|| g_Vars.stagenum == STAGE_PELAGIC
 				|| g_Vars.stagenum == STAGE_ATTACKSHIP) {
 			bgunSetAmmoQuantity(priammotype, g_AmmoTypes[priammotype].capacity);
