@@ -115,6 +115,7 @@ extern int enemyRocketsTrap;
 extern int perfectDarknessTrap;
 extern int fastAnimationsTrap;
 extern int skedarTrap;
+extern int nbombTrap;
 
 s32 dkModeTrapTime = 0;
 s32 smallJoTrapTime = 0;
@@ -124,6 +125,7 @@ s32 enemyRocketsTrapTime = 0;
 s32 perfectDarknessTrapTime = 0;
 s32 fastAnimationsTrapTime = 0;
 s32 skedarTrapTime = 0;
+s32 nbombTrapTime = 0;
 
 s8 trapSlots[8];
 
@@ -133,6 +135,7 @@ extern bool turnedOnLights;
 extern bool turnedOffLights;
 
 bool spawnedSkedar = false;
+bool spawnedNbomb = false;
 
 extern s32 chrPadnums[100];
 extern bool randomEnemyWeapons;
@@ -2396,6 +2399,7 @@ void lvTick(void)
 	checkTrap(&perfectDarknessTrap, &perfectDarknessTrapTime, TRAP_PERFECTDARKNESS);
 	checkTrap(&fastAnimationsTrap, &fastAnimationsTrapTime, TRAP_FASTANIMATIONS);
 
+	// For rendering trap text
 	if (dkModeTrap
 			|| smallJoTrap
 			|| smallCharactersTrap
@@ -2430,6 +2434,24 @@ void lvTick(void)
 
 		psCreate(NULL, g_Vars.currentplayer->prop, SFX_SKEDAR_ROAR_052E, -1, -1, 0, 0, PSTYPE_NONE, NULL, -1, NULL, -1, -1, -1, -1);
 		skedarTrap -= 1;
+	}
+
+	// Spawn N-Bomb trap
+	if (!spawnedNbomb 
+			&& g_Vars.stagenum != STAGE_CITRAINING
+			&& g_Vars.stagenum < STAGE_TITLE
+			&& nbombTrap > 0) {
+		spawnedNbomb = true;
+
+		for (i = 0; i < PLAYERCOUNT(); i++) {
+			setCurrentPlayerNum(i);
+			struct prop *playerprop = g_Vars.currentplayer->prop;
+			struct coord *pos = &playerprop->pos;
+			nbombCreateStorm(pos, playerprop);
+		}
+		
+		nbombTrap = 0;
+		spawnedNbomb = false;
 	}
 
 	// Handle MP match ending
@@ -2907,6 +2929,10 @@ s8 findTrapSlot(u8 trap)
 
 void addTrapToSlot(u8 trap)
 {
+	if (trap == TRAP_NBOMB) {
+		return;
+	}
+
 	for (s32 i = 0; i < ARRAYCOUNT(trapSlots); i++) {
 		if (trapSlots[i] == -1) {
 			trapSlots[i] = trap;

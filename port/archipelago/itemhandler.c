@@ -55,11 +55,12 @@
 #define AP_ITEM_PERFECT_DARKNESS_TRAP 257
 #define AP_ITEM_FAST_ANIMATIONS_TRAP 258
 #define AP_ITEM_SKEDAR_TRAP 259
+#define AP_ITEM_NBOMB_TRAP 260
 
-#define AP_ITEM_AMMO_REFILL 260
-#define AP_ITEM_SHIELD_REFILL 261
-#define AP_ITEM_HEALTH_REFILL 262
-#define AP_ITEM_BUDDY 263
+#define AP_ITEM_AMMO_REFILL 261
+#define AP_ITEM_SHIELD_REFILL 262
+#define AP_ITEM_HEALTH_REFILL 263
+#define AP_ITEM_BUDDY 264
 
 #define AP_AGENT_OBJ_OFFSET 1
 #define AP_SPECIAL_AGENT_OBJ_OFFSET 62
@@ -135,6 +136,7 @@ int enemyRocketsTrap = 0;
 int perfectDarknessTrap = 0;
 int fastAnimationsTrap = 0;
 int skedarTrap = 0;
+int nbombTrap = 0;
 
 extern s32 dkModeTrapTime;
 extern s32 smallJoTrapTime;
@@ -144,6 +146,7 @@ extern s32 enemyRocketsTrapTime;
 extern s32 perfectDarknessTrapTime;
 extern s32 fastAnimationsTrapTime;
 extern s32 skedarTrapTime;
+extern s32 nbombTrapTime;
 
 int ammoRefills = 0;
 int shieldRefills = 0;
@@ -408,6 +411,29 @@ void resetAP(int restartGame)
     hasNPCs = 0;
     hasPickupsanity = 0;
 
+    // Reset traps
+    if (g_Vars.stagenum == STAGE_CITRAINING) {
+        dkModeTrap = 0;
+        smallJoTrap = 0;
+        smallCharactersTrap = 0;
+        slowMotionTrap = 0;
+        enemyRocketsTrap = 0;
+        perfectDarknessTrap = 0;
+        fastAnimationsTrap = 0;
+        skedarTrap = 0;
+        nbombTrap = 0;
+
+        dkModeTrapTime = 0;
+        smallJoTrapTime = 0;
+        smallCharactersTrapTime = 0;
+        slowMotionTrapTime = 0;
+        enemyRocketsTrapTime = 0;
+        perfectDarknessTrapTime = 0;
+        fastAnimationsTrapTime = 0;
+        skedarTrapTime = 0;
+        nbombTrapTime = 0;
+    }
+
     if (restartGame) {
         titleSetNextStage(STAGE_CITRAINING);
         setNumPlayers(1);
@@ -643,6 +669,11 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
 
         if (itemID == AP_ITEM_SKEDAR_TRAP) {
             giveTrap(&skedarTrap, &skedarTrapTime, TICKS(1800), TRAP_SKEDAR);    
+            return;
+        }
+
+        if (itemID == AP_ITEM_NBOMB_TRAP) {
+            giveTrap(&nbombTrap, &nbombTrapTime, TICKS(0), TRAP_NBOMB);    
             return;
         }
 

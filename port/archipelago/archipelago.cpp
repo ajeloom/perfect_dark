@@ -368,6 +368,7 @@ std::string itemNames[] = {
     "Perfect Darkness Trap",
     "Fast Animations Trap",
     "Skedar Trap",
+    "N-Bomb Trap",
     "Ammo Refill",
     "Shield Refill",
     "Health Refill",
