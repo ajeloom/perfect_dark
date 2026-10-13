@@ -22,6 +22,7 @@ extern u32 completedChallenges[30];
 
 bool showLocationName;
 bool showConsole;
+bool disableBlur;
 bool randomMusic;
 bool customOutfits;
 bool randomEnemyHeads;
@@ -1653,6 +1654,20 @@ MenuItemHandlerResult menuhandlerShowConsole(s32 operation, struct menuitem *ite
 	return 0;
 }
 
+MenuItemHandlerResult menuhandlerDisableBlur(s32 operation, struct menuitem *item, union handlerdata *data)
+{
+	s32 val;
+
+	switch (operation) {
+	case MENUOP_GET:
+		return disableBlur;
+	case MENUOP_SET:
+		disableBlur = data->checkbox.value;
+	}
+
+	return 0;
+}
+
 MenuItemHandlerResult menuhandlerRandomMusic(s32 operation, struct menuitem *item, union handlerdata *data)
 {
 	s32 val;
@@ -1915,6 +1930,14 @@ struct menuitem g_OtherOptionsMenuItems[] = {
 		(uintptr_t)"Show Console\n",
 		0,
 		menuhandlerShowConsole,
+	},
+	{
+		MENUITEMTYPE_CHECKBOX,
+		0,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Disable Blur\n",
+		0,
+		menuhandlerDisableBlur,
 	},
 	{
 		MENUITEMTYPE_SEPARATOR,
@@ -2687,6 +2710,7 @@ PD_CONSTRUCTOR static void APConfigOtherOptionsInit(void)
 {
 	APConfigRegisterUInt("OtherOptions.ShowLocationName", &showLocationName, 0, 1);
 	APConfigRegisterUInt("OtherOptions.ShowConsole", &showConsole, 0, 1);
+	APConfigRegisterUInt("OtherOptions.DisableBlur", &disableBlur, 0, 1);
 }
 
 PD_CONSTRUCTOR static void APConfigRandomOptionsInit(void)

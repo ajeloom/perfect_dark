@@ -155,6 +155,8 @@ extern u8 seedCassandraHead;
 extern u8 seedJonathanHead;
 extern u8 seedPresidentHead;
 
+extern bool disableBlur;
+
 struct sndstate *g_MiscSfxAudioHandles[3];
 u32 var800aa5bc;
 s32 g_MiscSfxActiveTypes[3];
@@ -1249,6 +1251,10 @@ Gfx *lvRender(Gfx *gdl)
 #ifndef PLATFORM_N64
 					// reset the drug blur to 0 if it's disabled in MP settings
 					if (g_Vars.mplayerisrunning && (g_MpSetup.options & MPOPTION_NODRUGBLUR)) {
+						bluramount = 0;
+					}
+
+					if (disableBlur) {
 						bluramount = 0;
 					}
 #endif
