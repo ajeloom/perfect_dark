@@ -26,7 +26,7 @@ APClient* ap;
 
 #define VERSION_TUPLE {0, 6, 7}
 
-char* clientVersion = "0.6.0";
+char* clientVersion = "0.7.0";
 
 extern bool showConsole;
 bool consoleIsRunning = false;
