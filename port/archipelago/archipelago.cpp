@@ -60,7 +60,7 @@ int requiredAgentMissionStars;
 int requiredSpecialAgentMissionStars;
 int requiredPerfectAgentMissionStars;
 int requiredMissionStars = 0;
-
+int missionsInItemPool;
 
 extern int progressiveWeapon;
 extern int progressivePistol;
@@ -372,7 +372,28 @@ std::string itemNames[] = {
     "Ammo Refill",
     "Shield Refill",
     "Health Refill",
-    "Buddy"
+    "Buddy",
+    "dD Defection",
+    "dD Investigation",
+    "dD Extraction",
+    "Carrington Villa",
+    "Chicago",
+    "G5 Building",
+    "A51 Infiltration",
+    "A51 Rescue",
+    "A51 Escape",
+    "Air Base",
+    "Air Force One",
+    "Crash Site",
+    "Pelagic II",
+    "Deep Sea",
+    "CI Defense",
+    "Attack Ship",
+    "Skedar Ruins",
+    "Mr. Blonde's Revenge",
+    "Maian SOS",
+    "WAR!",
+    "The Duel",
 };
 
 std::map<int, std::string> locationNames = {
@@ -1291,6 +1312,10 @@ bool Initialize() {
                 requiredMissionStars += requiredPerfectAgentMissionStars;
             }
 
+            if (data.at("options").contains("missions_in_item_pool")) {
+                missionsInItemPool = data.at("options").at("missions_in_item_pool");
+            }
+
             if (data.at("options").contains("weapon_progression")) {
                 progressiveWeapon = 0;
                 progressivePistol = 0;
@@ -1420,6 +1445,8 @@ bool Initialize() {
         if (deathLink == 1) {
             ap->ConnectUpdate(false, 0b111, true, {"AP", "DeathLink"});
         }
+
+        initializeStartingItems();
 	});
 	
     // Called as reply to ConnectSlot failed. argument is reason.

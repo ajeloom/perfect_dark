@@ -14,6 +14,7 @@ void collectMPFeatureItem(u32 mpFeature);
 void collectAlternateExitItem(u8 missionIndex, u8 difficulty, u8 exitNum);
 void collectPickupItem(u8 missionIndex, u32 padnum);
 void printSentItemMessage(const char* itemname, const char* recipient, const char* location);
+void initializeStartingItems();
 void handleItem(int itemID, const char* itemname, const char* sender, const char* location, int itemIndex);
 void GetNextProgressiveWeapon(int weaponNumbersArray[], int currentWeaponNumber);
 void giveTrap(int *trap, s32 *trapTime, s32 amount, u8 trapName);

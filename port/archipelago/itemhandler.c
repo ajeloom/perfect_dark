@@ -62,6 +62,28 @@
 #define AP_ITEM_HEALTH_REFILL 263
 #define AP_ITEM_BUDDY 264
 
+#define AP_ITEM_DEFECTION 265
+#define AP_ITEM_INVESTIGATION 266
+#define AP_ITEM_EXTRACTION 267
+#define AP_ITEM_VILLA 268
+#define AP_ITEM_CHICAGO 269
+#define AP_ITEM_G5 270
+#define AP_ITEM_INFILTRATION 271
+#define AP_ITEM_RESCUE 272
+#define AP_ITEM_ESCAPE 273
+#define AP_ITEM_AIRBASE 274
+#define AP_ITEM_AFO 275
+#define AP_ITEM_CRASHSITE 276
+#define AP_ITEM_PELAGIC 277
+#define AP_ITEM_DEEPSEA 278
+#define AP_ITEM_DEFENSE 279
+#define AP_ITEM_ATTACKSHIP 280
+#define AP_ITEM_SKEDARRUINS 281
+#define AP_ITEM_MBR 282
+#define AP_ITEM_MAIANSOS 283
+#define AP_ITEM_WAR 284
+#define AP_ITEM_DUEL 285
+
 #define AP_AGENT_OBJ_OFFSET 1
 #define AP_SPECIAL_AGENT_OBJ_OFFSET 62
 #define AP_PERFECT_AGENT_OBJ_OFFSET 144
@@ -113,6 +135,11 @@ int progressiveRifle = 0;
 int progressiveExplosive = 0;
 int progressiveOtherWeapon = 0;
 
+extern int hasAgent;
+extern int hasSpecialAgent;
+extern int hasPerfectAgent;
+extern int missionsInItemPool;
+extern int challengesInItemPool;
 extern int hasChallenges;
 extern int hasWeaponTraining;
 extern int hasDeviceTraining;
@@ -606,6 +633,44 @@ void printSentItemMessage(const char* itemname, const char* recipient, const cha
 	hudmsgCreate(buffer, HUDMSGTYPE_DEFAULT);
 }
 
+void initializeStartingItems()
+{
+    s32 i;
+
+    if (!missionsInItemPool) {
+        for (i = 0; i < 21; i++) {
+            if (hasAgent) {
+                unlockedMissions[i][0] = 1;
+            }
+
+            if (hasSpecialAgent) {
+                unlockedMissions[i][1] = 1;
+            }
+
+            if (hasPerfectAgent) {
+                unlockedMissions[i][2] = 1;
+            }
+        }
+    }
+
+    if (!challengesInItemPool) {
+        for (i = 0; i < 30; i++) {
+            unlockedChallenges[i] = 1;   
+        }
+    }
+
+    if (hasPickupsanity
+            && !hasAgent
+            && !hasSpecialAgent
+            && !hasPerfectAgent) {
+        for (i = 0; i < 21; i++) {
+            unlockedMissions[i][0] = 1;
+            unlockedMissions[i][1] = 1;
+            unlockedMissions[i][2] = 1;
+        }
+    }
+}
+
 void handleItem(int itemID, const char* itemname, const char* sender, const char* location, int itemIndex)
 {
     char buffer[300] = "";
@@ -883,27 +948,30 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
         return;
     }
 
-    // Give Skedar Ruins on any difficulty that you have a mission in
-    if (itemID == AP_ITEM_SKEDAR_RUINS) {
-        for (s32 i = 0; i < 21; i++) {
-            if (unlockedMissions[i][0] == 1) {
-                unlockedMissions[16][0] = 1;
+    // Give mission on every difficulty set
+    if (itemID >= AP_ITEM_DEFECTION) {
+        u8 missionIndex = itemID - AP_ITEM_DEFECTION;
+
+        if (hasAgent) {
+            unlockedMissions[missionIndex][0] = 1;
             }
-            if (unlockedMissions[i][1] == 1) {
-                unlockedMissions[16][1] = 1;
+
+        if (hasSpecialAgent) {
+            unlockedMissions[missionIndex][1] = 1;
             }
-            if (unlockedMissions[i][2] == 1) {
-                unlockedMissions[16][2] = 1;
-            }
+
+        if (hasPerfectAgent) {
+            unlockedMissions[missionIndex][2] = 1;
         }
 
-        // Give Skedar Ruins on all difficulties if you played no missions
-        if (unlockedMissions[16][0] == 0
-                && unlockedMissions[16][1] == 0
-                && unlockedMissions[16][2] == 0) {
-            unlockedMissions[16][0] = 1;
-            unlockedMissions[16][1] = 1;
-            unlockedMissions[16][2] = 1;
+        // Give Skedar Ruins on all difficulties if no difficulty is set
+        if (itemID == AP_ITEM_SKEDARRUINS
+                && !hasAgent
+                && !hasSpecialAgent
+                && !hasPerfectAgent) {
+            unlockedMissions[missionIndex][0] = 1;
+            unlockedMissions[missionIndex][1] = 1;
+            unlockedMissions[missionIndex][2] = 1;
         }
 
         return;
