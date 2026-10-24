@@ -1230,7 +1230,7 @@ void invRemoveLockedWeapons(void)
 
 	if (weaponProgressionType == WEAPONPROG_DISABLED
 			|| weaponProgressionType == WEAPONPROG_VANILLA_ALLGUNS) {
-		for (i = WEAPON_FALCON2; i <= WEAPON_SUICIDEPILL; i++) {
+		for (i = WEAPON_FALCON2; i <= WEAPON_PSYCHOSISGUN; i++) {
 			if (unlockedWeapons[i] == 0) {
 				invRemoveItemByNum(i);
 			}
@@ -1241,12 +1241,6 @@ void invRemoveLockedWeapons(void)
 			if (unlockedWeapons[progressiveWeaponNumbers[i]] == 0
 					|| i > progressiveWeapon) {
 				invRemoveItemByNum(progressiveWeaponNumbers[i]);
-			}
-		}
-
-		for (i = WEAPON_NIGHTVISION; i <= WEAPON_SUICIDEPILL; i++) {
-			if (unlockedWeapons[i] == 0) {
-				invRemoveItemByNum(i);
 			}
 		}
 	}
@@ -1320,15 +1314,9 @@ void invRemoveLockedWeapons(void)
 				invRemoveItemByNum(i);
 			}
 		}
-
-		for (i = WEAPON_NIGHTVISION; i <= WEAPON_SUICIDEPILL; i++) {
-			if (unlockedWeapons[i] == 0) {
-				invRemoveItemByNum(i);
-			}
-		}
 	}
 	else if (weaponProgressionType == WEAPONPROG_TYPES) {
-		for (i = WEAPON_FALCON2; i <= WEAPON_SUICIDEPILL; i++) {
+		for (i = WEAPON_FALCON2; i <= WEAPON_PSYCHOSISGUN; i++) {
 			if (g_Vars.stagenum == STAGE_G5BUILDING 
 					&& i == WEAPON_REMOTEMINE
 					&& unlockedWeapons[WEAPON_REMOTEMINE] == 1) {
@@ -1422,11 +1410,33 @@ void invRemoveLockedWeapons(void)
 					break;
 			}
 		}
-
-		
 	}
 
+	invRemoveLockedItems();
 	invGetCheatItems();
+}
+
+void invRemoveLockedItems(void)
+{
+	s32 i;
+
+	for (i = WEAPON_NIGHTVISION; i <= WEAPON_SUICIDEPILL; i++) {
+		if (g_Vars.stagenum == STAGE_AIRFORCEONE
+				&& g_MissionConfig.difficulty == DIFF_A
+				&& i == WEAPON_SUITCASE) {
+			continue;
+		}
+
+		if (g_Vars.stagenum == STAGE_ESCAPE
+				&& g_MissionConfig.difficulty == DIFF_A
+				&& i == WEAPON_AUTOSURGEON) {
+			continue;
+		}
+
+		if (unlockedWeapons[i] == 0) {
+			invRemoveItemByNum(i);
+		}
+	}
 }
 
 void invGetProgressiveWeapons(void)

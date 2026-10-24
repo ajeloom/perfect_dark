@@ -1173,22 +1173,6 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
                     invGiveSingleWeapon(weaponnum);
                 }
                 break;
-            case WEAPON_AUTOSURGEON:
-                if (g_Vars.stagenum == STAGE_ESCAPE
-                        && g_MissionConfig.difficulty <= DIFF_SA) {
-                    invGiveSingleWeapon(weaponnum);
-
-                    // Unlock the door in hangar on Agent
-                    if (g_MissionConfig.difficulty == DIFF_A) {
-                        struct defaultobj *obj = objFindByTagId(0x0a);
-                        if (obj && obj->prop && obj->prop->type == PROPTYPE_DOOR) {
-                            struct doorobj *door = (struct doorobj *) obj;
-                            u8 bits = 0x02;
-                            door->keyflags = door->keyflags & ~bits;
-                        }
-                    }
-                }
-                break;
             case WEAPON_HORIZONSCANNER:
                 if (g_Vars.stagenum == STAGE_AIRBASE
                         || g_Vars.stagenum == STAGE_CRASHSITE) {
@@ -1198,12 +1182,6 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
             case WEAPON_COMBATBOOST:
                 if (g_Vars.stagenum == STAGE_AIRFORCEONE
                         || g_Vars.stagenum == STAGE_DEFENSE) {
-                    invGiveSingleWeapon(weaponnum);
-                }
-                break;
-            case WEAPON_SUITCASE:
-                if (g_Vars.stagenum == STAGE_AIRFORCEONE
-                        && g_MissionConfig.difficulty == DIFF_A) {
                     invGiveSingleWeapon(weaponnum);
                 }
                 break;
@@ -1235,6 +1213,9 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
                 if (g_Vars.stagenum == STAGE_MBR) {
                     invGiveSingleWeapon(weaponnum);
                 }
+                break;
+            case WEAPON_AUTOSURGEON:
+            case WEAPON_SUITCASE:
                 break;
         }
     }
