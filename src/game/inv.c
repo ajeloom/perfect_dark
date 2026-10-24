@@ -1267,7 +1267,8 @@ void invRemoveLockedWeapons(void)
 				continue;
 			}
 
-			if (g_Vars.stagenum == STAGE_G5BUILDING 
+			if ((g_Vars.stagenum == STAGE_CHICAGO
+					|| g_Vars.stagenum == STAGE_G5BUILDING)
 					&& i == WEAPON_REMOTEMINE
 					&& unlockedWeapons[WEAPON_REMOTEMINE] == 1) {
 				continue;
@@ -1317,7 +1318,8 @@ void invRemoveLockedWeapons(void)
 	}
 	else if (weaponProgressionType == WEAPONPROG_TYPES) {
 		for (i = WEAPON_FALCON2; i <= WEAPON_PSYCHOSISGUN; i++) {
-			if (g_Vars.stagenum == STAGE_G5BUILDING 
+			if ((g_Vars.stagenum == STAGE_CHICAGO
+					|| g_Vars.stagenum == STAGE_G5BUILDING)
 					&& i == WEAPON_REMOTEMINE
 					&& unlockedWeapons[WEAPON_REMOTEMINE] == 1) {
 				continue;
