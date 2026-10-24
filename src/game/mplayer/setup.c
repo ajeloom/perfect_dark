@@ -4985,7 +4985,7 @@ MenuItemHandlerResult menuhandlerMpStartChallenge(s32 operation, struct menuitem
 
 char *mpMenuTextChallengeName(struct menuitem *item)
 {
-	if (completionGoal >= 2 || (completionGoal == 0 && skedarRequirements >= 2)) {
+	if (completionGoal == 0 && skedarRequirements >= 2) {
 		if (g_BossFile.locktype == MPLOCKTYPE_CHALLENGE || g_Vars.normmplayerisrunning) {
 			sprintf(g_StringPointer, "%s:\n", challengeGetName(challengeGetCurrent()));
 			return g_StringPointer;

@@ -57,6 +57,9 @@ extern int skedarRequirements;
 extern int missionStars;
 extern int requiredMissionStars;
 
+extern int cheeseCount;
+extern int requiredCheese;
+
 u8 g_InventoryWeapon;
 
 struct menudialogdef g_2PMissionControlStyleMenuDialog;
@@ -4997,9 +5000,7 @@ char *handleMissionMenuName(void)
 {
 	sprintf(g_StringPointer, "Mission Select\n");
 
-	if (completionGoal == 1 
-			|| completionGoal == 3
-			|| (completionGoal == 0 && (skedarRequirements == 1 || skedarRequirements == 3))) {
+	if (completionGoal == 0 && (skedarRequirements == 1 || skedarRequirements == 3)) {
 		sprintf(g_StringPointer, "Mission Select - (Mission Stars: %d/%d)\n", missionStars, requiredMissionStars);
 	}
 
@@ -5244,9 +5245,20 @@ struct menuitem g_MainMenuMenuItems[] = {
 	{ MENUITEMTYPE_END },
 };
 
+char *handlePerfectMenuName(void)
+{
+	sprintf(g_StringPointer, "Perfect Menu\n");
+
+	if (completionGoal == 1) {
+		sprintf(g_StringPointer, "Perfect Menu - (Cheese: %d/%d)\n", cheeseCount, requiredCheese);
+	}
+
+	return g_StringPointer;
+}
+
 struct menudialogdef g_CiMenuViaPcMenuDialog = {
 	MENUDIALOGTYPE_DEFAULT,
-	L_OPTIONS_116, // "Perfect Menu"
+	(uintptr_t)&handlePerfectMenuName,
 	g_MainMenuMenuItems,
 	menudialogMainMenu,
 	MENUDIALOGFLAG_STARTSELECTS,
@@ -5255,7 +5267,7 @@ struct menudialogdef g_CiMenuViaPcMenuDialog = {
 
 struct menudialogdef g_CiMenuViaPauseMenuDialog = {
 	MENUDIALOGTYPE_DEFAULT,
-	L_OPTIONS_116, // "Perfect Menu"
+	(uintptr_t)&handlePerfectMenuName,
 	g_MainMenuMenuItems,
 	menudialogMainMenu,
 	MENUDIALOGFLAG_STARTSELECTS,

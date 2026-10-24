@@ -844,6 +844,7 @@ bool challengeIsCompleteForEndscreen(void)
 
 			if (completedChallenges[g_MpChallengeIndex] == false) {
 				completedChallenges[g_MpChallengeIndex] = true;
+				updateChallengeStars();
 				collectChallengeItem(g_MpChallengeIndex);
 			}
 				

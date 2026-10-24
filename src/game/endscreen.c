@@ -32,6 +32,7 @@
 #include "types.h"
 #include "itemhandler.h"
 
+extern int missionStars;
 extern u32 completedMissions[NUM_SOLOSTAGES][3];
 
 int exitNum = 0;
@@ -1465,6 +1466,7 @@ void endscreenPrepare(void)
 		} else {
 			if (completedMissions[g_MissionConfig.stageindex][g_MissionConfig.difficulty] == false) {
 				completedMissions[g_MissionConfig.stageindex][g_MissionConfig.difficulty] = true;
+				updateMissionStars();
 
 				collectMissionItem(g_MissionConfig.stageindex, g_MissionConfig.difficulty);
 			}
@@ -1725,6 +1727,7 @@ void endscreenPushCoop(void)
 		endscreenSetCoopCompleted();
 		if (completedMissions[g_MissionConfig.stageindex][g_MissionConfig.difficulty] == false) {
 			completedMissions[g_MissionConfig.stageindex][g_MissionConfig.difficulty] = true;
+			updateMissionStars();
 			collectMissionItem(g_MissionConfig.stageindex, g_MissionConfig.difficulty);
 		}
 	}

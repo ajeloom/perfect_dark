@@ -63,6 +63,8 @@ u32 randomMaianBody = BODY_ELVIS1;
 extern int completionGoal;
 extern int skedarRequirements;
 
+extern int requiredCheese;
+
 extern int missionLogic;
 extern int hasAgent;
 extern int hasSpecialAgent;
@@ -1277,14 +1279,7 @@ const char *GetOption(struct menuitem *item)
 				case 0:
 					return "Complete Skedar Ruins  \n";
 				case 1:
-					sprintf(g_StringPointer, "%d Missions  \n", requiredMissionStars);
-					return g_StringPointer;
-				case 2:
-					sprintf(g_StringPointer, "%d Challenges  \n", requiredChallengeStars);
-					return g_StringPointer;
-				case 3:
-					sprintf(g_StringPointer, "%d Missions, %d Challenges  \n", requiredMissionStars, requiredChallengeStars);
-					return g_StringPointer;
+					return "Cheese Hunt  \n";
 			}
 		case 1:
 			switch (skedarRequirements) {
@@ -1341,11 +1336,6 @@ const char *GetOption(struct menuitem *item)
 			break;
 		case 9:
 			option = hasChallenges;
-			if (completionGoal >= 2 
-					|| (completionGoal == 0 
-					&& skedarRequirements >= 2)) {
-				option = 1;
-			}
 			break;
 		case 10:
 			switch (challengeLogic) {

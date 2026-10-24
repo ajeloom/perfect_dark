@@ -50,6 +50,8 @@ extern int lastReceivedItemIndex;
 int completionGoal;
 int skedarRequirements;
 
+int requiredCheese;
+
 int missionLogic;
 int hasAgent;
 int hasSpecialAgent;
@@ -345,9 +347,6 @@ std::string itemNames[] = {
     "Air Force One Master Key",
     "Cheese",
     "Trap",
-    "Mission Star",
-    "Challenge Star",
-    "Skedar Ruins",
     "Victory",
     "Progressive Pistol",
     "Progressive SMG",
@@ -1267,6 +1266,10 @@ bool Initialize() {
                 skedarRequirements = data.at("options").at("skedar_ruins_requirements");
             }
 
+            if (data.at("options").contains("required_cheese")) {
+                requiredCheese = data.at("options").at("required_cheese");
+            }
+
             if (data.at("options").contains("mission_logic")) {
                 missionLogic = data.at("options").at("mission_logic");
             }
@@ -1300,6 +1303,7 @@ bool Initialize() {
 
             requiredMissionStars = 0;
 
+            if (completionGoal == 0 && (skedarRequirements == 1 || skedarRequirements == 3)) {
             if (hasAgent == 1) {
                 requiredMissionStars += requiredAgentMissionStars;
             }
@@ -1310,6 +1314,7 @@ bool Initialize() {
 
             if (hasPerfectAgent == 1) {
                 requiredMissionStars += requiredPerfectAgentMissionStars;
+                }
             }
 
             if (data.at("options").contains("missions_in_item_pool")) {
@@ -1337,8 +1342,7 @@ bool Initialize() {
             if (data.at("options").contains("challenges")) {
                 hasChallenges = data.at("options").at("challenges");
 
-                if (completionGoal >= 2
-                        || (completionGoal == 0 && skedarRequirements >= 2)) {
+                if (completionGoal == 0 && skedarRequirements >= 2) {
                     hasChallenges = 1;
                 }
             }
@@ -1346,6 +1350,10 @@ bool Initialize() {
             if (data.at("options").contains("required_challenge_stars")) {
                 challengeStars = 0;
                 requiredChallengeStars = data.at("options").at("required_challenge_stars");
+            }
+
+            if (completionGoal == 0 && (skedarRequirements == 0 || skedarRequirements == 1)) {
+                requiredChallengeStars = 0;
             }
 
             if (data.at("options").contains("challenge_logic")) {
@@ -1427,9 +1435,11 @@ bool Initialize() {
                     int difficulty = (location - 247) % 3;
 
                     completedMissions[missionIndex][difficulty] = 1;
+                    missionStars += 1;
                 }
                 else if (location >= 310 && location < 340) {
                     completedChallenges[location - 310] = 1;
+                    challengeStars += 1;
                 }
                 else if (location >= 340 && location < 439) {
                     int weaponIndex = (location - 340) / 3;

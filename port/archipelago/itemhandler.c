@@ -34,10 +34,7 @@
 #define AP_ITEM_G5_BUILDING_MASTER_KEY 232
 #define AP_ITEM_AREA_51_MASTER_KEY 233
 #define AP_ITEM_AIR_FORCE_ONE_MASTER_KEY 234
-#define AP_ITEM_FILLER 235
-#define AP_ITEM_MISSION_STAR 237
-#define AP_ITEM_CHALLENGE_STAR 238
-#define AP_ITEM_SKEDAR_RUINS 239
+#define AP_ITEM_CHEESE 235
 #define AP_ITEM_VICTORY 240
 #define AP_ITEM_CHARACTER_START 246
 
@@ -118,6 +115,9 @@ u32 unlockedCharacters[6];
 
 extern int completionGoal;
 extern int skedarRequirements;
+
+int cheeseCount = 0;
+extern int requiredCheese;
 
 int missionStars = 0;
 extern int requiredMissionStars;
@@ -434,6 +434,9 @@ void resetAP(int restartGame)
 
     completionGoal = 0;
     skedarRequirements = 0;
+    cheeseCount = 0;
+    missionStars = 0;
+    challengeStars = 0;
 
     hasNPCs = 0;
     hasPickupsanity = 0;
@@ -743,10 +746,6 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
         }
 
         // Filler
-        if (itemID == AP_ITEM_FILLER) {
-            return;
-        }
-
         if (itemID == AP_ITEM_AMMO_REFILL) {
             ammoRefills++;
 
@@ -807,6 +806,17 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
             spawnBuddy();
             return;
         }
+    }
+
+    if (itemID == AP_ITEM_CHEESE) {
+        if (completionGoal == 1) {
+            cheeseCount += 1;
+            if (cheeseCount >= requiredCheese) {
+                ReachedGoal();
+                hasVictory = true;
+            }
+        }
+        return;
     }
 
     // Character
@@ -900,65 +910,17 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
         return;
     }
 
-	// Mission Star
-	if (itemID == AP_ITEM_MISSION_STAR) {
-        missionStars += 1;
-
-        if (completionGoal == 1
-                || (completionGoal == 0 && skedarRequirements == 1)) {
-            if (missionStars >= requiredMissionStars) {
-                uint64_t location = AP_COLLECT_ALL_STARS_LOCATION;
-                InternalCollectAPItem(location);
-            }
-        }
-
-        if (completionGoal == 3
-                || (completionGoal == 0 && skedarRequirements == 3)) {
-            if (missionStars >= requiredMissionStars
-                    && challengeStars >= requiredChallengeStars) {
-                uint64_t location = AP_COLLECT_ALL_STARS_LOCATION;
-                InternalCollectAPItem(location);
-            }
-        }
-
-        return;
-	}
-
-    // Challenge Star
-    if (itemID == AP_ITEM_CHALLENGE_STAR) {
-        challengeStars += 1;
-
-        if (completionGoal == 2
-                || (completionGoal == 0 && skedarRequirements == 2)) {
-            if (challengeStars >= requiredChallengeStars) {
-                uint64_t location = AP_COLLECT_ALL_STARS_LOCATION;
-                InternalCollectAPItem(location);
-            }
-        }
-
-        if (completionGoal == 3
-                || (completionGoal == 0 && skedarRequirements == 3)) {
-            if (missionStars >= requiredMissionStars
-                    && challengeStars >= requiredChallengeStars) {
-                uint64_t location = AP_COLLECT_ALL_STARS_LOCATION;
-                InternalCollectAPItem(location);
-            }
-        }
-
-        return;
-    }
-
     // Give mission on every difficulty set
     if (itemID >= AP_ITEM_DEFECTION) {
         u8 missionIndex = itemID - AP_ITEM_DEFECTION;
 
         if (hasAgent) {
             unlockedMissions[missionIndex][0] = 1;
-            }
+        }
 
         if (hasSpecialAgent) {
             unlockedMissions[missionIndex][1] = 1;
-            }
+        }
 
         if (hasPerfectAgent) {
             unlockedMissions[missionIndex][2] = 1;
@@ -1281,7 +1243,7 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
     else if (itemID < AP_ITEM_CHEAT_START  && itemID >= AP_ITEM_CHALLENGE_START) {
         unlockedChallenges[itemID - AP_ITEM_CHALLENGE_START] = 1;
     }
-    else if (itemID < AP_ITEM_FILLER && itemID >= AP_ITEM_CHEAT_START) {
+    else if (itemID < AP_ITEM_CHEESE && itemID >= AP_ITEM_CHEAT_START) {
         unlockedCheats[itemID - AP_ITEM_CHEAT_START] = 1;
 
         // Classic weapon cheats
@@ -1289,6 +1251,34 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
             unlockedWeapons[itemID - 186] = 1;
         }
     }
+}
+
+void updateMissionStars()
+{
+    missionStars += 1;
+    if (completionGoal == 0 && skedarRequirements >= 1) {
+        if (missionStars >= requiredMissionStars
+                && challengeStars >= requiredChallengeStars) {
+            uint64_t location = AP_COLLECT_ALL_STARS_LOCATION;
+            InternalCollectAPItem(location);
+        }
+    }
+
+    return;
+}
+
+void updateChallengeStars()
+{
+    challengeStars += 1;
+    if (completionGoal == 0 && skedarRequirements >= 1) {
+        if (missionStars >= requiredMissionStars
+                && challengeStars >= requiredChallengeStars) {
+            uint64_t location = AP_COLLECT_ALL_STARS_LOCATION;
+            InternalCollectAPItem(location);
+        }
+    }
+    
+    return;
 }
 
 void GetNextProgressiveWeapon(int weaponNumbersArray[], int currentWeaponNumber) {

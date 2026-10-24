@@ -16,6 +16,8 @@ void collectPickupItem(u8 missionIndex, u32 padnum);
 void printSentItemMessage(const char* itemname, const char* recipient, const char* location);
 void initializeStartingItems();
 void handleItem(int itemID, const char* itemname, const char* sender, const char* location, int itemIndex);
+void updateMissionStars();
+void updateChallengeStars();
 void GetNextProgressiveWeapon(int weaponNumbersArray[], int currentWeaponNumber);
 void giveTrap(int *trap, s32 *trapTime, s32 amount, u8 trapName);
 void spawnBuddy(void);
