@@ -44,16 +44,6 @@
 #define AP_ITEM_PROG_EXPLOSIVE 244
 #define AP_ITEM_PROG_OTHER_WEAPON 245
 
-#define AP_ITEM_DK_TRAP 252
-#define AP_ITEM_SMALL_JO_TRAP 253
-#define AP_ITEM_SMALL_CHARACTERS_TRAP 254
-#define AP_ITEM_SLOW_MOTION_TRAP 255
-#define AP_ITEM_ENEMY_ROCKETS_TRAP 256
-#define AP_ITEM_PERFECT_DARKNESS_TRAP 257
-#define AP_ITEM_FAST_ANIMATIONS_TRAP 258
-#define AP_ITEM_SKEDAR_TRAP 259
-#define AP_ITEM_NBOMB_TRAP 260
-
 #define AP_ITEM_AMMO_REFILL 261
 #define AP_ITEM_SHIELD_REFILL 262
 #define AP_ITEM_HEALTH_REFILL 263
@@ -80,6 +70,17 @@
 #define AP_ITEM_MAIANSOS 283
 #define AP_ITEM_WAR 284
 #define AP_ITEM_DUEL 285
+
+#define AP_ITEM_DK_TRAP 300
+#define AP_ITEM_SMALL_JO_TRAP 301
+#define AP_ITEM_SMALL_CHARACTERS_TRAP 302
+#define AP_ITEM_SLOW_MOTION_TRAP 303
+#define AP_ITEM_ENEMY_ROCKETS_TRAP 304
+#define AP_ITEM_PERFECT_DARKNESS_TRAP 305
+#define AP_ITEM_FAST_ANIMATIONS_TRAP 306
+#define AP_ITEM_SKEDAR_TRAP 307
+#define AP_ITEM_NBOMB_TRAP 308
+#define AP_ITEM_CLOAK_TRAP 309
 
 #define AP_AGENT_OBJ_OFFSET 1
 #define AP_SPECIAL_AGENT_OBJ_OFFSET 62
@@ -164,6 +165,7 @@ int perfectDarknessTrap = 0;
 int fastAnimationsTrap = 0;
 int skedarTrap = 0;
 int nbombTrap = 0;
+int cloakTrap = 0;
 
 extern s32 dkModeTrapTime;
 extern s32 smallJoTrapTime;
@@ -174,6 +176,7 @@ extern s32 perfectDarknessTrapTime;
 extern s32 fastAnimationsTrapTime;
 extern s32 skedarTrapTime;
 extern s32 nbombTrapTime;
+extern s32 cloakTrapTime;
 
 int ammoRefills = 0;
 int shieldRefills = 0;
@@ -452,6 +455,7 @@ void resetAP(int restartGame)
         fastAnimationsTrap = 0;
         skedarTrap = 0;
         nbombTrap = 0;
+        cloakTrap = 0;
 
         dkModeTrapTime = 0;
         smallJoTrapTime = 0;
@@ -462,6 +466,7 @@ void resetAP(int restartGame)
         fastAnimationsTrapTime = 0;
         skedarTrapTime = 0;
         nbombTrapTime = 0;
+        cloakTrapTime = 0;
     }
 
     if (restartGame) {
@@ -742,6 +747,11 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
 
         if (itemID == AP_ITEM_NBOMB_TRAP) {
             giveTrap(&nbombTrap, &nbombTrapTime, TICKS(0), TRAP_NBOMB);    
+            return;
+        }
+
+        if (itemID == AP_ITEM_CLOAK_TRAP) {
+            giveTrap(&cloakTrap, &cloakTrapTime, TICKS(1800), TRAP_CLOAK); 
             return;
         }
 

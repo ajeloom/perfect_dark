@@ -61,6 +61,8 @@ extern bool randomEnemyHeads;
 extern bool randomEnemyBodies;
 extern bool randomEnemyWeapons;
 
+extern int cloakTrap;
+
 s32 g_RecentQuipsPlayed[5];
 u32 var8009cd84;
 u32 var8009cd88;
@@ -2941,6 +2943,11 @@ void chrAttack(struct chrdata *chr, struct attackanimgroup **animgroups, bool fl
 
 				chr->hidden &= ~CHRHFLAG_NEEDANIM;
 			}
+		}
+
+		// Make enemies uncloak when attacking
+		if (cloakTrap) {
+			chrUncloakTemporarily(chr);
 		}
 	}
 }
@@ -7891,6 +7898,11 @@ bool chrTryPunch(struct chrdata *chr, u8 reverse)
 
 		chr->act_anim.reverse = reverse;
 		chr->chrflags &= ~CHRCFLAG_INJUREDTARGET;
+
+		// Make enemies uncloak when attacking
+		if (cloakTrap) {
+			chrUncloakTemporarily(chr);
+		}
 
 		return true;
 	}

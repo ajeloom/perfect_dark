@@ -116,6 +116,7 @@ extern int perfectDarknessTrap;
 extern int fastAnimationsTrap;
 extern int skedarTrap;
 extern int nbombTrap;
+extern int cloakTrap;
 
 s32 dkModeTrapTime = 0;
 s32 smallJoTrapTime = 0;
@@ -126,8 +127,9 @@ s32 perfectDarknessTrapTime = 0;
 s32 fastAnimationsTrapTime = 0;
 s32 skedarTrapTime = 0;
 s32 nbombTrapTime = 0;
+s32 cloakTrapTime = 0;
 
-s8 trapSlots[8];
+s8 trapSlots[9];
 
 bool updatedTrapSlots = false;
 
@@ -1903,6 +1905,10 @@ Gfx *lvRender(Gfx *gdl)
 		gdl = renderTrapHud(gdl, TRAP_FASTANIMATIONS, fastAnimationsTrapTime);
 	}
 
+	if (cloakTrap) {
+		gdl = renderTrapHud(gdl, TRAP_CLOAK, cloakTrapTime);
+	}
+
 	if (skedarTrap) {
 		s8 slot = findTrapSlot(TRAP_SKEDAR);
 		if (g_Vars.stagenum == STAGE_CITRAINING) {
@@ -2404,6 +2410,7 @@ void lvTick(void)
 	checkTrap(&enemyRocketsTrap, &enemyRocketsTrapTime, TRAP_ENEMYROCKETS);
 	checkTrap(&perfectDarknessTrap, &perfectDarknessTrapTime, TRAP_PERFECTDARKNESS);
 	checkTrap(&fastAnimationsTrap, &fastAnimationsTrapTime, TRAP_FASTANIMATIONS);
+	checkTrap(&cloakTrap, &cloakTrapTime, TRAP_CLOAK);
 
 	// For rendering trap text
 	if (dkModeTrap
@@ -2859,6 +2866,9 @@ Gfx *renderTrapHud(Gfx *gdl, u8 trapName, s32 trapTime)
 			break;
 		case TRAP_SKEDAR:
 			sprintf(name, "Skedar");
+			break;
+		case TRAP_CLOAK:
+			sprintf(name, "Cloak");
 			break;
 	}
 

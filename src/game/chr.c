@@ -56,6 +56,7 @@ extern int smallJoTrap;
 extern int smallCharactersTrap;
 extern int enemyRocketsTrap;
 extern int fastAnimationsTrap;
+extern int cloakTrap;
 
 extern s32 chrStartingWeapons[100];
 
@@ -2160,7 +2161,7 @@ void chrUpdateCloak(struct chrdata *chr)
 			}
 		}
 
-		if (chr->aibot->cloakdeviceenabled || chr->aibot->rcp120cloakenabled) {
+		if (chr->aibot->cloakdeviceenabled || chr->aibot->rcp120cloakenabled || cloakTrap) {
 			if ((chr->hidden & CHRHFLAG_CLOAKED) == 0) {
 				if (chr->cloakpause < 1) {
 					chrCloak(chr, true);
@@ -2209,6 +2210,21 @@ void chrUpdateCloak(struct chrdata *chr)
 		}
 
 		setCurrentPlayerNum(prevplayernum);
+	}
+	else if (chr->prop->type == PROPTYPE_CHR) {
+		s32 race = CHRRACE(chr);
+		
+		if (race != RACE_DRCAROLL && race != RACE_EYESPY && race != RACE_ROBOT) {
+			if (cloakTrap) {
+				if ((chr->hidden & CHRHFLAG_CLOAKED) == 0) {
+					if (chr->cloakpause < 1) {
+						chrCloak(chr, true);
+					}
+				}
+			} else if (chr->hidden & CHRHFLAG_CLOAKED) {
+				chrUncloak(chr, true);
+			}
+		}
 	}
 
 	// Update cloakfade
