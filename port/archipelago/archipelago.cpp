@@ -1693,6 +1693,9 @@ void QueueItem(APClient::NetworkItem item) {
         location = locationNames[item.location];
     }
 
+    if (sender == slotName) {
+        sender = "You";
+    }
     handleItem(item.item, itemname.c_str(), sender.c_str(), location.c_str(), item.index);
 }
 
