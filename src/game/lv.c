@@ -101,6 +101,7 @@
 #include "video.h"
 #endif
 #include "archipelago.h"
+#include "random.h"
 
 extern int hasNPCs;
 extern u32 unlockedCharacters[6];
@@ -148,14 +149,6 @@ char APText[200];
 
 u16 apTextTimer = 0;
 u16 apTextSetTime = 0;
-
-extern u8 seedElvisHead;
-extern u8 seedCarringtonHead;
-extern u8 seedMrBlondeHead;
-extern u8 seedTrentHead;
-extern u8 seedCassandraHead;
-extern u8 seedJonathanHead;
-extern u8 seedPresidentHead;
 
 extern bool disableBlur;
 
@@ -370,14 +363,6 @@ void lvReset(s32 stagenum)
 	spawnedSkedar = false;
 
 	numberOfAmmoCratesPickedUp = 0;
-
-	seedElvisHead = APGetAssignedHead(HEAD_ELVIS);
-	seedCarringtonHead = APGetAssignedHead(HEAD_CARRINGTON);
-	seedMrBlondeHead = APGetAssignedHead(HEAD_MRBLONDE);
-	seedTrentHead = APGetAssignedHead(HEAD_TRENT);
-	seedCassandraHead = APGetAssignedHead(HEAD_CASSANDRA);
-	seedJonathanHead = APGetAssignedHead(HEAD_JONATHAN);
-	seedPresidentHead = APGetAssignedHead(HEAD_PRESIDENT);
 
 	musicReset();
 	modelmgrSetLvResetting(true);
@@ -3034,7 +3019,7 @@ void spawnSkedar(s32 pad_id)
         chr->chrflags |= CHRCFLAG_RUNFASTER;
 
         if (randomEnemyWeapons) {
-            u32 randomWeapon = (rngRandom() % 33) + 2;
+			u8 randomWeapon = APGetRandomWeapon();
             chrGiveWeapon(chr, playermgrGetModelOfWeapon(randomWeapon), randomWeapon, 0);
         }
         else {

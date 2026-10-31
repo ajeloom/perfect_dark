@@ -8,6 +8,7 @@
 
 extern "C" {
     #include "itemhandler.h"
+    #include "random.h"
 }
 
 using nlohmann::json;
@@ -1458,6 +1459,7 @@ bool Initialize() {
         }
 
         initializeStartingItems();
+        setSeedHeadsAndBodies();
 	});
 	
     // Called as reply to ConnectSlot failed. argument is reason.

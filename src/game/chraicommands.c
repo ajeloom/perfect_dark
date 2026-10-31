@@ -51,6 +51,7 @@
 #include "lib/libc/ll.h"
 #include "data.h"
 #include "types.h"
+#include "random.h"
 
 extern bool randomMusic;
 extern u32 unlockedWeapons[94];
@@ -4290,7 +4291,7 @@ bool aiTryEquipWeapon(void)
 			}
 		} else if (randomEnemyWeapons && g_Vars.stagenum != STAGE_CITRAINING) {
 			// Randomize the gun an enemy pulls out
-			u32 randomWeapon = (rngRandom() % 33) + 2;
+			u8 randomWeapon = APGetRandomWeapon();
 
 			switch (cmd[4]) {
 			case WEAPON_FALCON2:

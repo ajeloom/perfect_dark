@@ -56,6 +56,7 @@
 #include "lib/vi.h"
 #include "data.h"
 #include "types.h"
+#include "random.h"
 
 extern bool randomEnemyHeads;
 extern bool randomEnemyBodies;

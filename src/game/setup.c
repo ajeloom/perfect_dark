@@ -36,6 +36,7 @@
 #include "lib/collision.h"
 #include "data.h"
 #include "types.h"
+#include "random.h"
 
 extern u32 unlockedCharacters[6];
 
@@ -715,7 +716,7 @@ void setupPlaceWeapon(struct weaponobj *weapon, s32 cmdindex)
 					}
 				}
 				else if (randomEnemyWeapons) {
-					u32 randomWeapon = (rngRandom() % 33) + 2;
+					u8 randomWeapon = APGetRandomWeapon();
 
 					switch (weapon->weaponnum) {
 					case WEAPON_FALCON2:
