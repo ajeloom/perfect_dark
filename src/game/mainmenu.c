@@ -5143,7 +5143,7 @@ struct menuitem g_CiRoomMenuItems[] = {
 		MENUITEMTYPE_SELECTABLE,
 		0,
 		MENUITEMFLAG_BIGFONT | MENUITEMFLAG_LITERAL_TEXT,
-		(uintptr_t)"Device Room\n",
+		(uintptr_t)"Device Lab\n",
 		289,
 		menuhandlerTeleport,
 	},
