@@ -2212,17 +2212,60 @@ void chrUpdateCloak(struct chrdata *chr)
 		setCurrentPlayerNum(prevplayernum);
 	}
 	else if (chr->prop->type == PROPTYPE_CHR) {
-		s32 race = CHRRACE(chr);
-		
-		if (race != RACE_DRCAROLL && race != RACE_EYESPY && race != RACE_ROBOT) {
-			if (cloakTrap) {
-				if ((chr->hidden & CHRHFLAG_CLOAKED) == 0) {
-					if (chr->cloakpause < 1) {
-						chrCloak(chr, true);
+		if ((g_Vars.stagenum == STAGE_G5BUILDING 
+				&& chr->chrnum != 0x00
+				&& chr->chrnum != 0x01
+				&& chr->chrnum != 0x03
+				&& chr->chrnum != 0x04
+				&& chr->chrnum != 0x05
+				&& chr->chrnum != 0x06)
+			|| (g_Vars.stagenum == STAGE_DEEPSEA
+				&& chr->chrnum != 0x01
+				&& chr->chrnum != 0x02
+				&& chr->chrnum != 0x03
+				&& chr->chrnum != 0x04
+				&& chr->chrnum != 0x05
+				&& chr->chrnum != 0x06
+				&& chr->chrnum != 0x07
+				&& chr->chrnum != 0x08
+				&& chr->chrnum != 0x09
+				&& chr->chrnum != 0x14
+				&& chr->chrnum != 0x15
+				&& chr->chrnum != 0x16)
+			|| (g_Vars.stagenum == STAGE_SKEDARRUINS
+				&& chr->chrnum != 0x05
+				&& chr->chrnum != 0x06
+				&& chr->chrnum != 0x07
+				&& chr->chrnum != 0x08
+				&& chr->chrnum != 0x09
+				&& chr->chrnum != 0x0a
+				&& chr->chrnum != 0x0b
+				&& chr->chrnum != 0x0c
+				&& chr->chrnum != 0x0d
+				&& chr->chrnum != 0x0e
+				&& chr->chrnum != 0x0f
+				&& chr->chrnum != 0x10
+				&& chr->chrnum != 0x11
+				&& chr->chrnum != 0x12
+				&& chr->chrnum != 0x13
+				&& chr->chrnum != 0x14
+				&& chr->chrnum != 0x15
+				&& chr->chrnum != 0x16)
+			|| (g_Vars.stagenum != STAGE_G5BUILDING
+				&& g_Vars.stagenum != STAGE_DEEPSEA
+				&& g_Vars.stagenum != STAGE_SKEDARRUINS)) {
+			s32 race = CHRRACE(chr);
+
+			if (race != RACE_DRCAROLL && race != RACE_EYESPY && race != RACE_ROBOT) {
+				if (cloakTrap) {
+					if ((chr->hidden & CHRHFLAG_CLOAKED) == 0) {
+						if (chr->cloakpause < 1) {
+							chrCloak(chr, true);
+						}
 					}
+				} else if (chr->hidden & CHRHFLAG_CLOAKED) {
+					chrUncloak(chr, true);
 				}
-			} else if (chr->hidden & CHRHFLAG_CLOAKED) {
-				chrUncloak(chr, true);
 			}
 		}
 	}
