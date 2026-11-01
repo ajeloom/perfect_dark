@@ -1437,11 +1437,11 @@ bool Initialize() {
                     int difficulty = (location - 247) % 3;
 
                     completedMissions[missionIndex][difficulty] = 1;
-                    missionStars += 1;
+                    updateMissionStars();
                 }
                 else if (location >= 310 && location < 340) {
                     completedChallenges[location - 310] = 1;
-                    challengeStars += 1;
+                    updateChallengeStars();
                 }
                 else if (location >= 340 && location < 439) {
                     int weaponIndex = (location - 340) / 3;

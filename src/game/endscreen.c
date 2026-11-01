@@ -1467,7 +1467,6 @@ void endscreenPrepare(void)
 			if (completedMissions[g_MissionConfig.stageindex][g_MissionConfig.difficulty] == false) {
 				completedMissions[g_MissionConfig.stageindex][g_MissionConfig.difficulty] = true;
 				updateMissionStars();
-
 				collectMissionItem(g_MissionConfig.stageindex, g_MissionConfig.difficulty);
 			}
 
