@@ -43,7 +43,7 @@ extern u32 unlockedCharacters[6];
 s32 chrStartingWeapons[100];
 s32 chrPadnums[100];
 
-extern bool randomEnemyWeapons;
+extern int randomEnemyWeapons;
 
 extern int hasPickupsanity;
 

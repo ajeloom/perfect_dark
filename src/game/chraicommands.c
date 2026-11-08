@@ -53,11 +53,11 @@
 #include "types.h"
 #include "random.h"
 
-extern bool randomMusic;
+extern int randomMusic;
 extern u32 unlockedWeapons[94];
 extern int weaponProgressionType;
 extern u32 unlockedCharacters[6];
-extern bool randomEnemyWeapons;
+extern int randomEnemyWeapons;
 
 extern s16 warpPad;
 extern int exitNum;

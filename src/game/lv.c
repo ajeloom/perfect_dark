@@ -141,7 +141,7 @@ bool spawnedSkedar = false;
 bool spawnedNbomb = false;
 
 extern s32 chrPadnums[100];
-extern bool randomEnemyWeapons;
+extern int randomEnemyWeapons;
 
 extern int numberOfAmmoCratesPickedUp;
 

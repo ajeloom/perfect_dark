@@ -28,8 +28,8 @@
 
 extern u32 unlockedCharacters[6];
 
-extern bool randomEnemyHeads;
-extern bool randomEnemyBodies;
+extern int randomEnemyHeads;
+extern int randomEnemyBodies;
 
 extern int dkModeTrap;
 extern int smallJoTrap;

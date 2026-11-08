@@ -102,6 +102,13 @@ int hasAlternateExits;
 int hasPickupsanity;
 int hasGlassanity;
 
+extern int randomMusic;
+extern int randomEnemyHeads;
+extern int randomEnemyBodies;
+extern int randomEnemyWeapons;
+extern int randomBuddyWeapons;
+extern int randomChallengeStages;
+
 extern u32 completedMissions[21][3];
 extern u32 completedChallenges[30];
 extern u32 completedTrainingMedals[33][3];
@@ -1912,6 +1919,30 @@ bool Initialize() {
 
             if (data.at("options").contains("glassanity")) {
                 hasGlassanity = data.at("options").at("glassanity");
+            }
+
+            if (data.at("options").contains("random_music")) {
+                randomMusic = data.at("options").at("random_music");
+            }
+
+            if (data.at("options").contains("random_heads")) {
+                randomEnemyHeads = data.at("options").at("random_heads");
+            }
+
+            if (data.at("options").contains("random_bodies")) {
+                randomEnemyBodies = data.at("options").at("random_bodies");
+            }
+
+            if (data.at("options").contains("random_enemy_weapons")) {
+                randomEnemyWeapons = data.at("options").at("random_enemy_weapons");
+            }
+
+            if (data.at("options").contains("random_buddy_weapons")) {
+                randomBuddyWeapons = data.at("options").at("random_buddy_weapons");
+            }
+
+            if (data.at("options").contains("random_challenge_stages")) {
+                randomChallengeStages = data.at("options").at("random_challenge_stages");
             }
 
             if (data.at("options").contains("deathlink")) {

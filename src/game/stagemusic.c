@@ -11,7 +11,7 @@
 #include "types.h"
 #include "lib/rng.h"
 
-extern bool randomMusic;
+extern int randomMusic;
 
 struct stagemusic g_StageTracks[] = {
 	// stage,              main theme,           background sfx,          X theme

@@ -23,13 +23,13 @@ extern u32 completedChallenges[30];
 bool showLocationName;
 bool showConsole;
 bool disableBlur;
-bool randomMusic;
+int randomMusic;
 bool customOutfits;
-bool randomEnemyHeads;
-bool randomEnemyBodies;
-bool randomEnemyWeapons;
-bool randomBuddyWeapons;
-bool randomChallengeStage;
+int randomEnemyHeads;
+int randomEnemyBodies;
+int randomEnemyWeapons;
+int randomBuddyWeapons;
+int randomChallengeStages;
 
 int lastReceivedItemIndex;
 
@@ -1902,15 +1902,15 @@ MenuItemHandlerResult menuhandlerRandomBuddyWeapons(s32 operation, struct menuit
 	return 0;
 }
 
-MenuItemHandlerResult menuhandlerRandomChallengeStage(s32 operation, struct menuitem *item, union handlerdata *data)
+MenuItemHandlerResult menuhandlerRandomChallengeStages(s32 operation, struct menuitem *item, union handlerdata *data)
 {
 	s32 val;
 
 	switch (operation) {
 	case MENUOP_GET:
-		return randomChallengeStage;
+		return randomChallengeStages;
 	case MENUOP_SET:
-		randomChallengeStage = data->checkbox.value;
+		randomChallengeStages = data->checkbox.value;
 	}
 
 	return 0;
@@ -2016,7 +2016,7 @@ struct menuitem g_RandomOptionsMenuItems[] = {
 		MENUITEMFLAG_LITERAL_TEXT,
 		(uintptr_t)"Random Challenge Stage\n",
 		0,
-		menuhandlerRandomChallengeStage,
+		menuhandlerRandomChallengeStages,
 	},
 	{
 		MENUITEMTYPE_SEPARATOR,
@@ -2722,7 +2722,7 @@ PD_CONSTRUCTOR static void APConfigRandomOptionsInit(void)
 	APConfigRegisterUInt("RandomOptions.RandomEnemyBodies", &randomEnemyBodies, 0, 1);
 	APConfigRegisterUInt("RandomOptions.RandomEnemyWeapons", &randomEnemyWeapons, 0, 1);
 	APConfigRegisterUInt("RandomOptions.RandomBuddyWeapons", &randomBuddyWeapons, 0, 1);
-	APConfigRegisterUInt("RandomOptions.RandomChallengeStage", &randomChallengeStage, 0, 1);
+	APConfigRegisterUInt("RandomOptions.RandomChallengeStages", &randomChallengeStages, 0, 1);
 }
 
 PD_CONSTRUCTOR static void APConfigCharacterInit(void)

@@ -58,9 +58,9 @@
 #include "types.h"
 #include "random.h"
 
-extern bool randomEnemyHeads;
-extern bool randomEnemyBodies;
-extern bool randomEnemyWeapons;
+extern int randomEnemyHeads;
+extern int randomEnemyBodies;
+extern int randomEnemyWeapons;
 
 extern int cloakTrap;
 

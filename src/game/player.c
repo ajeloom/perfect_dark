@@ -81,7 +81,7 @@
 extern u32 unlockedWeapons[94];
 
 extern bool customOutfits;
-extern bool randomBuddyWeapons;
+extern int randomBuddyWeapons;
 
 extern u32 randomJoHead;
 extern u32 randomVDHead;

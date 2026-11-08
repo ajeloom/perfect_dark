@@ -184,7 +184,7 @@ int shieldRefills = 0;
 int healthRefills = 0;
 int buddyCount = 0;
 
-extern bool randomBuddyWeapons;
+extern int randomBuddyWeapons;
 
 bool hasVictory = false;
 

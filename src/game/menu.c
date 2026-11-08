@@ -57,7 +57,7 @@
 #define BLUR_OFS 30
 #endif
 
-extern bool randomMusic;
+extern int randomMusic;
 
 #if VERSION >= VERSION_PAL_FINAL
 char g_CheatMarqueeString[300];
