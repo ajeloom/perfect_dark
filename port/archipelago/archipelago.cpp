@@ -65,6 +65,8 @@ int requiredPerfectAgentMissionStars;
 int requiredMissionStars = 0;
 int missionsInItemPool;
 
+extern int cheeseCount;
+
 extern int progressiveWeapon;
 extern int progressivePistol;
 extern int progressiveSMG;
@@ -1756,6 +1758,7 @@ bool Initialize() {
             }
 
             if (data.at("options").contains("required_cheese")) {
+                cheeseCount = 0;
                 requiredCheese = data.at("options").at("required_cheese");
             }
 
