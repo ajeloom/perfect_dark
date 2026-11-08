@@ -153,6 +153,7 @@ extern int hasNPCs;
 extern int hasMPUnlocks;
 extern int hasAlternateExits;
 extern int hasPickupsanity;
+extern int hasGlassanity;
 
 extern bool showLocationName;
 
@@ -443,6 +444,7 @@ void resetAP(int restartGame)
 
     hasNPCs = 0;
     hasPickupsanity = 0;
+    hasGlassanity = 0;
 
     // Reset traps
     if (g_Vars.stagenum == STAGE_CITRAINING) {
@@ -604,6 +606,14 @@ void collectPickupItem(u8 missionIndex, u32 padnum)
     }
 
 	if (hasPickupsanity == 1 && location != 0) {
+		InternalCollectAPItem(location);
+	}
+}
+
+void collectGlassItem(u32 padnum, u8 missionIndex)
+{
+    int location = getGlassLocation(padnum, missionIndex);
+	if (hasGlassanity == 1) {
 		InternalCollectAPItem(location);
 	}
 }
@@ -1590,4 +1600,179 @@ void spawnBuddy(void)
             }
         }
     }
+}
+
+int getGlassLocation(u32 padnum, u8 missionIndex)
+{
+    // Get matching pad for Extraction
+    if (missionIndex == SOLOSTAGEINDEX_EXTRACTION) {
+        switch (padnum) {
+            case PAD_ARK_0111: // "dD Central: Top Glass Railing (stairs between roof and 4F)": 40291, # 273
+            case PAD_ARK_0112: // "dD Central: Bottom Glass Railing (stairs between roof and 4F)": 40292, # 274
+            case 279: // "dD Central: 4F Glass Railing 1": 40297, # 279
+            case 280: // "dD Central: 4F Glass Railing 4": 40298, # 280
+            case 275: // "dD Central: Top Glass Railing (stairs between 4F and 2F)": 40293, # 275
+            case 276: // "dD Central: Bottom Glass Railing (stairs between 4F and 2F)": 40294, # 276
+                padnum += 18;
+                break;
+            case PAD_ARK_0110: // "dD Central: Top Window (stairs between roof and 4F)": 40284, # 272
+            case PAD_ARK_010F: // "dD Central: Middle Window (stairs between roof and 4F)": 40283, # 271
+            case 268: // "dD Central: Cassandra's Office Window (left)": 40280, # 268
+            case 269: // "dD Central: Cassandra's Office Window (middle)": 40281, # 269
+            case 267: // "dD Central: Cassandra's Office Window (right)": 40279, # 267
+            case 270: // "dD Central: Cassandra's Office Window (top)": 40282, # 270
+            case 246: // "dD Central: Middle Window (stairs between 4F and 2F)": 40258, # 246
+                padnum += 12;
+                break;
+            case PAD_ARK_00F4: // "dD Central: Bottom Window (stairs between roof and 4F)": 40257, # 244
+            case 243: // "dD Central: 4F Window 1": 40256, # 243
+            case 227: // "dD Central: 4F Window 2": 40240, # 227
+            case 222: // "dD Central: 4F Window 3": 40235, # 222
+            case 218: // "dD Central: 4F Window 4": 40231, # 218
+            case 219: // "dD Central: 4F Window 5": 40232, # 219
+            case 213: // "dD Central: 4F Window 6": 40226, # 213
+            case 212: // "dD Central: 4F Window 7": 40225, # 212
+            case 234: // "dD Central: 4F Window 8": 40247, # 234
+            case 242: // "dD Central: 4F Window 9": 40255, # 242
+            case 282: // "dD Central: 4F Glass Railing 2": 40295, # 282
+            case 247: // "dD Central: Top Window (stairs between 4F and 2F)": 40260, # 247
+            case 261: // "dD Central: 3F Glass 1 (near elevator)": 40274, # 261
+            case 263: // "dD Central: 3F Glass 2 (near elevator)": 40276, # 263
+            case 262: // "dD Central: 3F Glass 3 (near elevator)": 40275, # 262
+            case 241: // "dD Central: 3F Window 1": 40254, # 241
+            case 235: // "dD Central: 3F Window 2": 40248, # 235
+            case 211: // "dD Central: 3F Window 3": 40224, # 211
+            case 214: // "dD Central: 3F Window 4": 40227, # 214
+            case 220: // "dD Central: 3F Window 5": 40233, # 220
+            case 217: // "dD Central: 3F Window 6": 40230, # 217
+            case 223: // "dD Central: 3F Window 7": 40236, # 223
+            case 226: // "dD Central: 3F Window 8": 40239, # 226
+            case 228: // "dD Central: 3F Window 9": 40241, # 228
+            case 232: // "dD Central: 3F Window 10": 40245, # 232
+            case 231: // "dD Central: 3F Window 11": 40244, # 231
+            case 256: // "dD Central: 3F Window 12": 40269, # 256
+            case 257: // "dD Central: 3F Window 13": 40270, # 257
+            case 254: // "dD Central: 3F Window 14": 40267, # 254
+            case 255: // "dD Central: 3F Window 15": 40268, # 255
+            // case 249: // "dD Central: 3F Window 16": 40262, # Unreachable on extraction
+            // case 238: // "dD Central: 3F Window 17": 40251, # Unreachable on extraction
+            // case 239: // "dD Central: 3F Window 18": 40252, # Unreachable on extraction
+            case 260: // "dD Central: 2F Glass 1 (near elevator)": 40273, # 260
+            case 258: // "dD Central: 2F Glass 2 (near elevator)": 40271, # 258
+            case 259: // "dD Central: 2F Glass 3 (near elevator)": 40272, # 259
+            case 236: // "dD Central: 2F Window 1": 40249, # 236
+            case 210: // "dD Central: 2F Window 2": 40223, # 210
+            case 215: // "dD Central: 2F Window 3": 40228, # 215
+            // case 221: // "dD Central: 2F Window 4": 40234, # Unreachable on extraction
+            // case 216: // "dD Central: 2F Window 5": 40229, # Unreachable on extraction
+            case 224: // "dD Central: 2F Window 6": 40237, # 224
+            case 225: // "dD Central: 2F Window 7": 40238, # 225
+            case 229: // "dD Central: 2F Window 8": 40242, # 229
+            case 233: // "dD Central: 2F Window 9": 40246, # 233
+            case 230: // "dD Central: 2F Window 10": 40243, # 230
+            case 248: // "dD Central: 2F Window 11": 40261, # 248
+            case 250: // "dD Central: 2F Window 12": 40263, # 250
+            case 251: // "dD Central: 2F Window 13": 40264, # 251
+            case 252: // "dD Central: 2F Window 14": 40265, # 252
+            case 253: // "dD Central: 2F Window 15": 40266, # 253
+            case 237: // "dD Central: 2F Window 16": 40250, # 237
+            case 240: // "dD Central: 2F Window 17": 40253, # 240
+                padnum += 13;
+                break;
+            case 281: // "dD Central: 4F Glass Railing 3": 40296, # 281
+                padnum = 296;
+                break;
+            case 245: // "dD Central: Bottom Window (stairs between 4F and 2F)": 40259, # 245
+                padnum = 259;
+                break;
+            case 208: // "dD Central: Left Elevator Glass 1": 40287, # 208
+            case 209: // "dD Central: Left Elevator Glass 2": 40288, # 209
+                padnum += 79;
+                break;
+            case 207: // "dD Central: Right Elevator Glass 1": 40289, # 207
+                padnum = 289;
+                break;
+            case 206: // "dD Central: Right Elevator Glass 2": 40290, # 206
+                padnum = 290;
+                break;
+            case 597: // "dD Central: 1F Left Elevator Glass 1": 40584, # 597
+                padnum = 584;
+                break;
+            case 592: // "dD Central: 1F Left Elevator Glass 2": 40589, # 592
+                padnum = 589;
+                break;
+            case 590: // "dD Central: 1F Left Elevator Glass 3": 40591, # 590
+                padnum = 591;
+                break;
+            case 593: // "dD Central: 1F Right Elevator Glass 1": 40588, # 593
+                padnum = 588;
+                break;
+            case 591: // "dD Central: 1F Right Elevator Glass 2": 40590, # 591
+                padnum = 590;
+                break;
+            case 589: // "dD Central: 1F Right Elevator Glass 3": 40592, # 589
+                padnum = 592;
+                break;
+            case 596: // "dD Central: 1F Glass Railing 1": 40585, # 596
+                padnum = 585;
+                break;
+            case 595: // "dD Central: 1F Glass Railing 2": 40586, # 595
+                padnum = 586;
+                break;
+            case 594: // "dD Central: 1F Glass Railing 3": 40587, # 594
+                padnum = 587;
+                break;
+            case 588: // "dD Central: 1F Glass Railing 4": 40593, # 588
+                padnum = 593;
+                break;
+            case 587: // "dD Central: 1F Glass Railing 5": 40594, # 587
+                padnum = 594;
+                break;
+            default:
+                break;
+        }
+    }
+
+    switch (missionIndex) {
+        case SOLOSTAGEINDEX_DEFECTION:
+        case SOLOSTAGEINDEX_EXTRACTION:
+        case SOLOSTAGEINDEX_MBR:
+            missionIndex = 0;
+            break;
+        case SOLOSTAGEINDEX_INVESTIGATION:
+            missionIndex = 1;
+            break;
+        case SOLOSTAGEINDEX_VILLA:
+            missionIndex = 2;
+            break;
+        case SOLOSTAGEINDEX_CHICAGO:
+            missionIndex = 3;
+            break;
+        case SOLOSTAGEINDEX_G5BUILDING:
+            missionIndex = 4;
+            break;
+        case SOLOSTAGEINDEX_RESCUE:
+        case SOLOSTAGEINDEX_ESCAPE:
+        case SOLOSTAGEINDEX_MAIANSOS:
+            missionIndex = 5;
+            break;
+        case SOLOSTAGEINDEX_AIRBASE:
+            missionIndex = 6;
+            break;
+        case SOLOSTAGEINDEX_PELAGIC:
+            missionIndex = 7;
+            break;
+        case SOLOSTAGEINDEX_DEEPSEA:
+            missionIndex = 8;
+            break;
+        case SOLOSTAGEINDEX_DEFENSE:
+            missionIndex = 9;
+            break;
+        case SOLOSTAGEINDEX_ATTACKSHIP:
+            missionIndex = 10;
+            break;
+    }
+
+    u32 location = 40000 + (2000 * missionIndex) + padnum;
+    return location;
 }

@@ -92,6 +92,7 @@ extern int hasNPCs;
 extern int hasMPUnlocks;
 extern int hasAlternateExits;
 extern int hasPickupsanity;
+extern int hasGlassanity;
 extern int deathLink;
 
 extern int selectedFileSlot;
@@ -1386,6 +1387,9 @@ const char *GetOption(struct menuitem *item)
 			option = hasPickupsanity;
 			break;
 		case 22:
+			option = hasGlassanity;
+			break;
+		case 23:
 			option = deathLink;
 			break;
 	}
@@ -1577,6 +1581,14 @@ struct menuitem g_GameOptionsMenuItems[] = {
 	{
 		MENUITEMTYPE_SELECTABLE,
 		22,
+		MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Glassanity:\n",
+		(uintptr_t)&GetOption,
+		NULL,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		23,
 		MENUITEMFLAG_LITERAL_TEXT,
 		(uintptr_t)"Death Link:\n",
 		(uintptr_t)&GetOption,

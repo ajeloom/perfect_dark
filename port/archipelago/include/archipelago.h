@@ -31,7 +31,7 @@ void PrintCommands();
 void ConnectAP();
 void DisconnectAP(bool joining);
 void ClearConnectionInfo();
-int CheckIfLocationExists(int location);
+int LocationExists(int location);
 int IsLocationCompleted(int location);
 int GetSeed();
 

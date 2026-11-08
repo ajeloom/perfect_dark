@@ -77,6 +77,7 @@
 #include "textures.h"
 #include "types.h"
 #include "string.h"
+#include "archipelago.h"
 #include "itemhandler.h"
 
 extern int smallJoTrap;
@@ -84,6 +85,8 @@ extern int perfectDarknessTrap;
 
 extern int hasPickupsanity;
 int numberOfAmmoCratesPickedUp = 0;
+
+extern int hasGlassanity;
 
 void rng2SetSeed(u32 seed);
 
@@ -13824,6 +13827,24 @@ Gfx *objRender(struct prop *prop, Gfx *gdl, bool xlupass)
 		colour[3] = obj->shadecol[3];
 	}
 
+	if (hasGlassanity 
+			&& (obj->type == OBJTYPE_GLASS 
+			|| obj->type == OBJTYPE_TINTEDGLASS 
+			|| (obj->type == OBJTYPE_DOOR && ((struct doorobj *)obj)->doorflags & DOORFLAG_WINDOWED))) {
+		int location = getGlassLocation(obj->pad, g_MissionConfig.stageindex);
+
+		if (LocationExists(location) && !IsLocationCompleted(location)) {
+			colour[0] = 0;
+			colour[1] = 0xff;
+			colour[2] = 0;
+			colour[3] = 0x96;
+
+			if (obj->type == OBJTYPE_DOOR) {
+				colour[3] = 0x40;
+			}
+		}
+	}
+
 	if (g_Vars.normmplayerisrunning) {
 		scenarioHighlightProp(prop, colour);
 	}
@@ -15186,6 +15207,8 @@ void glassDestroy(struct defaultobj *obj)
 	struct prop *prop = obj->prop;
 	struct modelrodata_bbox *bbox = objFindBboxRodata(obj);
 
+	collectGlassItem(obj->pad, g_MissionConfig.stageindex);
+
 	wallhitsFreeByProp(prop, 0);
 	wallhitsFreeByProp(prop, 1);
 
@@ -15231,6 +15254,8 @@ void doorDestroyGlass(struct doorobj *door)
 	union modelrodata *rodata;
 	union modelrwdata *rwdata;
 	Mtxf matrix;
+
+	collectGlassItem(door->base.pad, g_MissionConfig.stageindex);
 
 	rodata = modelGetPartRodata(model->definition, MODELPART_WINDOWEDDOOR_0002);
 
@@ -18055,8 +18080,21 @@ s32 objTestForPickup(struct prop *prop)
 		if (pickup) {
 			if (prop->obj->type == OBJTYPE_WEAPON) {
 				struct weaponobj *weapon = (struct weaponobj *) prop->obj;
-				if (unlockedWeapons[weapon->weaponnum] == 0) {
-					return TICKOP_NONE;
+				if (weaponProgressionType == WEAPONPROG_ALLGUNS
+						|| weaponProgressionType == WEAPONPROG_ONEGUN) {
+							
+					if (unlockedWeapons[weapon->weaponnum] == 0
+							&& weapon->weaponnum != WEAPON_RCP120
+							&& weapon->weaponnum != WEAPON_TIMEDMINE
+							&& weapon->weaponnum != WEAPON_REMOTEMINE
+							&& weapon->weaponnum != WEAPON_K7AVENGER) {
+						return TICKOP_NONE;
+					}
+				}
+				else {
+					if (unlockedWeapons[weapon->weaponnum] == 0) {
+						return TICKOP_NONE;
+					}
 				}
 			}
 			else if (prop->obj->type == OBJTYPE_KEY) {

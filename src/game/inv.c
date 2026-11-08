@@ -29,6 +29,8 @@ extern int progressiveRifleNumbers[7];
 extern int progressiveExplosiveNumbers[9];
 extern int progressiveOtherWeaponNumbers[10];
 
+extern int hasGlassanity;
+
 void invClear(void)
 {
 	s32 i;
@@ -1548,6 +1550,46 @@ void invGetProgressiveWeapons(void)
 			}
 		}
 
+		// Give explosive for Glassanity
+		if (hasGlassanity) {
+			if (g_Vars.stagenum == STAGE_DEFENSE
+					|| g_Vars.stagenum == STAGE_AIRBASE
+					|| g_Vars.stagenum == STAGE_DEFENSE) {
+				if (unlockedWeapons[WEAPON_SLAYER] == 1
+						&& unlockedWeapons[WEAPON_ROCKETLAUNCHER] == 0
+						&& progressiveWeaponNumbers[progressiveWeapon] != WEAPON_SLAYER) {
+					invGiveSingleWeapon(WEAPON_SLAYER);
+				}
+				else if (unlockedWeapons[WEAPON_ROCKETLAUNCHER] == 1
+						&& progressiveWeaponNumbers[progressiveWeapon] != WEAPON_ROCKETLAUNCHER) {
+					invGiveSingleWeapon(WEAPON_ROCKETLAUNCHER);
+				}
+			}
+			else if (g_Vars.stagenum == STAGE_INVESTIGATION
+					|| g_Vars.stagenum == STAGE_CHICAGO
+					|| g_Vars.stagenum == STAGE_G5BUILDING
+					|| g_Vars.stagenum == STAGE_MAIANSOS) {
+				if ((unlockedWeapons[WEAPON_DRAGON] == 1 || unlockedWeapons[WEAPON_TIMEDMINE] == 1)
+						&& (progressiveWeaponNumbers[progressiveWeapon] != WEAPON_DRAGON
+							&& progressiveWeaponNumbers[progressiveWeapon] != WEAPON_TIMEDMINE
+							&& progressiveWeaponNumbers[progressiveWeapon] != WEAPON_PROXIMITYMINE
+							&& progressiveWeaponNumbers[progressiveWeapon] != WEAPON_GRENADE
+							&& progressiveWeaponNumbers[progressiveWeapon] != WEAPON_SLAYER
+							&& progressiveWeaponNumbers[progressiveWeapon] != WEAPON_REMOTEMINE
+							&& progressiveWeaponNumbers[progressiveWeapon] != WEAPON_ROCKETLAUNCHER
+							&& progressiveWeaponNumbers[progressiveWeapon] != WEAPON_DEVASTATOR
+							&& progressiveWeaponNumbers[progressiveWeapon] != WEAPON_SUPERDRAGON
+							&& progressiveWeaponNumbers[progressiveWeapon] != WEAPON_PHOENIX)) {
+					if (unlockedWeapons[WEAPON_TIMEDMINE] == 0) {
+						invGiveSingleWeapon(WEAPON_DRAGON);
+					}
+					else {
+						invGiveSingleWeapon(WEAPON_TIMEDMINE);
+					}
+				}
+			}
+		}
+
 		// Need a weapon to blow up the wall
 		if (g_Vars.stagenum == STAGE_SKEDARRUINS
 				&& progressiveWeapon >= 30 
@@ -1601,6 +1643,35 @@ void invGetProgressiveWeapons(void)
 					&& progressivePistolNumbers[progressivePistol] != WEAPON_PHOENIX
 					&& progressiveRifleNumbers[progressiveRifle] != WEAPON_SUPERDRAGON) {
 				invGiveSingleWeapon(WEAPON_TIMEDMINE);
+			}
+
+			// Give explosive for Glassanity
+			if (hasGlassanity) {
+				if (g_Vars.stagenum == STAGE_DEFENSE
+						|| g_Vars.stagenum == STAGE_AIRBASE
+						|| g_Vars.stagenum == STAGE_DEFENSE) {
+					if (unlockedWeapons[WEAPON_SLAYER] == 1
+							&& unlockedWeapons[WEAPON_ROCKETLAUNCHER] == 0
+							&& progressiveExplosiveNumbers[progressiveExplosive] != WEAPON_SLAYER) {
+						invGiveSingleWeapon(WEAPON_SLAYER);
+					}
+					else if (unlockedWeapons[WEAPON_ROCKETLAUNCHER] == 1
+							&& progressiveExplosiveNumbers[progressiveExplosive] != WEAPON_ROCKETLAUNCHER) {
+						invGiveSingleWeapon(WEAPON_ROCKETLAUNCHER);
+					}
+				}
+				else if (g_Vars.stagenum == STAGE_INVESTIGATION
+						|| g_Vars.stagenum == STAGE_CHICAGO
+						|| g_Vars.stagenum == STAGE_G5BUILDING
+						|| g_Vars.stagenum == STAGE_MAIANSOS) {
+					if (unlockedWeapons[WEAPON_TIMEDMINE] == 1
+							&& progressiveExplosiveNumbers[progressiveExplosive] == WEAPON_NBOMB
+							&& progressivePistolNumbers[progressivePistol] != WEAPON_PHOENIX
+							&& progressiveRifleNumbers[progressiveRifle] != WEAPON_DRAGON
+							&& progressiveRifleNumbers[progressiveRifle] != WEAPON_SUPERDRAGON) {
+						invGiveSingleWeapon(WEAPON_TIMEDMINE);
+					}
+				}
 			}
 		}
 

@@ -992,9 +992,9 @@ MenuItemHandlerResult menuhandlerShowExitCheck(s32 operation, struct menuitem *i
 
 		// Check if location exists
 		if (hasAlternateExits == 1) {
-			int exists = CheckIfLocationExists(location);
+			int exists = LocationExists(location);
 			if (!exists) {
-				exists = CheckIfLocationExists(++location);
+				exists = LocationExists(++location);
 				if (!exists) {
 					return 0;
 				}
