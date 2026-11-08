@@ -1199,7 +1199,7 @@ struct menuitem g_ConnectionInfoMenuItems[] = {
 		MENUITEMTYPE_SELECTABLE,
 		0,
 		MENUITEMFLAG_LITERAL_TEXT,
-		(uintptr_t)"Server Address:               \n",
+		(uintptr_t)"Server Address:                         \n",
 		(uintptr_t)GetServerAddress,
 		menuhandlerSetLoginSetting,
 	},
