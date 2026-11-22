@@ -13827,6 +13827,127 @@ Gfx *objRender(struct prop *prop, Gfx *gdl, bool xlupass)
 		colour[3] = obj->shadecol[3];
 	}
 
+	// Highlight pick ups for Pickupsanity
+	if (hasPickupsanity 
+			&& !g_Vars.normmplayerisrunning
+			&& ((obj->type == OBJTYPE_KEY 
+					&& g_MissionConfig.stageindex == SOLOSTAGEINDEX_ATTACKSHIP 
+					&& obj->pad == 51)
+				|| obj->type == OBJTYPE_AMMOCRATE
+				|| obj->type == OBJTYPE_WEAPON
+				|| obj->type == OBJTYPE_SHIELD)) {
+		int location = getPickupLocation(g_MissionConfig.stageindex, obj->pad);
+
+		if (obj->type == OBJTYPE_WEAPON) {
+			struct weaponobj *weapon = (struct weaponobj *)obj;
+
+			// Get location for specific weapons
+			if (weapon->weaponnum == WEAPON_DEVASTATOR
+					&& g_MissionConfig.stageindex == SOLOSTAGEINDEX_VILLA
+					&& obj->pad == -1) {
+				location = 8000;
+			}
+			else if (weapon->weaponnum == WEAPON_EYESPY
+					&& g_MissionConfig.stageindex == SOLOSTAGEINDEX_CHICAGO
+					&& obj->pad == -1) {
+				location = 10000;
+			}
+			else if (weapon->weaponnum == WEAPON_CROSSBOW
+					&& g_MissionConfig.stageindex == SOLOSTAGEINDEX_G5BUILDING
+					&& (obj->pad == 0 || obj->pad == 1)) {
+				location = 12000;
+			}
+			else if (weapon->weaponnum == WEAPON_PROXIMITYMINE
+					&& g_MissionConfig.stageindex == SOLOSTAGEINDEX_CRASHSITE
+					&& obj->pad == 262) {
+				location = 24263;
+			}
+			else if (weapon->weaponnum == WEAPON_DEVASTATOR
+					&& g_MissionConfig.stageindex == SOLOSTAGEINDEX_DEFENSE
+					&& obj->pad == -1) {
+				location = 30000;
+			}
+
+			if ((weapon->weaponnum == WEAPON_FALCON2_SILENCER 
+						&& (location == 2033 || location == 2468 || location == 2469
+							|| location == 16987 || location == 26052))
+					|| (weapon->weaponnum == WEAPON_LAPTOPGUN
+						&& (location == 2466 || location == 36466))
+					|| (weapon->weaponnum == WEAPON_CMP150
+						&& (location == 2605 || location == 2606 || location == 4633
+							|| location == 4634 || location == 4635 || location == 4636
+							|| location == 8410 || location == 36015 || location == 36605
+							|| location == 36606))
+					|| (weapon->weaponnum == WEAPON_PROXIMITYMINE
+						&& (location == 4637 || location == 20181 
+							|| location == 24263 || location == 28008))
+					|| (weapon->weaponnum == WEAPON_DY357MAGNUM
+						&& (location == 6005 || location == 20018))
+					|| (weapon->weaponnum == WEAPON_ROCKETLAUNCHER
+						&& (location == 6452 || location == 6516 
+							|| location == 6519 || location == 14052))
+					|| (weapon->weaponnum == WEAPON_GRENADE && location == 6466)
+					|| (weapon->weaponnum == WEAPON_DRAGON && location == 6467)
+					|| (weapon->weaponnum == WEAPON_DEVASTATOR 
+						&& (location == 8000 || location == 30000))
+					|| (weapon->weaponnum == WEAPON_SNIPERRIFLE && location == 8085)
+					|| (weapon->weaponnum == WEAPON_FALCON2_SCOPE
+						&& (location == 10287 || location == 18036))
+					|| (weapon->weaponnum == WEAPON_CROSSBOW && location == 12000)
+					|| (weapon->weaponnum == WEAPON_NBOMB && location == 12149)
+					|| (weapon->weaponnum == WEAPON_MAGSEC4 && location == 14053)
+					|| (weapon->weaponnum == WEAPON_PHOENIX 
+						&& (location == 16905 || location == 34050))
+					|| (weapon->weaponnum == WEAPON_REMOTEMINE && location == 19383)
+					|| (weapon->weaponnum == WEAPON_CYCLONE
+						&& (location == 22203 || location == 22204))
+					|| (weapon->weaponnum == WEAPON_DY357LX
+						&& (location == 24001 || location == 38011))
+					|| (weapon->weaponnum == WEAPON_MAULER && location == 32045)
+					|| (weapon->weaponnum == WEAPON_SLAYER && location == 32466)
+					|| (weapon->weaponnum == WEAPON_FALCON2
+						&& (location == 36468 || location == 36469))
+					|| (weapon->weaponnum == WEAPON_PSYCHOSISGUN && location == 38919)
+					|| (weapon->weaponnum == WEAPON_EYESPY && location == 10000)) {
+				if (LocationExists(location) 
+						&& !IsLocationCompleted(location)) {
+					colour[0] = 0;
+					colour[1] = 0xff;
+					colour[2] = 0;
+					colour[3] = 125;
+				}
+			}
+		}
+		else if (obj->type == OBJTYPE_AMMOCRATE
+				&& g_MissionConfig.stageindex == SOLOSTAGEINDEX_VILLA) {
+			u8 completedCrateLocations = 0;
+
+			// Count number of crate locations finished
+			for (s32 i = 1; i < 10; i++) {
+				if (IsLocationCompleted(8000 + i)) {
+					completedCrateLocations++;
+				}
+			}
+
+			if (numberOfAmmoCratesPickedUp >= completedCrateLocations) {
+				colour[0] = 0;
+				colour[1] = 0xff;
+				colour[2] = 0;
+				colour[3] = 125;
+			}
+		}
+		else {
+			if (LocationExists(location) 
+					&& !IsLocationCompleted(location)) {
+				colour[0] = 0;
+				colour[1] = 0xff;
+				colour[2] = 0;
+				colour[3] = 125;
+			}
+		}
+	}
+
+	// Highlight breakable glass for Glassanity
 	if (hasGlassanity 
 			&& (obj->type == OBJTYPE_GLASS 
 			|| obj->type == OBJTYPE_TINTEDGLASS 

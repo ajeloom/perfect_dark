@@ -593,17 +593,7 @@ void collectAlternateExitItem(u8 missionIndex, u8 difficulty, u8 exitNum)
 
 void collectPickupItem(u8 missionIndex, u32 padnum)
 {
-    uint64_t location = 0;
-
-    if ((missionIndex == SOLOSTAGEINDEX_VILLA && padnum >= 8000)
-            || (missionIndex == SOLOSTAGEINDEX_CHICAGO && padnum == 10000)
-            || (missionIndex == SOLOSTAGEINDEX_G5BUILDING && padnum == 12000)
-            || (missionIndex == SOLOSTAGEINDEX_DEFENSE && padnum == 30000)) {
-        location = padnum;
-    }
-    else {
-        location = (2000 * missionIndex) + padnum + AP_PICKUPSANITY_OFFSET;
-    }
+    uint64_t location = getPickupLocation(missionIndex, padnum);
 
 	if (hasPickupsanity == 1 && location != 0) {
 		InternalCollectAPItem(location);
@@ -1600,6 +1590,23 @@ void spawnBuddy(void)
             }
         }
     }
+}
+
+int getPickupLocation(u8 missionIndex, u32 padnum)
+{
+    int location;
+    
+    if ((missionIndex == SOLOSTAGEINDEX_VILLA && padnum >= 8000)
+            || (missionIndex == SOLOSTAGEINDEX_CHICAGO && padnum == 10000)
+            || (missionIndex == SOLOSTAGEINDEX_G5BUILDING && padnum == 12000)
+            || (missionIndex == SOLOSTAGEINDEX_DEFENSE && padnum == 30000)) {
+        location = padnum;
+    }
+    else {
+        location = (2000 * missionIndex) + padnum + AP_PICKUPSANITY_OFFSET;
+    }
+
+    return location;
 }
 
 int getGlassLocation(u32 padnum, u8 missionIndex)

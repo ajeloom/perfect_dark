@@ -22,4 +22,5 @@ void updateChallengeStars();
 void GetNextProgressiveWeapon(int weaponNumbersArray[], int currentWeaponNumber);
 void giveTrap(int *trap, s32 *trapTime, s32 amount, u8 trapName);
 void spawnBuddy(void);
+int getPickupLocation(u8 missionIndex, u32 padnum);
 int getGlassLocation(u32 padnum, u8 missionIndex);
