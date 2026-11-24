@@ -23,6 +23,7 @@
 #include "lib/snd.h"
 #include "lib/str.h"
 #include "archipelago.h"
+#include "aphudmsg.h"
 #include "console.h"
 
 #define AP_ITEM_AGENT_START 95
@@ -634,13 +635,13 @@ void printSentItemMessage(const char* itemname, const char* recipient, const cha
     location = CheckString(location);
 
     if (showLocationName) {
-        sprintf(buffer, "Sent %s to %s (%s)\n", itemname, recipient, location);
+        sprintf(buffer, "Sent %s's %s (%s)\n", recipient, itemname, location);
     }
     else {
-        sprintf(buffer, "Sent %s to %s\n", itemname, recipient);
+        sprintf(buffer, "Sent %s's %s\n", recipient, itemname);
     }
-    
-	hudmsgCreate(buffer, HUDMSGTYPE_DEFAULT);
+
+    apHudmsgCreate(buffer, HUDMSGTYPE_DEFAULT);
 }
 
 void initializeStartingItems()
@@ -690,19 +691,21 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
         sender = CheckString(sender);
         location = CheckString(location);
 
-        // Print item received message
-        for (s32 i = 0; i < PLAYERCOUNT(); i++) {
-            setCurrentPlayerNum(i);
-
-            if (showLocationName) {
-                sprintf(buffer, "%s found your %s (%s)\n", sender, itemname, location);
-            }
-            else {
-                sprintf(buffer, "%s found your %s\n", sender, itemname);
-            }
-            
-            hudmsgCreate(buffer, HUDMSGTYPE_DEFAULT);
+        if (showLocationName) {
+            sprintf(buffer, "%s found your %s (%s)\n", sender, itemname, location);
         }
+        else {
+            sprintf(buffer, "%s found your %s\n", sender, itemname);
+        }
+        
+        if (strcmp(sender, "You") == 0) {
+            sprintf(buffer, "Found %s\n", itemname);
+        } 
+        else {
+            sprintf(buffer, "Received %s\n", itemname);
+        }
+
+        apHudmsgCreate(buffer, HUDMSGTYPE_DEFAULT);
 
         savedSlots[selectedFileSlot].lastReceivedItemIndex = itemIndex;
 

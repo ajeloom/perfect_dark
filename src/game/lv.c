@@ -101,6 +101,7 @@
 #ifndef PLATFORM_N64
 #include "video.h"
 #endif
+#include "aphudmsg.h"
 #include "archipelago.h"
 #include "random.h"
 
@@ -371,6 +372,7 @@ void lvReset(s32 stagenum)
 	texReset();
 	textReset();
 	hudmsgsReset();
+	apHudmsgsReset();
 
 	if (stagenum == STAGE_TEST_OLD) {
 		titleReset();
@@ -1925,6 +1927,8 @@ Gfx *lvRender(Gfx *gdl)
 		gdl = renderAPConnection(gdl);
 	}
 
+	gdl = apHudmsgsRender(gdl);
+
 #if VERSION < VERSION_NTSC_1_0
 	if ((uintptr_t)gdl < (uintptr_t)g_GfxBuffers[g_GfxActiveBufferIndex]
 			|| (uintptr_t)gdl > (uintptr_t)g_GfxBuffers[g_GfxActiveBufferIndex + 1]) {
@@ -2328,6 +2332,7 @@ void lvTick(void)
 
 	bgunTickBoost();
 	hudmsgsTick();
+	apHudmsgsTick();
 
 	if ((joyGetButtonsPressedThisFrame(0, 0xffffffff) != 0
 				|| joyGetStickX(0) > 10
