@@ -32,16 +32,14 @@ jobs:
           submodules: recursive
       - name: Build pd.i686.exe
         run: cmake -G"Unix Makefiles" -Bbuild . && cmake --build build -j
-      - name: Build pd.pal.i686.exe
-        run: cmake -G"Unix Makefiles" -Bbuild_pal -DROMID=pal-final . && cmake --build build_pal -j
-      - name: Build pd.jpn.i686.exe
-        run: cmake -G"Unix Makefiles" -Bbuild_jpn -DROMID=jpn-final . && cmake --build build_jpn -j
+      # - name: Build pd.pal.i686.exe
+      #   run: cmake -G"Unix Makefiles" -Bbuild_pal -DROMID=pal-final . && cmake --build build_pal -j
+      # - name: Build pd.jpn.i686.exe
+      #   run: cmake -G"Unix Makefiles" -Bbuild_jpn -DROMID=jpn-final . && cmake --build build_jpn -j
       - name: Prepare artifact for packaging
         run: |
           mkdir -p bin/data
           cp build/pd.i686.exe bin/
-          cp build_pal/pd.pal.i686.exe bin/
-          cp build_jpn/pd.jpn.i686.exe bin/
           cp /mingw32/bin/{SDL2.dll,zlib1.dll,libgcc_s_dw2-1.dll,libwinpthread-1.dll} bin/
           touch bin/data/put_your_rom_here.txt
       - name: Upload artifact
@@ -65,16 +63,14 @@ jobs:
           submodules: recursive
       - name: Build pd.i686
         run: cmake -G"Unix Makefiles" -Bbuild -DCMAKE_C_FLAGS=-m32 -DCMAKE_CXX_FLAGS=-m32 . && cmake --build build -j
-      - name: Build pd.pal.i686
-        run: cmake -G"Unix Makefiles" -Bbuild_pal -DCMAKE_C_FLAGS=-m32 -DCMAKE_CXX_FLAGS=-m32 -DROMID=pal-final . && cmake --build build_pal -j
-      - name: Build pd.jpn.i686
-        run: cmake -G"Unix Makefiles" -Bbuild_jpn -DCMAKE_C_FLAGS=-m32 -DCMAKE_CXX_FLAGS=-m32 -DROMID=jpn-final . && cmake --build build_jpn -j
+      # - name: Build pd.pal.i686
+      #   run: cmake -G"Unix Makefiles" -Bbuild_pal -DCMAKE_C_FLAGS=-m32 -DCMAKE_CXX_FLAGS=-m32 -DROMID=pal-final . && cmake --build build_pal -j
+      # - name: Build pd.jpn.i686
+      #   run: cmake -G"Unix Makefiles" -Bbuild_jpn -DCMAKE_C_FLAGS=-m32 -DCMAKE_CXX_FLAGS=-m32 -DROMID=jpn-final . && cmake --build build_jpn -j
       - name: Prepare artifact for packaging
         run: |
           mkdir -p bin/data
           cp build/pd.i686 bin/
-          cp build_pal/pd.pal.i686 bin/
-          cp build_jpn/pd.jpn.i686 bin/
           touch bin/data/put_your_rom_here.txt
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -108,16 +104,14 @@ jobs:
           submodules: recursive
       - name: Build pd.x86_64.exe
         run: cmake -G"Unix Makefiles" -Bbuild . && cmake --build build -j
-      - name: Build pd.pal.x86_64.exe
-        run: cmake -G"Unix Makefiles" -Bbuild_pal -DROMID=pal-final . && cmake --build build_pal -j
-      - name: Build pd.jpn.x86_64.exe
-        run: cmake -G"Unix Makefiles" -Bbuild_jpn -DROMID=jpn-final . && cmake --build build_jpn -j
+      # - name: Build pd.pal.x86_64.exe
+      #   run: cmake -G"Unix Makefiles" -Bbuild_pal -DROMID=pal-final . && cmake --build build_pal -j
+      # - name: Build pd.jpn.x86_64.exe
+      #   run: cmake -G"Unix Makefiles" -Bbuild_jpn -DROMID=jpn-final . && cmake --build build_jpn -j
       - name: Prepare artifact for packaging
         run: |
           mkdir -p bin/data
           cp build/pd.x86_64.exe bin/
-          cp build_pal/pd.pal.x86_64.exe bin/
-          cp build_jpn/pd.jpn.x86_64.exe bin/
           cp /mingw64/bin/{SDL2.dll,zlib1.dll,libwinpthread-1.dll,libgcc_s_seh-1.dll} bin/
           touch bin/data/put_your_rom_here.txt
       - name: Upload artifact
@@ -141,16 +135,14 @@ jobs:
           submodules: recursive
       - name: Build pd.x86_64
         run: cmake -G"Unix Makefiles" -Bbuild . && cmake --build build -j
-      - name: Build pd.pal.x86_64
-        run: cmake -G"Unix Makefiles" -Bbuild_pal -DROMID=pal-final . && cmake --build build_pal -j
-      - name: Build pd.jpn.x86_64
-        run: cmake -G"Unix Makefiles" -Bbuild_jpn -DROMID=jpn-final . && cmake --build build_jpn -j
+      # - name: Build pd.pal.x86_64
+      #   run: cmake -G"Unix Makefiles" -Bbuild_pal -DROMID=pal-final . && cmake --build build_pal -j
+      # - name: Build pd.jpn.x86_64
+      #   run: cmake -G"Unix Makefiles" -Bbuild_jpn -DROMID=jpn-final . && cmake --build build_jpn -j
       - name: Prepare artifact for packaging
         run: |
           mkdir -p bin/data
           cp build/pd.x86_64 bin/
-          cp build_pal/pd.pal.x86_64 bin/
-          cp build_jpn/pd.jpn.x86_64 bin/
           touch bin/data/put_your_rom_here.txt
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -176,20 +168,18 @@ jobs:
         run: |
           cmake -G"Unix Makefiles" -Bbuild -DCMAKE_OSX_ARCHITECTURES=x86_64 .
           cmake --build build --target pd -j4 --clean-first
-      - name: Build pd.pal.x86_64
-        run: |
-          cmake -G"Unix Makefiles" -Bbuild_pal -DCMAKE_OSX_ARCHITECTURES=x86_64 -DROMID=pal-final .
-          cmake --build build_pal --target pd -j4 --clean-first
-      - name: Build pd.jpn.x86_64
-        run: |
-          cmake -G"Unix Makefiles" -Bbuild_jpn -DCMAKE_OSX_ARCHITECTURES=x86_64 -DROMID=jpn-final .
-          cmake --build build_jpn --target pd -j4 --clean-first
+      # - name: Build pd.pal.x86_64
+      #   run: |
+      #     cmake -G"Unix Makefiles" -Bbuild_pal -DCMAKE_OSX_ARCHITECTURES=x86_64 -DROMID=pal-final .
+      #     cmake --build build_pal --target pd -j4 --clean-first
+      # - name: Build pd.jpn.x86_64
+      #   run: |
+      #     cmake -G"Unix Makefiles" -Bbuild_jpn -DCMAKE_OSX_ARCHITECTURES=x86_64 -DROMID=jpn-final .
+      #     cmake --build build_jpn --target pd -j4 --clean-first
       - name: Prepare artifact for packaging
         run: |
           mkdir -p bin/data
           cp build/pd.x86_64 bin/
-          cp build_pal/pd.pal.x86_64 bin/
-          cp build_jpn/pd.jpn.x86_64 bin/
           cp -vr /Library/Frameworks/SDL2.framework bin/
           touch bin/data/put_your_rom_here.txt
       - name: Upload artifact
@@ -216,20 +206,18 @@ jobs:
         run: |
           cmake -G"Unix Makefiles" -Bbuild -DCMAKE_OSX_ARCHITECTURES=arm64 .
           cmake --build build --target pd -j4 --clean-first
-      - name: Build pd.pal.arm64
-        run: |
-          cmake -G"Unix Makefiles" -Bbuild_pal -DCMAKE_OSX_ARCHITECTURES=arm64 -DROMID=pal-final .
-          cmake --build build_pal --target pd -j4 --clean-first
-      - name: Build pd.jpn.arm64
-        run: |
-          cmake -G"Unix Makefiles" -Bbuild_jpn -DCMAKE_OSX_ARCHITECTURES=arm64 -DROMID=jpn-final .
-          cmake --build build_jpn --target pd -j4 --clean-first
+      # - name: Build pd.pal.arm64
+      #   run: |
+      #     cmake -G"Unix Makefiles" -Bbuild_pal -DCMAKE_OSX_ARCHITECTURES=arm64 -DROMID=pal-final .
+      #     cmake --build build_pal --target pd -j4 --clean-first
+      # - name: Build pd.jpn.arm64
+      #   run: |
+      #     cmake -G"Unix Makefiles" -Bbuild_jpn -DCMAKE_OSX_ARCHITECTURES=arm64 -DROMID=jpn-final .
+      #     cmake --build build_jpn --target pd -j4 --clean-first
       - name: Prepare artifact for packaging
         run: |
           mkdir -p bin/data
           cp build/pd.arm64 bin/
-          cp build_pal/pd.pal.arm64 bin/
-          cp build_jpn/pd.jpn.arm64 bin/
           cp -vr /Library/Frameworks/SDL2.framework bin/
           touch bin/data/put_your_rom_here.txt
       - name: Upload artifact
