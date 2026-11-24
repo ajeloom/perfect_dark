@@ -152,7 +152,7 @@ char APText[200];
 u16 apTextTimer = 0;
 u16 apTextSetTime = 0;
 
-extern bool disableBlur;
+extern int disableBlur;
 
 struct sndstate *g_MiscSfxAudioHandles[3];
 u32 var800aa5bc;

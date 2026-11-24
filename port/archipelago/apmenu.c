@@ -23,7 +23,7 @@ extern u32 completedChallenges[30];
 
 bool showLocationName;
 bool showConsole;
-bool disableBlur;
+int disableBlur;
 int randomMusic;
 bool customOutfits;
 int randomEnemyHeads;

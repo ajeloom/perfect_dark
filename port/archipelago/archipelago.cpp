@@ -59,9 +59,6 @@ int hasSpecialAgent;
 int hasPerfectAgent;
 
 extern int missionStars;
-int requiredAgentMissionStars;
-int requiredSpecialAgentMissionStars;
-int requiredPerfectAgentMissionStars;
 int requiredMissionStars = 0;
 int missionsInItemPool;
 
@@ -108,6 +105,8 @@ extern int randomEnemyBodies;
 extern int randomEnemyWeapons;
 extern int randomBuddyWeapons;
 extern int randomChallengeStages;
+
+extern int disableBlur;
 
 extern u32 completedMissions[21][3];
 extern u32 completedChallenges[30];
@@ -1770,47 +1769,25 @@ bool Initialize() {
                 hasAgent = data.at("options").at("agent");
             }
 
-            if (data.at("options").contains("required_agent_mission_stars")) {
-                missionStars = 0;
-                requiredAgentMissionStars = data.at("options").at("required_agent_mission_stars");
-            }
-
             if (data.at("options").contains("special_agent")) {
                 hasSpecialAgent = data.at("options").at("special_agent");
-            }
-
-            if (data.at("options").contains("required_special_agent_mission_stars")) {
-                missionStars = 0;
-                requiredSpecialAgentMissionStars = data.at("options").at("required_special_agent_mission_stars");
             }
 
             if (data.at("options").contains("perfect_agent")) {
                 hasPerfectAgent = data.at("options").at("perfect_agent");
             }
 
-            if (data.at("options").contains("required_perfect_agent_mission_stars")) {
-                missionStars = 0;
-                requiredPerfectAgentMissionStars = data.at("options").at("required_perfect_agent_mission_stars");
-            }
-
+            missionStars = 0;
             requiredMissionStars = 0;
-
-            if (completionGoal == 0 && (skedarRequirements == 1 || skedarRequirements == 3)) {
-            if (hasAgent == 1) {
-                requiredMissionStars += requiredAgentMissionStars;
-            }
-
-            if (hasSpecialAgent == 1) {
-                requiredMissionStars += requiredSpecialAgentMissionStars;
-            }
-
-            if (hasPerfectAgent == 1) {
-                requiredMissionStars += requiredPerfectAgentMissionStars;
+            
+            if (data.at("options").contains("total_required_missions")) {
+                if (completionGoal == 0 && (skedarRequirements == 1 || skedarRequirements == 3)) {
+                    requiredMissionStars = data.at("options").at("total_required_missions");
                 }
             }
 
-            if (data.at("options").contains("missions_in_item_pool")) {
-                missionsInItemPool = data.at("options").at("missions_in_item_pool");
+            if (data.at("options").contains("mission_unlock_item")) {
+                missionsInItemPool = data.at("options").at("mission_unlock_item");
             }
 
             if (data.at("options").contains("weapon_progression")) {
@@ -1839,21 +1816,21 @@ bool Initialize() {
                 }
             }
 
-            if (data.at("options").contains("required_challenge_stars")) {
-                challengeStars = 0;
-                requiredChallengeStars = data.at("options").at("required_challenge_stars");
-            }
+            challengeStars = 0;
+            requiredChallengeStars = 0;
 
-            if (completionGoal == 0 && (skedarRequirements == 0 || skedarRequirements == 1)) {
-                requiredChallengeStars = 0;
+            if (data.at("options").contains("total_required_challenges")) {
+                if (completionGoal == 0 && (skedarRequirements == 2 || skedarRequirements == 3)) {
+                    requiredChallengeStars = data.at("options").at("total_required_challenges");
+                }
             }
 
             if (data.at("options").contains("challenge_logic")) {
                 challengeLogic = data.at("options").at("challenge_logic");
             }
 
-            if (data.at("options").contains("challenges_in_item_pool")) {
-                challengesInItemPool = data.at("options").at("challenges_in_item_pool");
+            if (data.at("options").contains("challenge_unlock_item")) {
+                challengesInItemPool = data.at("options").at("challenge_unlock_item");
             }
 
             if (data.at("options").contains("shorter_challenges")) {
@@ -1936,6 +1913,10 @@ bool Initialize() {
 
             if (data.at("options").contains("random_challenge_stages")) {
                 randomChallengeStages = data.at("options").at("random_challenge_stages");
+            }
+
+            if (data.at("options").contains("blur")) {
+                disableBlur = data.at("options").at("blur");
             }
 
             if (data.at("options").contains("deathlink")) {
