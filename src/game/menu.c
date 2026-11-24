@@ -581,6 +581,8 @@ void menuGetItemBlocksRequired(struct menuitem *item, s32 *numwords)
 	case MENUITEMTYPE_KEYBOARD:
 	case MENUITEMTYPE_10:
 	case MENUITEMTYPE_16:
+	case MENUITEMTYPE_TEXTINPUT:
+	case MENUITEMTYPE_TEXTOUTPUT:
 		*numwords = 3;
 		break;
 	}
@@ -901,6 +903,10 @@ void menuCalculateItemSize(struct menuitem *item, s16 *width, s16 *height, struc
 	case MENUITEMTYPE_CAROUSEL:
 		*width = 130;
 		*height = item->param3;
+		break;
+	case MENUITEMTYPE_TEXTOUTPUT:
+		*width = item->param2 > 0 ? item->param2 : 400;
+		*height = item->param3 > 0 ? item->param3 : 150;
 		break;
 	default:
 		*width = 80;

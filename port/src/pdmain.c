@@ -74,6 +74,7 @@
 #include "types.h"
 #include "system.h"
 #include "archipelago.h"
+#include "console.h"
 
 extern int failedToConnectTotal;
 
@@ -273,6 +274,7 @@ void mainInit(void)
 	racesInit();
 	bodiesInit();
 	titleInit();
+	consoleReset();
 
 	modelSetDistanceChecksDisabled(true); // don't use LODs
 

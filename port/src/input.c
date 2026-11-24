@@ -1424,7 +1424,7 @@ char inputGetLastTextChar(void)
 
 static inline s32 filterChar(const char ch)
 {
-	return isalnum(ch) || ch == ' ' || ch == '?' || ch == '!' || ch == '.' || ch == ':' || ch == '-' || ch == '/';
+	return isalnum(ch) || ch == ' ' || ch == '?' || ch == '!' || ch == '.' || ch == ':' || ch == '-' || ch == '/' || ch == '_';
 }
 
 s32 inputTextHandler(char *out, const u32 outSize, s32 *curCol, s32 oskCharsOnly)
@@ -1464,6 +1464,9 @@ s32 inputTextHandler(char *out, const u32 outSize, s32 *curCol, s32 oskCharsOnly
 		}
 	} else if (key == VK_ESCAPE) {
 		return -1;
+	} else if (key == VK_RETURN) {
+		// For sending command in the console
+		return 2;
 	}
 
 	return 0;

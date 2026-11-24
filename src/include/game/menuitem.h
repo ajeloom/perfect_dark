@@ -88,3 +88,11 @@ s32 menuitemGetTop(struct menuitem *item, struct menudialog *dialog);
 #endif
 
 #endif
+
+Gfx *menuitemTextInputRender(Gfx *gdl, struct menurendercontext *context);
+bool menuitemTextInputTick(struct menuitem *item, struct menuinputs *inputs, u32 tickflags, union menuitemdata *data);
+void menuitemTextInputInit(struct menuitem *item, union menuitemdata *data);
+
+Gfx *menuitemTextOutputRender(Gfx *gdl, struct menurendercontext *context);
+bool menuitemTextOutputTick(struct menuitem *item, struct menudialog *dialog, struct menuinputs *inputs, u32 tickflags, union menuitemdata *data);
+void menuitemTextOutputInit(union menuitemdata *data);

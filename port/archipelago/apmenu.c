@@ -6,6 +6,7 @@
 #include "game/mplayer/setup.h"
 #include "game/player.h"
 #include "lib/rng.h"
+#include "lib/str.h"
 #include "archipelago.h"
 #include "apconfig.h"
 #include "utils.h"
@@ -1636,26 +1637,6 @@ MenuItemHandlerResult menuhandlerShowLocationName(s32 operation, struct menuitem
 	return 0;
 }
 
-MenuItemHandlerResult menuhandlerShowConsole(s32 operation, struct menuitem *item, union handlerdata *data)
-{
-	s32 val;
-
-	switch (operation) {
-	case MENUOP_GET:
-		return showConsole;
-	case MENUOP_SET:
-		showConsole = data->checkbox.value;
-		if (showConsole) {
-			APInitConsole();
-		}
-		else {
-			APCloseConsole();
-		}
-	}
-
-	return 0;
-}
-
 MenuItemHandlerResult menuhandlerDisableBlur(s32 operation, struct menuitem *item, union handlerdata *data)
 {
 	s32 val;
@@ -1924,14 +1905,6 @@ struct menuitem g_OtherOptionsMenuItems[] = {
 		(uintptr_t)"Show Location Name\n",
 		0,
 		menuhandlerShowLocationName,
-	},
-	{
-		MENUITEMTYPE_CHECKBOX,
-		0,
-		MENUITEMFLAG_LITERAL_TEXT,
-		(uintptr_t)"Show Console\n",
-		0,
-		menuhandlerShowConsole,
 	},
 	{
 		MENUITEMTYPE_CHECKBOX,

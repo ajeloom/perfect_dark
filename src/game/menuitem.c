@@ -28,6 +28,8 @@
 #else
 #define MENU_KEYBOARD_ROWS 5
 #endif
+#include "archipelago.h"
+#include "console.h"
 
 extern bool showAPKeyboard;
 
@@ -3049,6 +3051,7 @@ char *menuitemScrollableGetText(u32 type)
 	case DESCRIPTION_HOLOTIP2:       return htGetTip2();
 	case DESCRIPTION_DEVICETIP1:     return dtGetTip1();
 	case DESCRIPTION_DEVICETIP2:     return dtGetTip2();
+	case CONSOLE_TEXT:				 return consoleGetText();
 	}
 
 	return langGet(g_Briefing.briefingtextnum);
@@ -4639,6 +4642,8 @@ Gfx *menuitemRender(Gfx *gdl, struct menurendercontext *context)
 
 #ifndef PLATFORM_N64
 	case MENUITEMTYPE_COLORBOX:    return menuitemColorBoxRender(gdl, context);
+	case MENUITEMTYPE_TEXTINPUT:   return menuitemTextInputRender(gdl, context);
+	case MENUITEMTYPE_TEXTOUTPUT:  return menuitemTextOutputRender(gdl, context);
 #endif
 
 	}
@@ -4663,6 +4668,8 @@ bool menuitemTick(struct menuitem *item, struct menudialog *dialog, struct menui
 	case MENUITEMTYPE_KEYBOARD:    return menuitemKeyboardTick(item, inputs, tickflags, data);
 	case MENUITEMTYPE_CAROUSEL:    return menuitemCarouselTick(item, inputs, tickflags);
 	case MENUITEMTYPE_PLAYERSTATS: return menuitemPlayerStatsTick(item, dialog, inputs, tickflags, data);
+	case MENUITEMTYPE_TEXTINPUT:   return menuitemTextInputTick(item, inputs, tickflags, data);
+	case MENUITEMTYPE_TEXTOUTPUT:  return menuitemTextOutputTick(item, dialog, inputs, tickflags, data);
 	}
 
 	return true;
@@ -4695,6 +4702,12 @@ void menuitemInit(struct menuitem *item, union menuitemdata *data)
 		break;
 	case MENUITEMTYPE_CONTROLLER:
 		menuitemControllerInit(data);
+		break;
+	case MENUITEMTYPE_TEXTINPUT:
+		menuitemTextInputInit(item, data);
+		break;
+	case MENUITEMTYPE_TEXTOUTPUT:
+		menuitemTextOutputInit(data);
 		break;
 	}
 }
@@ -4734,3 +4747,265 @@ s32 menuitemGetTop(struct menuitem *item, struct menudialog *dialog)
 }
 
 #endif
+
+Gfx *menuitemTextInputRender(Gfx *gdl, struct menurendercontext *context)
+{
+	s32 x;
+	s32 y;
+	struct menuitemdata_textinput *data = &context->data->textinput;
+	u32 cursorcolour;
+	u32 alpha;
+
+	textSetWaveColours(
+			g_MenuWave2Colours[context->dialog->type].item_unfocused,
+			g_MenuWave1Colours[context->dialog->type].item_unfocused);
+
+	// Draw input field background
+	gdl = textSetPrimColour(gdl, 0x0000ff7f);
+
+	gDPFillRectangleScaled(gdl++,
+			context->x + 4, context->y + 1,
+			context->x + 270, context->y + 10);
+
+	// Render text value
+	gdl = text0f153838(gdl);
+
+	x = context->x + 4;
+	y = context->y + 2;
+
+	if (strlen(data->string) > 40) {
+		x -= (8 * (strlen(data->string) - 40));
+	}
+
+	gdl = text0f153628(gdl);
+	gdl = textRenderProjected(gdl, &x, &y, data->string, g_CharsHandelGothicSm, g_FontHandelGothicSm, 0xffffffff, 1000, context->height, 0, 0);
+	gdl = text0f153780(gdl);
+
+	// Render cursor
+	alpha = menuGetSinOscFrac(40) * 255;
+
+	if (context->dialog->transitionfrac < 0) {
+		cursorcolour = g_MenuColours[context->dialog->type].item_focused_inner;
+	} else {
+		cursorcolour = colourBlend(
+				g_MenuColours[context->dialog->type2].item_focused_inner,
+				g_MenuColours[context->dialog->type].item_focused_inner,
+				context->dialog->colourweight);
+	}
+
+	cursorcolour = colourBlend(colourBlend(0x0000ffff, 0x000000ff, 127), cursorcolour, alpha);
+
+	gdl = textSetPrimColour(gdl, cursorcolour);
+
+	gDPFillRectangleScaled(gdl++, x + 1, context->y + 2, x + 3, context->y + 9);
+
+	gdl = text0f153838(gdl);
+
+	return gdl;
+}
+
+bool menuitemTextInputTick(struct menuitem *item, struct menuinputs *inputs, u32 tickflags, union menuitemdata *data)
+{
+	struct menuitemdata_textinput *ti = &data->textinput;
+
+	if (tickflags & MENUTICKFLAG_ITEMISFOCUSED) {
+		u8 maxlen = item->param == 0 ? 10 : item->param;
+		if (g_MenuKeyboardPlayer != 0) {
+			inputClearLastKey();
+			inputClearLastTextChar();
+			g_MenuKeyboardPlayer = 0;
+			inputStartTextInput();
+		}
+
+		if (g_MenuKeyboardPlayer == 0) {
+			// Handle text input
+			s32 prevpos = strlen(ti->string);
+			s32 pos = prevpos;
+			s32 result = inputTextHandler(ti->string, maxlen + 1, &pos, true);
+			if (result == -1) {
+				// Exit console
+				g_MenuKeyboardPlayer = -1;
+				inputStopTextInput();
+				menuPopDialog();
+			} else if (result == 2) {
+				// Pressed enter
+				if (strlen(ti->string) > 0) {
+					// Send command to ap
+					apSendCommand(ti->string);
+					snprintf(ti->string, sizeof(ti->string), "");
+					menuPlaySound(MENUSOUND_SELECT);
+				}
+			} else if (prevpos != pos) {
+				// Added/Deleted a char
+				menuPlaySound(MENUSOUND_FOCUS);
+			}
+		}
+	}
+	else if (tickflags | MENUTICKFLAG_ITEMISFOCUSED) {
+		g_MenuKeyboardPlayer = -1;
+		inputStopTextInput();
+	}
+
+	return true;
+}
+
+void menuitemTextInputInit(struct menuitem *item, union menuitemdata *data)
+{
+	s32 i;
+
+	for (i = 0; i < ARRAYCOUNT(data->textinput.string);) {
+		data->textinput.string[i++] = '\0';
+	}
+
+	if (item->handler) {
+		union handlerdata handlerdata;
+		handlerdata.textinput.string = data->textinput.string;
+		item->handler(MENUOP_GETTEXT, item, &handlerdata);
+	}
+}
+
+Gfx *menuitemTextOutputRender(Gfx *gdl, struct menurendercontext *context)
+{
+	char headingtext[15000];
+	char bodytext[15000];
+	char *streams[2];
+	struct menuitemdata_textoutput *data = &context->data->textoutput;
+	u32 colour;
+	s32 x;
+	s32 y;
+	char *rawtext;
+
+	rawtext = menuitemScrollableGetText(context->item->param);
+	
+	streams[1] = headingtext;
+	streams[0] = bodytext;
+
+	s32 start = consoleGetStart();
+	s32 end = consoleGetTail();
+	s32 length = end;
+
+	if (end < start) {
+		length = strlen(rawtext);
+	}
+
+	// Print the text from the start to the end of the array
+	for (s32 i = start; i < length; i++) {
+		*streams[0] = rawtext[i];
+		streams[0]++;
+	}
+
+	// Print remaining text if tail loops around
+	if (end < start) {
+		for (s32 i = 0; i < end; i++) {
+			*streams[0] = rawtext[i];
+			streams[0]++;
+		}
+	}
+
+	*streams[0] = '\0';
+	*streams[1] = '\0';
+
+	x = context->x + 2;
+	y = context->y + 2;
+
+	if (context->dialog->transitionfrac < 0) {
+		colour = g_MenuColours[context->dialog->type].item_unfocused;
+	} else {
+		colour = colourBlend(
+				g_MenuColours[context->dialog->type2].item_unfocused,
+				g_MenuColours[context->dialog->type].item_unfocused,
+				context->dialog->colourweight);
+	}
+
+	if (context->dialog->dimmed) {
+		colour = (colourBlend(colour, 0, 0x7f) & 0xffffff00) | (colour & 0xff);
+	}
+
+	textSetWaveColours(
+			g_MenuWave2Colours[context->dialog->type].item_unfocused,
+			g_MenuWave1Colours[context->dialog->type].item_unfocused);
+
+	gdl = text0f153628(gdl);
+
+	// Body text
+	x = context->x + 2;
+	y = context->y + 2;
+
+	gdl = textRenderProjected(gdl, &x, &y, bodytext, g_CharsHandelGothicSm, g_FontHandelGothicSm,
+			colour, context->width - 4, context->height - 1, -data->scrolloffset, 0);
+
+	return text0f153780(gdl);
+}
+
+bool menuitemTextOutputTick(struct menuitem *item, struct menudialog *dialog, struct menuinputs *inputs, u32 tickflags, union menuitemdata *data)
+{
+	s32 width;
+	s32 height;
+	s32 rowindex;
+	s32 colindex;
+	s16 colwidth;
+	s16 rowheight;
+
+	dialogFindItem(dialog, item, &rowindex, &colindex);
+
+	colwidth = g_Menus[g_MpPlayerNum].cols[colindex].width;
+	rowheight = g_Menus[g_MpPlayerNum].rows[rowindex].height;
+
+	width = colwidth - 24;
+
+	consoleTextMeasure(&height, &width, g_CharsHandelGothicSm, g_FontHandelGothicSm, 0);
+
+	data->textoutput.maxscrolloffset = height - rowheight + 5;
+
+	if (data->textoutput.maxscrolloffset < -10) {
+		data->textoutput.maxscrolloffset = -10;
+	}
+
+	data->textoutput.dialogheight = dialog->height;
+
+	if (tickflags & MENUTICKFLAG_ITEMISFOCUSED) {
+		f32 floatval;
+		s32 intval = 0;
+
+		if (inputs->yaxis < 0) {
+			floatval = -(f32)inputs->yaxis;
+		} else {
+			floatval = inputs->yaxis;
+		}
+
+		if (floatval > 20) {
+			floatval = (floatval - 20) / 5;
+			floatval *= g_Vars.diffframe60f;
+
+			if (inputs->yaxis < 0) {
+				intval = floatval;
+			} else {
+				intval = -(s32)floatval;
+			}
+		}
+
+		intval += inputs->updownheld * 2 * g_Vars.diffframe60;
+		intval += inputs->mousescroll * (LINEHEIGHT - 2) * 3;
+		data->textoutput.scrolloffset += intval;
+
+		if (data->textoutput.scrolloffset < -10) {
+			data->textoutput.scrolloffset = -10;
+		}
+
+		if (data->textoutput.scrolloffset > data->textoutput.maxscrolloffset) {
+			data->textoutput.scrolloffset = data->textoutput.maxscrolloffset;
+		}
+	}
+	else if (tickflags | MENUTICKFLAG_ITEMISFOCUSED) {
+		// Move to the bottom of the text output
+		data->textoutput.scrolloffset = data->textoutput.maxscrolloffset;
+	}
+
+	return true;
+}
+
+void menuitemTextOutputInit(union menuitemdata *data)
+{
+	data->textoutput.dialogheight = -1;
+	data->textoutput.scrolloffset = -10;
+}

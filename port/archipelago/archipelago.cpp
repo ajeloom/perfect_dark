@@ -7,6 +7,7 @@
 #include <map>
 
 extern "C" {
+    #include "console.h"
     #include "itemhandler.h"
     #include "random.h"
 }
@@ -30,7 +31,6 @@ APClient* ap;
 char* clientVersion = "0.7.0";
 
 extern bool showConsole;
-bool consoleIsRunning = false;
 HANDLE inputThread = NULL;
 
 std::string URI;
@@ -1586,6 +1586,7 @@ std::map<int, std::string> locationNames = {
     {60418, "Attack Ship: Engine System Glass 6"},
 };
 
+// Console for debugging purposes
 void APInitConsole()
 {
     if (showConsole) {
@@ -1606,9 +1607,6 @@ void APInitConsole()
         printf("If you are using an incompatible version of the APWorld, then it will not work correctly.\n");
         PrintCommands();
 
-        consoleIsRunning = true;
-
-        inputThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)InputCommand, NULL, 0, NULL);
     }
 }
 
@@ -1622,65 +1620,59 @@ void APCloseConsole() {
     fclose(stdout);
     fclose(stderr);
     fclose(stdin);
-
-    consoleIsRunning = false;
 }
 
-VOID InputCommand()
+void apSendCommand(char *line)
 {
-    while (consoleIsRunning) {
-        std::string line;
-		std::getline(std::cin, line);
-        
-        if (line == "/help") {
-            PrintCommands();
-		}
-        else if (line[0] == '!') {
-            Message(line);
+    std::string commandText = std::string(line);
+
+    if (strcmp(line, "/help") == 0) {
+        PrintCommands();
+    }
+    else if (commandText.find("/connect ") == 0) {
+        std::string param = commandText.substr(9);
+        int spaceIndex = param.find(" ");
+
+        if (spaceIndex == -1) {
+            printf("Couldn't connect to room. Missing parameters.\n");
+        } else {
+            URI = param.substr(0, spaceIndex);
+            if (spaceIndex == 0) {
+                printf("Couldn't connect to room. Missing parameters.\n");
+            }
+
+            int passwordIndex = param.find("password:");
+            std::string password = "";
+            if (passwordIndex != -1) {
+                password = param.substr(passwordIndex + 9);
+            }
+
+            slotName = param.substr(spaceIndex + 1, passwordIndex - spaceIndex - 2);
+
+            printf("Attempting to connect to room...\n");
+
+            Initialize();
         }
-        else if (line.find("/connect ") == 0) {
-            
-			std::string param = line.substr(9);
-			int spaceIndex = param.find(" ");
-
-			if (spaceIndex == -1) {
-                printf("Missing parameter : Make sure to type '/connect {SERVER_IP}:{SERVER_PORT} {SLOT_NAME} [password:{PASSWORD}]\n");
-			} else {
-                URI = param.substr(0, spaceIndex);
-                if (spaceIndex == 0) {
-                    printf("Missing parameter : Make sure to type '/connect {SERVER_IP}:{SERVER_PORT} {SLOT_NAME} [password:{PASSWORD}]\n");
-                    continue;
-                }
-
-                int passwordIndex = param.find("password:");
-				std::string password = "";
-				if (passwordIndex != -1) {
-					password = param.substr(passwordIndex + 9);
-				}
-
-				slotName = param.substr(spaceIndex + 1, passwordIndex - spaceIndex - 2);
-				
-                // std::cout << "URI: " << URI << "\n";
-                // std::cout << "slotname: " << slotName << "\n";
-                // std::cout << "password: " << password << "\n";
-				
-				printf("Attempting to connect to room...\n");
-
-                Initialize();
-			}
-		}
-		else if (line.find("/connect") == 0) {
-			printf("Missing parameter : Make sure to type '/connect {SERVER_IP}:{SERVER_PORT} {SLOT_NAME} [password:{PASSWORD}]\n");
-		}
-        else if (line.find("/reconnect") == 0) {
-            ConnectAP();
-		}
-        else if (line.find("/version") == 0) {
-            printf("Version: %s\n", clientVersion);
-		}
-        else if (line.find("/disconnect") == 0) {
-            DisconnectAP(false);
+    }
+    else if (strcmp(line, "/connect") == 0) {
+        printf("Couldn't connect to room. Missing parameters.\n");
+    }
+    else if (strcmp(line, "/reconnect") == 0) {
+        ConnectAP();
+    }
+    else if (strcmp(line, "/disconnect") == 0) {
+        DisconnectAP(false);
+    }
+    else if (strcmp(line, "/version") == 0) {
+        printf("Version: %s\n", clientVersion);
+	}
+    else {
+        if (!ap) {
+            printf("Invalid command. Type /help to see commands.\n");
+            return;
         }
+
+        Message(commandText);
     }
 }
 
@@ -1748,7 +1740,8 @@ bool Initialize() {
     // Called as reply to ConnectSlot when successful. argument is slot data.
 	ap->set_slot_connected_handler([](const json& data) {
         ap->StatusUpdate(APClient::ClientStatus::PLAYING);
-        printf("Connected and ready to go as %s\n", ap->get_player_alias(ap->get_player_number()).c_str());
+        char text[256];
+        snprintf(text, sizeof(text), "Connected and ready to go as %s\n", ap->get_player_alias(ap->get_player_number()).c_str());
 
         sprintf(buffer, "Joined %s as %s\n", GetServerAddress(), GetSlotName());
         setAPConnectionText(buffer);
@@ -2078,7 +2071,7 @@ bool Initialize() {
 
     // colorful chat and server messages. pass arg.data to render_json for text output
 	ap->set_print_json_handler([](const std::list<APClient::TextNode>& msg) {
-        printf("%s\n", ap->render_json(msg, APClient::RenderFormat::ANSI).c_str());
+        printf("%s\n", ap->render_json(msg, APClient::RenderFormat::TEXT).c_str());
     });
 
     // broadcasted when a client sends a Bounce
@@ -2284,19 +2277,24 @@ char *GetStatus()
     return status;
 }
 
+char *apGetVersion()
+{
+    return clientVersion;
+}
+
 void PrintCommands()
 {
-    printf("--------------------------------------------------------------------------------------------------\n");
+    printf("-----------------------------------\n");
     printf("Commands:\n");
-    printf(" - '/help' - shows available commands\n");
+    printf("/help - show available commands\n");
     if (ap) {
-        printf(" - '!help' - Prints the help message related to Archipelago.\n");
+        printf("!help - show the Archipelago help message\n");
     }
-	printf(" - '/connect {SERVER_IP}:{SERVER_PORT} {SLOT_NAME} [password:{PASSWORD}]' - to connect to the room\n");
-    printf(" - '/reconnect - to connect to the file's saved connection info\n");
-    printf(" - '/version' - to show the version of the client\n");
-    printf(" - '/disconnect' - to exit the room\n");
-	printf("--------------------------------------------------------------------------------------------------\n");
+	printf("/connect addr:port name password - to join room\n");
+    printf("/reconnect - to re-join last room\n");
+    printf("/disconnect - to leave room\n");
+    printf("/version - to show client version\n");
+    printf("-----------------------------------\n");
 }
 
 void ConnectAP()
@@ -2327,15 +2325,12 @@ void DisconnectAP(bool joining)
         failedToConnectTotal = 0;
 
         if (joining) {
-            printf("--------------------------------------------------------------------------------------------------\n");
-            printf("Failed to join room.\n");
+            printf("Failed to connect to %s\n", GetServerAddress());
             sprintf(buffer, "Failed to connect to %s\n", GetServerAddress());
             setAPConnectionText(buffer);
         }
         else {
-            printf("--------------------------------------------------------------------------------------------------\n");
-            printf("Disconnected from room.\n");
-
+            printf("Disconnected from server\n");
             sprintf(buffer, "Disconnected from server\n");
             setAPConnectionText(buffer);
         }

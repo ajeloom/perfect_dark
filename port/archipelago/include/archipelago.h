@@ -1,8 +1,5 @@
-#include <windows.h>
-
 #ifdef __cplusplus
 
-VOID InputCommand();
 bool Initialize();
 void Message(std::string message);
 void QueueItem(APClient::NetworkItem item);
@@ -12,6 +9,7 @@ extern "C" {
 
 void APInitConsole();
 void APCloseConsole();
+void apSendCommand(char *line);
 int IsConnected();
 int IsDisconnected();
 int IsConnecting();
@@ -27,6 +25,7 @@ char *GetServerAddress();
 char *GetSlotName();
 char *GetPassword();
 char *GetStatus();
+char *apGetVersion();
 void PrintCommands();
 void ConnectAP();
 void DisconnectAP(bool joining);

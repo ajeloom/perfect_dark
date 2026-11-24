@@ -95,7 +95,6 @@ static void cleanup(void)
 	configSave(CONFIG_PATH);
 	videoShutdown();
 	crashShutdown();
-	APCloseConsole();
 	// TODO: actually shut down all subsystems
 }
 
@@ -160,7 +159,6 @@ int main(int argc, const char **argv)
 		sysLogPrintf(LOG_NOTE, "player profile set to %d", g_FileAutoSelect);
 	}
 
-	APInitConsole();
 	resetAP(false);
 
 	mainProc();

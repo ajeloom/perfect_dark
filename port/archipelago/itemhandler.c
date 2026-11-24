@@ -21,7 +21,9 @@
 #include "lib/main.h"
 #include "lib/rng.h"
 #include "lib/snd.h"
+#include "lib/str.h"
 #include "archipelago.h"
+#include "console.h"
 
 #define AP_ITEM_AGENT_START 95
 #define AP_ITEM_SPECIAL_AGENT_START 116

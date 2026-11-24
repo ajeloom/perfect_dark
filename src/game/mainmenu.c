@@ -35,6 +35,7 @@
 #include "data.h"
 #include "types.h"
 #include "archipelago.h"
+#include "console.h"
 
 extern bool checkedFiles;
 
@@ -68,6 +69,7 @@ struct menudialogdef g_CinemaMenuDialog;
 #ifndef PLATFORM_N64
 extern struct menudialogdef g_ExtendedMenuDialog;
 extern struct menudialogdef g_ArchipelagoMenuDialog;
+extern struct menudialogdef g_ConsoleMenuDialog;
 #endif
 
 char *menuTextCurrentStageName(struct menuitem *item)
@@ -2418,6 +2420,7 @@ MenuItemHandlerResult menuhandlerChangeAgent(s32 operation, struct menuitem *ite
 		func0f0f820c(NULL, -7);
 		DisconnectAP(false);
 		ClearConnectionInfo();
+		consoleReset();
 		checkedFiles = false;
 	}
 
@@ -3701,6 +3704,14 @@ struct menuitem g_SoloMissionOptionsMenuItems[] = {
 		0,
 		(void *)&g_ExtendedMenuDialog,
 	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		0,
+		MENUITEMFLAG_SELECTABLE_OPENSDIALOG | MENUITEMFLAG_BIGFONT | MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Console\n",
+		0,
+		(void *)&g_ConsoleMenuDialog,
+	},
 #endif
 	{ MENUITEMTYPE_END },
 };
@@ -3890,6 +3901,14 @@ struct menuitem g_CiOptionsMenuItems[] = {
 		(uintptr_t)"Extended\n",
 		7,
 		(void *)&g_ExtendedMenuDialog,
+	},
+	{
+		MENUITEMTYPE_SELECTABLE,
+		0,
+		MENUITEMFLAG_SELECTABLE_OPENSDIALOG | MENUITEMFLAG_BIGFONT | MENUITEMFLAG_LITERAL_TEXT,
+		(uintptr_t)"Console\n",
+		8,
+		(void *)&g_ConsoleMenuDialog,
 	},
 #endif
 	{ MENUITEMTYPE_END },

@@ -3327,6 +3327,16 @@ struct menuitemdata_slider {
 	s16 multiplier;
 };
 
+struct menuitemdata_textinput {
+	char string[100];
+};
+
+struct menuitemdata_textoutput {
+	s16 scrolloffset;
+	s16 maxscrolloffset;
+	s16 dialogheight;
+};
+
 union menuitemdata {
 	struct menuitemdata_controller controller;
 	struct menuitemdata_dropdown dropdown;
@@ -3336,6 +3346,8 @@ union menuitemdata {
 	struct menuitemdata_ranking ranking;
 	struct menuitemdata_scrollable scrollable;
 	struct menuitemdata_slider slider;
+	struct menuitemdata_textinput textinput;
+	struct menuitemdata_textoutput textoutput;
 };
 
 struct handlerdata_carousel {
@@ -3405,6 +3417,10 @@ struct handlerdata_dialog2 {
 	struct menuinputs *inputs;
 };
 
+struct handlerdata_textinput {
+	char *string;
+};
+
 union handlerdata {
 	struct handlerdata_carousel carousel;
 	struct handlerdata_checkbox checkbox;
@@ -3417,6 +3433,8 @@ union handlerdata {
 
 	struct handlerdata_dialog1 dialog1;
 	struct handlerdata_dialog2 dialog2;
+
+	struct handlerdata_textinput textinput;
 };
 
 struct menuitem {

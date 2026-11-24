@@ -94,6 +94,7 @@
 #include "lib/rng.h"
 #include "lib/sched.h"
 #include "lib/snd.h"
+#include "lib/str.h"
 #include "lib/vars.h"
 #include "lib/vi.h"
 #include "types.h"
