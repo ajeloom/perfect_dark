@@ -2197,7 +2197,6 @@ void InternalCollectAPItem(uint64_t location)
         check.push_back(location);
         ap->LocationScouts(check);
         ap->LocationChecks(check);
-        completedLocations[location] = 1;
     }
 }
 
@@ -2215,6 +2214,9 @@ void QueueItem(APClient::NetworkItem item) {
 
     if (sender == slotName) {
         sender = "You";
+        if (completedLocations[item.location] == 0) {
+            completedLocations[item.location] = 1;
+        }
     }
     handleItem(item.item, itemname.c_str(), sender.c_str(), location.c_str(), item.index);
 }
