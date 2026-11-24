@@ -449,6 +449,8 @@ void resetAP(int restartGame)
     hasPickupsanity = 0;
     hasGlassanity = 0;
 
+    hasVictory = false;
+
     // Reset traps
     if (g_Vars.stagenum == STAGE_CITRAINING) {
         dkModeTrap = 0;
@@ -826,9 +828,17 @@ void handleItem(int itemID, const char* itemname, const char* sender, const char
     if (itemID == AP_ITEM_CHEESE) {
         if (completionGoal == 1) {
             cheeseCount += 1;
-            if (cheeseCount >= requiredCheese) {
+            if (cheeseCount >= requiredCheese && !hasVictory) {
                 ReachedGoal();
                 hasVictory = true;
+
+                if (g_Vars.stagenum != STAGE_CREDITS) {
+                    g_MissionConfig.stagenum = STAGE_CREDITS;
+                    titleSetNextStage(g_MissionConfig.stagenum);
+                    lvSetDifficulty(g_MissionConfig.difficulty);
+                    titleSetNextMode(TITLEMODE_SKIP);
+                    mainChangeToStage(g_MissionConfig.stagenum);
+                }
             }
         }
         return;
